@@ -1,7 +1,7 @@
 import { encode } from '@toon-format/toon';
 import type { EmbedSnapshotTransformInput, ExtensionSettings } from './config.js';
 
-// Formats zTracker tracker snapshots for embedding into prompt context.
+// Formats xUtils tracker snapshots for embedding into prompt context.
 
 function minifyEmbeddingWhitespace(text: string): string {
   // Preserve indentation (YAML-like), but remove blank lines and trailing whitespace.
@@ -170,7 +170,7 @@ function formatTopLevelSnapshot(value: unknown, presetKey?: string): string {
 }
 
 function formatToonSnapshot(value: unknown): string {
-  // includeZTrackerMessages uses structuredClone(), which can produce object shapes
+  // includeXUtilsMessages uses structuredClone(), which can produce object shapes
   // the TOON encoder treats as non-JSON input. Normalize back to plain JSON first.
   return encode(normalizeToPlainJsonValue(value ?? {}), { delimiter: '\t' });
 }
@@ -203,10 +203,10 @@ function getDefaultCodeFenceWrap(presetKey?: string): boolean {
 
 export function formatEmbeddedTrackerSnapshot(
   trackerValue: unknown,
-  settings: Pick<ExtensionSettings, 'embedZTrackerSnapshotTransformPreset' | 'embedZTrackerSnapshotTransformPresets'>,
+  settings: Pick<ExtensionSettings, 'embedXUtilsSnapshotTransformPreset' | 'embedXUtilsSnapshotTransformPresets'>,
 ): { lang: string; text: string; wrapInCodeFence: boolean } {
-  const presets = settings.embedZTrackerSnapshotTransformPresets;
-  const presetKey = settings.embedZTrackerSnapshotTransformPreset;
+  const presets = settings.embedXUtilsSnapshotTransformPresets;
+  const presetKey = settings.embedXUtilsSnapshotTransformPreset;
   const preset = (presetKey && presets && presets[presetKey]) || presets?.default;
 
   const input = preset?.input ?? 'pretty_json';

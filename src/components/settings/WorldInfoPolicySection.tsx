@@ -147,12 +147,12 @@ export const WorldInfoPolicySection: FC<{
   return (
     <>
       <div className="setting-row">
-        <label title="Controls whether SillyTavern World Info is included when zTracker builds the prompt for tracker generation.">
+        <label title="Controls whether SillyTavern World Info is included when xUtils builds the prompt for tracker generation.">
           World Info during tracker generation
         </label>
         <select
           className="text_pole"
-          title="Controls whether SillyTavern World Info is included when zTracker builds the prompt for tracker generation."
+          title="Controls whether SillyTavern World Info is included when xUtils builds the prompt for tracker generation."
           value={worldInfoPolicyMode}
           onChange={(e) =>
             updateAndRefresh((s) => {

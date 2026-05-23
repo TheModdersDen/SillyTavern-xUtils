@@ -22,7 +22,7 @@ describe('parseResponse TOON repair fixtures', () => {
 
     expect(result).toEqual(barTrackerExpected);
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired TOON response',
+      'xUtils: repaired TOON response',
       expect.objectContaining({
         appliedSteps: expect.arrayContaining(['fence cleanup', 'tabular delimiter normalization']),
       }),
@@ -38,7 +38,7 @@ describe('parseResponse TOON repair fixtures', () => {
       expect(() => parseResponse(invalidToonJsonFenceFromSmokeTest, 'toon', { schema: sceneTrackerSchema })).toThrow(
         'Model response is not valid TOON.',
       );
-      expect(consoleInfoSpy).not.toHaveBeenCalledWith('zTracker: repaired TOON response', expect.anything());
+      expect(consoleInfoSpy).not.toHaveBeenCalledWith('xUtils: repaired TOON response', expect.anything());
     } finally {
       consoleWarnSpy.mockRestore();
       consoleErrorSpy.mockRestore();
@@ -53,7 +53,7 @@ describe('parseResponse TOON repair fixtures', () => {
 
     expect(result).toEqual(barTrackerExpected);
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired TOON response',
+      'xUtils: repaired TOON response',
       expect.objectContaining({
         appliedSteps: expect.arrayContaining(['object-array block normalization']),
       }),

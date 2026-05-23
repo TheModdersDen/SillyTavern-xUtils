@@ -1,10 +1,10 @@
 import { EXTENSION_KEY } from '../config.js';
 
-/** Character-card field name used to persist zTracker's per-character auto-mode exclusion. */
+/** Character-card field name used to persist xUtils's per-character auto-mode exclusion. */
 export const CHARACTER_AUTO_MODE_EXCLUDED_FIELD = 'autoModeExcluded';
 
 /** DOM id for the character-panel toggle button so repeated sync passes remain idempotent. */
-export const CHARACTER_AUTO_MODE_BUTTON_ID = 'ztracker-character-auto-mode-toggle';
+export const CHARACTER_AUTO_MODE_BUTTON_ID = 'xutils-character-auto-mode-toggle';
 
 type CharacterLike = {
   avatar?: string;
@@ -39,8 +39,8 @@ function resolveCharacterContext(options: CharacterPanelButtonSyncOptions): Char
   return options.context ?? null;
 }
 
-/** Returns the zTracker extension payload stored on a character card, if present. */
-export function getCharacterZTrackerExtensionData(character: CharacterLike | undefined): Record<string, unknown> {
+/** Returns the xUtils extension payload stored on a character card, if present. */
+export function getCharacterXUtilsExtensionData(character: CharacterLike | undefined): Record<string, unknown> {
   const data = character?.data?.extensions?.[EXTENSION_KEY];
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     return {};
@@ -48,9 +48,9 @@ export function getCharacterZTrackerExtensionData(character: CharacterLike | und
   return data as Record<string, unknown>;
 }
 
-/** Reads whether the supplied character is excluded from zTracker auto-mode. */
+/** Reads whether the supplied character is excluded from xUtils auto-mode. */
 export function isCharacterAutoModeExcluded(character: CharacterLike | undefined): boolean {
-  return getCharacterZTrackerExtensionData(character)[CHARACTER_AUTO_MODE_EXCLUDED_FIELD] === true;
+  return getCharacterXUtilsExtensionData(character)[CHARACTER_AUTO_MODE_EXCLUDED_FIELD] === true;
 }
 
 /** Resolves a SillyTavern character id from a rendered message's original avatar reference. */
@@ -110,7 +110,7 @@ export function setCharacterAutoModeExcluded(
   }
 
   const character = characters[characterId] ?? {};
-  const currentExtensionData = getCharacterZTrackerExtensionData(character);
+  const currentExtensionData = getCharacterXUtilsExtensionData(character);
   const nextExtensionData = {
     ...currentExtensionData,
     [CHARACTER_AUTO_MODE_EXCLUDED_FIELD]: excluded,
@@ -141,7 +141,7 @@ export function toggleCurrentCharacterAutoModeExcluded(
   return { characterId, excluded: nextExcluded };
 }
 
-/** Finds the character edit-panel action row where zTracker should inject its toggle button. */
+/** Finds the character edit-panel action row where xUtils should inject its toggle button. */
 export function findCharacterPanelButtonRow(root: ParentNode = document): HTMLElement | null {
   const form = root.querySelector('#form_create');
   if (!(form instanceof HTMLElement)) {
@@ -171,16 +171,16 @@ function buildCharacterAutoModeButtonTitle(options: {
 }): string {
   const { hasCharacter, excluded, autoModeEnabled } = options;
   if (!hasCharacter) {
-    return 'zTracker: Open a character card to toggle auto-mode exclusion.';
+    return 'xUtils: Open a character card to toggle auto-mode exclusion.';
   }
   if (!autoModeEnabled) {
     return excluded
-      ? 'zTracker: This character stays excluded while auto mode is disabled globally.'
-      : 'zTracker: Auto mode is disabled globally. Enable it to use this character exclusion toggle.';
+      ? 'xUtils: This character stays excluded while auto mode is disabled globally.'
+      : 'xUtils: Auto mode is disabled globally. Enable it to use this character exclusion toggle.';
   }
   return excluded
-    ? 'zTracker: Auto mode excluded for this character. Click to include.'
-    : 'zTracker: Auto mode active for this character. Click to exclude.';
+    ? 'xUtils: Auto mode excluded for this character. Click to include.'
+    : 'xUtils: Auto mode active for this character. Click to exclude.';
 }
 
 /** Creates or refreshes the character-panel exclusion button and keeps its state in sync. */
@@ -200,7 +200,7 @@ export function syncCharacterAutoModeButton(options: CharacterPanelButtonSyncOpt
   if (!button) {
     button = document.createElement('div');
     button.id = CHARACTER_AUTO_MODE_BUTTON_ID;
-    button.className = 'menu_button interactable fa-solid fa-truck ztracker-character-auto-mode-button';
+    button.className = 'menu_button interactable fa-solid fa-truck xutils-character-auto-mode-button';
     button.setAttribute('role', 'button');
     button.tabIndex = 0;
     button.addEventListener('click', () => {

@@ -5,7 +5,7 @@ Last updated: 2026-04-28
 
 ## Summary
 
-Add a small, repo-local SillyTavern host test harness for the host behaviors that zTracker actually depends on.
+Add a small, repo-local SillyTavern host test harness for the host behaviors that xUtils actually depends on.
 
 This harness is meant to reduce duplicated host setup in Jest, make host-boundary tests cheaper to write, and support the still-missing wiring coverage defined in `02-B-entrypoint-wiring-tests.md`.
 
@@ -15,8 +15,8 @@ This spec intentionally does not propose a generalized fake SillyTavern test fra
 
 ## Goals
 
-- Add a reusable host harness under `src/test-utils/` for zTracker's host-boundary tests.
-- Keep the harness narrow, explicit, and shaped around real zTracker dependencies.
+- Add a reusable host harness under `src/test-utils/` for xUtils's host-boundary tests.
+- Keep the harness narrow, explicit, and shaped around real xUtils dependencies.
 - Reuse the same host primitives across `ui-init`, tracker-action host tests, and future wiring tests.
 - Make selector assumptions and event registrations easy to test without rebuilding ad hoc setup in each suite.
 - Document the boundary clearly so tests stay lean and maintainable.
@@ -50,7 +50,7 @@ const host = createSillyTavernHost({
 installSillyTavernHost(host.context);
 ```
 
-The builder must provide stable defaults for the host state zTracker uses, including:
+The builder must provide stable defaults for the host state xUtils uses, including:
 
 - `chat`
 - `chatMetadata`
@@ -97,7 +97,7 @@ This is the highest-value shared primitive and should be treated as required, no
 
 ### Layer 3: DOM scaffold helpers
 
-Add small DOM scaffold helpers for the host nodes zTracker expects.
+Add small DOM scaffold helpers for the host nodes xUtils expects.
 
 Suggested helpers:
 
@@ -109,7 +109,7 @@ Suggested helpers:
 - `installCharacterPanelDom()`
 - `installChatMessageDom(messageId, options)`
 
-These helpers should cover the selectors zTracker relies on, including:
+These helpers should cover the selectors xUtils relies on, including:
 
 - `#extensionsMenu`
 - `#extensions_settings`
@@ -120,7 +120,7 @@ These helpers should cover the selectors zTracker relies on, including:
 - `.mes_buttons`
 - `.extraMesButtons`
 
-For character-panel tests, the scaffold only needs to provide one supported action-row shape that zTracker can target reliably. It must not try to mirror every possible host layout variation.
+For character-panel tests, the scaffold only needs to provide one supported action-row shape that xUtils can target reliably. It must not try to mirror every possible host layout variation.
 
 These helpers must stay intentionally small. They exist to make selector assumptions explicit and reusable, not to mirror host markup in detail.
 

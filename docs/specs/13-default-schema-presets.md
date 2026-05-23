@@ -5,11 +5,11 @@ Last updated: 2026-03-20
 
 ## Goal
 
-Ship zTracker with additional built-in schema presets so new users can immediately pick a genre-appropriate tracker instead of building one from scratch. The default "Roleplay Scene" preset stays; four genre presets are added alongside it.
+Ship xUtils with additional built-in schema presets so new users can immediately pick a genre-appropriate tracker instead of building one from scratch. The default "Roleplay Scene" preset stays; four genre presets are added alongside it.
 
 ## Motivation
 
-Currently the extension ships with a single `default` schema preset (general roleplay scene tracker). New users must manually author a JSON Schema and a Handlebars template before they can track genre-specific details. Providing curated presets for popular genres lowers the onboarding barrier and showcases what zTracker can do.
+Currently the extension ships with a single `default` schema preset (general roleplay scene tracker). New users must manually author a JSON Schema and a Handlebars template before they can track genre-specific details. Providing curated presets for popular genres lowers the onboarding barrier and showcases what xUtils can do.
 
 ## Scope
 
@@ -27,7 +27,7 @@ Currently the extension ships with a single `default` schema preset (general rol
 1. **Read-only vs. user-editable**: Should built-in presets be fully read-only (schema + template locked), or should users be able to edit the JSON/HTML while only preventing deletion? Current `default` behavior allows editing but prevents deletion — should we keep that?
 2. **Key naming**: Proposed keys are `space_opera`, `cyberpunk_detective`, `fantasy_adventure`, `post_apocalyptic`. Any preference?
 3. **Upgrade path**: When a user already has settings stored and we add new built-in presets in a future version, should we auto-inject missing built-in presets on load, or only include them for fresh installs?
-4. **Template style**: Should the new preset templates reuse the same CSS class prefix (`ztracker_default_mes_template`) or use genre-specific classes (e.g., `ztracker_space_opera_template`)?
+4. **Template style**: Should the new preset templates reuse the same CSS class prefix (`xutils_default_mes_template`) or use genre-specific classes (e.g., `xutils_space_opera_template`)?
 
 ## Decisions (chosen)
 
@@ -124,8 +124,8 @@ _(to be filled after clarification)_
     },
     "characters": {
       "type": "array",
-      "x-ztracker-dependsOn": ["charactersPresent"],
-      "x-ztracker-idKey": "name",
+      "x-xutils-dependsOn": ["charactersPresent"],
+      "x-xutils-idKey": "name",
       "items": {
         "type": "object",
         "properties": {
@@ -148,7 +148,7 @@ _(to be filled after clarification)_
 #### Handlebars template (`html`)
 
 ```html
-<div class="ztracker_default_mes_template">
+<div class="xutils_default_mes_template">
     <table>
         <tbody>
             <tr><td>Stardate:</td><td>{{data.stardate}}</td></tr>
@@ -167,7 +167,7 @@ _(to be filled after clarification)_
                 <tr><td>Present:</td><td>{{join data.charactersPresent ', '}}</td></tr>
             </tbody>
         </table>
-        <div class="mes_ztracker_characters">
+        <div class="mes_xutils_characters">
             {{#each data.characters as |character|}}
             <hr>
             <strong>{{character.name}}</strong> ({{character.species}}, {{character.role}})<br>
@@ -274,8 +274,8 @@ _(to be filled after clarification)_
     },
     "characters": {
       "type": "array",
-      "x-ztracker-dependsOn": ["charactersPresent"],
-      "x-ztracker-idKey": "name",
+      "x-xutils-dependsOn": ["charactersPresent"],
+      "x-xutils-idKey": "name",
       "items": {
         "type": "object",
         "properties": {
@@ -298,7 +298,7 @@ _(to be filled after clarification)_
 #### Handlebars template (`html`)
 
 ```html
-<div class="ztracker_default_mes_template">
+<div class="xutils_default_mes_template">
     <table>
         <tbody>
             <tr><td>Time:</td><td>{{data.time}}</td></tr>
@@ -318,7 +318,7 @@ _(to be filled after clarification)_
                 <tr><td>Present:</td><td>{{join data.charactersPresent ', '}}</td></tr>
             </tbody>
         </table>
-        <div class="mes_ztracker_characters">
+        <div class="mes_xutils_characters">
             {{#each data.characters as |character|}}
             <hr>
             <strong>{{character.name}}</strong> ({{character.affiliation}})<br>
@@ -422,8 +422,8 @@ _(to be filled after clarification)_
     },
     "characters": {
       "type": "array",
-      "x-ztracker-dependsOn": ["charactersPresent"],
-      "x-ztracker-idKey": "name",
+      "x-xutils-dependsOn": ["charactersPresent"],
+      "x-xutils-idKey": "name",
       "items": {
         "type": "object",
         "properties": {
@@ -446,7 +446,7 @@ _(to be filled after clarification)_
 #### Handlebars template (`html`)
 
 ```html
-<div class="ztracker_default_mes_template">
+<div class="xutils_default_mes_template">
     <table>
         <tbody>
             <tr><td>Time:</td><td>{{data.time}}</td></tr>
@@ -467,7 +467,7 @@ _(to be filled after clarification)_
                 <tr><td>Present:</td><td>{{join data.charactersPresent ', '}}</td></tr>
             </tbody>
         </table>
-        <div class="mes_ztracker_characters">
+        <div class="mes_xutils_characters">
             {{#each data.characters as |character|}}
             <hr>
             <strong>{{character.name}}</strong> ({{character.race}} {{character.class}})<br>
@@ -570,8 +570,8 @@ _(to be filled after clarification)_
     },
     "characters": {
       "type": "array",
-      "x-ztracker-dependsOn": ["charactersPresent"],
-      "x-ztracker-idKey": "name",
+      "x-xutils-dependsOn": ["charactersPresent"],
+      "x-xutils-idKey": "name",
       "items": {
         "type": "object",
         "properties": {
@@ -594,7 +594,7 @@ _(to be filled after clarification)_
 #### Handlebars template (`html`)
 
 ```html
-<div class="ztracker_default_mes_template">
+<div class="xutils_default_mes_template">
     <table>
         <tbody>
             <tr><td>Time:</td><td>{{data.time}}</td></tr>
@@ -614,7 +614,7 @@ _(to be filled after clarification)_
                 <tr><td>Present:</td><td>{{join data.charactersPresent ', '}}</td></tr>
             </tbody>
         </table>
-        <div class="mes_ztracker_characters">
+        <div class="mes_xutils_characters">
             {{#each data.characters as |character|}}
             <hr>
             <strong>{{character.name}}</strong> [{{character.health}}]<br>
@@ -641,8 +641,8 @@ _(to be filled after clarification)_
 All four schemas follow the same structural pattern as the existing `default` preset:
 - **Top-level scalar fields** for at-a-glance scene info (time, location summary).
 - **Nested objects** for grouped details (mission, case file, quest, resources).
-- **`charactersPresent`** string array → **`characters`** object array with `x-ztracker-dependsOn` and `x-ztracker-idKey`, enabling sequential part generation (spec 08).
-- **Handlebars templates** reuse the existing `ztracker_default_mes_template` class and the table + collapsible `<details>` layout.
+- **`charactersPresent`** string array → **`characters`** object array with `x-xutils-dependsOn` and `x-xutils-idKey`, enabling sequential part generation (spec 08).
+- **Handlebars templates** reuse the existing `xutils_default_mes_template` class and the table + collapsible `<details>` layout.
 
 ### Genre-specific field choices
 Each schema tracks the details that matter for its genre:
@@ -687,5 +687,5 @@ Each schema has ~7 top-level properties plus a character array — comparable to
 
 ## Notes
 
-- Templates reuse the existing CSS class (`ztracker_default_mes_template`) so they inherit the same styling without additional CSS. The open question about genre-specific classes should be resolved before implementation — custom classes would allow per-genre theming but add CSS maintenance burden.
-- The `x-ztracker-dependsOn` / `x-ztracker-idKey` annotations follow the conventions established in spec 08.
+- Templates reuse the existing CSS class (`xutils_default_mes_template`) so they inherit the same styling without additional CSS. The open question about genre-specific classes should be resolved before implementation — custom classes would allow per-genre theming but add CSS maintenance burden.
+- The `x-xutils-dependsOn` / `x-xutils-idKey` annotations follow the conventions established in spec 08.

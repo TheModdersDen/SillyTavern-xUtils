@@ -1,9 +1,9 @@
-# zTracker specs index
+# xUtils specs index
 
 These are “living” per-change specs. Each spec tracks its current status and open questions that must be clarified **before** implementation.
 
 ## Specs
-- [01-rename-to-ztracker.md](01-rename-to-ztracker.md)
+- [01-rename-to-xutils.md](01-rename-to-xutils.md)
 - [02-testing-strategy.md](02-testing-strategy.md)
 - [02-B-entrypoint-wiring-tests.md](02-B-entrypoint-wiring-tests.md)
 - [03-versioning-semver.md](03-versioning-semver.md)

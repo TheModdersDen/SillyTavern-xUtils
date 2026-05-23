@@ -117,7 +117,7 @@ export function runRepairWorkflow<TStepName extends string>(options: {
 
       try {
         const parsed = parseValidatedCandidate(candidate);
-        console.info(`zTracker: repaired ${formatLabel} response`, {
+        console.info(`xUtils: repaired ${formatLabel} response`, {
           appliedSteps: [...appliedSteps],
           originalLength: content.length,
           repairedLength: candidate.length,
@@ -131,7 +131,7 @@ export function runRepairWorkflow<TStepName extends string>(options: {
     if (!parseAfterEachStep && appliedSteps.length > 0) {
       try {
         const parsed = parseValidatedCandidate(candidate);
-        console.info(`zTracker: repaired ${formatLabel} response`, {
+        console.info(`xUtils: repaired ${formatLabel} response`, {
           appliedSteps: [...appliedSteps],
           originalLength: content.length,
           repairedLength: candidate.length,

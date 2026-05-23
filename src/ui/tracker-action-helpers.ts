@@ -1,6 +1,7 @@
 import type { Message } from 'sillytavern-utils-lib';
 import type { ExtensionSettings } from '../config.js';
 import { getArrayItemIdentityKey } from '../tracker-parts.js';
+import { LEGACY_SCHEMA_DEPENDS_ON_KEY, XUTILS_SCHEMA_DEPENDS_ON_KEY } from '../extension-metadata.js';
 
 /** Calculates tracker-part metadata once so render and regeneration flows can reuse the same schema hints. */
 export function buildPartsMeta(schema: any): Record<string, { idKey?: string; fields?: string[]; dependsOn?: string[] }> {
@@ -17,10 +18,11 @@ export function buildPartsMeta(schema: any): Record<string, { idKey?: string; fi
     }
 
     const idKey = getArrayItemIdentityKey(schema, key);
-    const dependsOn = Array.isArray(def?.['x-ztracker-dependsOn'])
-      ? def['x-ztracker-dependsOn'].filter((value: unknown): value is string => typeof value === 'string' && value.trim().length > 0)
-      : typeof def?.['x-ztracker-dependsOn'] === 'string' && def['x-ztracker-dependsOn'].trim().length > 0
-        ? [def['x-ztracker-dependsOn'].trim()]
+    const dependsOnValue = def?.[XUTILS_SCHEMA_DEPENDS_ON_KEY] ?? def?.[LEGACY_SCHEMA_DEPENDS_ON_KEY];
+    const dependsOn = Array.isArray(dependsOnValue)
+      ? dependsOnValue.filter((value: unknown): value is string => typeof value === 'string' && value.trim().length > 0)
+      : typeof dependsOnValue === 'string' && dependsOnValue.trim().length > 0
+        ? [dependsOnValue.trim()]
         : undefined;
     const itemProps = def?.items?.type === 'object' ? def?.items?.properties : undefined;
     const fields =
@@ -37,7 +39,7 @@ export function buildPartsMeta(schema: any): Record<string, { idKey?: string; fi
 /** Captures which tracker details elements are currently expanded so rerenders can preserve UI state. */
 export function captureDetailsState(messageId: number): boolean[] {
   const messageBlock = document.querySelector(`.mes[mesid="${messageId}"]`);
-  const existingTracker = messageBlock?.querySelector('.mes_ztracker');
+  const existingTracker = messageBlock?.querySelector('.mes_xutils');
   if (!existingTracker) {
     return [];
   }
@@ -53,7 +55,7 @@ export function restoreDetailsState(messageId: number, detailsState: boolean[]):
   }
 
   const messageBlock = document.querySelector(`.mes[mesid="${messageId}"]`);
-  const newTracker = messageBlock?.querySelector('.mes_ztracker');
+  const newTracker = messageBlock?.querySelector('.mes_xutils');
   if (!newTracker) {
     return;
   }

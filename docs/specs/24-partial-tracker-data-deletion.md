@@ -18,7 +18,7 @@ The primary UX should therefore be a structured `Clear and Recreate Selected` fl
 
 ## Motivation
 
-zTracker already supports targeted regeneration:
+xUtils already supports targeted regeneration:
 
 - top-level parts;
 - array items;
@@ -74,7 +74,7 @@ The parts menu is generated in `src/tracker.ts` from `partsOrder` and `partsMeta
 - `generateTrackerArrayItem()` and its identity/name variants use `redactTrackerArrayItemValue()`;
 - `generateTrackerArrayItemField()` and its identity/name variants use `redactTrackerArrayItemFieldValue()`.
 
-This is important: the current problem is not that single-target regeneration forgets to redact. The problem is that zTracker has no user-facing way to redact several stale targets together before re-creating them.
+This is important: the current problem is not that single-target regeneration forgets to redact. The problem is that xUtils has no user-facing way to redact several stale targets together before re-creating them.
 
 ### Helper coverage already present
 
@@ -103,7 +103,7 @@ This makes the proposed feature a good extension of existing architecture rather
 
 - Replacing the raw JSON editor with a full generic JSON tree editor.
 - Trying to infer and hide arbitrary values inside the user-provided tracker HTML template DOM.
-- Adding arbitrary nested-field targeting beyond the granularity zTracker already exposes today.
+- Adding arbitrary nested-field targeting beyond the granularity xUtils already exposes today.
 - Changing the semantics of existing single-target regenerate actions.
 
 ## UX proposal
@@ -196,7 +196,7 @@ Recommended UI:
 - pending markers in the cleanup modal on reopen;
 - pending styling in the parts menu so the user can see which targets still need recreation.
 
-The main rendered tracker HTML should continue to come from the stored tracker value. zTracker should not attempt DOM-level hiding inside arbitrary user templates.
+The main rendered tracker HTML should continue to come from the stored tracker value. xUtils should not attempt DOM-level hiding inside arbitrary user templates.
 
 ## Data and rendering model
 
@@ -218,7 +218,7 @@ This keeps rendering structurally safe while still removing the stale content th
 
 ### Pending-redaction metadata
 
-Add message-level metadata for cleared targets so zTracker can:
+Add message-level metadata for cleared targets so xUtils can:
 
 - show pending state in the UI;
 - preserve recreate affordances even when the stored display value has been blanked;

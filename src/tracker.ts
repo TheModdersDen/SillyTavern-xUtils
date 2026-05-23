@@ -84,7 +84,7 @@ export function renderTracker(messageId: number, options: RenderTrackerOptions):
 
   const message = context.chat?.[messageId];
   const messageBlock = doc.querySelector(`.mes[mesid="${messageId}"]`);
-  messageBlock?.querySelector('.mes_ztracker')?.remove();
+  messageBlock?.querySelector('.mes_xutils')?.remove();
 
   if (!message?.extra?.[EXTENSION_KEY]) {
     return;
@@ -104,7 +104,7 @@ export function renderTracker(messageId: number, options: RenderTrackerOptions):
   const template = hb.compile(trackerHtmlSchema, { strict: true });
   const renderedHtml = template({ data: trackerData });
   const container = doc.createElement('div');
-  container.className = 'mes_ztracker';
+  container.className = 'mes_xutils';
   container.innerHTML = renderedHtml;
   const extra = message.extra?.[EXTENSION_KEY] as Record<string, any> | undefined;
 
@@ -121,7 +121,7 @@ export function renderTracker(messageId: number, options: RenderTrackerOptions):
       const partPendingClass = isPartPending ? ' is-pending-redaction' : '';
       const partPendingText = isPartPending ? ' (pending recreation)' : '';
       const arrayItems = Array.isArray(value)
-        ? `<div class="ztracker-part-items" title="Regenerate individual items">${value
+        ? `<div class="xutils-part-items" title="Regenerate individual items">${value
             .map((item: any, index: number) => {
               const idKey =
                 typeof partsMeta?.[k]?.idKey === 'string' && partsMeta[k].idKey.trim() ? partsMeta[k].idKey.trim() : 'name';
@@ -138,10 +138,10 @@ export function renderTracker(messageId: number, options: RenderTrackerOptions):
                   : toShortTrackerLabel(item),
               );
               const itemName = item && typeof item === 'object' && typeof item.name === 'string' ? item.name : '';
-              const safeName = itemName ? ` data-ztracker-name="${escapeHtmlAttr(itemName)}"` : '';
+              const safeName = itemName ? ` data-xutils-name="${escapeHtmlAttr(itemName)}"` : '';
               const safeId =
                 idKey && idValue
-                  ? ` data-ztracker-idkey="${escapeHtmlAttr(idKey)}" data-ztracker-idvalue="${escapeHtmlAttr(idValue)}"`
+                  ? ` data-xutils-idkey="${escapeHtmlAttr(idKey)}" data-xutils-idvalue="${escapeHtmlAttr(idValue)}"`
                   : '';
               const itemPendingClass = pendingItemTarget ? ' is-pending-redaction' : '';
               const title = itemName
@@ -171,43 +171,43 @@ export function renderTracker(messageId: number, options: RenderTrackerOptions):
                   const fieldTitle = itemName
                     ? `Regenerate ${safeKey} (${escapeHtmlAttr(itemName)}).${safeField}`
                     : `Regenerate ${safeKey}[${index}].${safeField}`;
-                  return `<div class="ztracker-array-item-field-regenerate-button${fieldPendingClass}" data-ztracker-part="${safeKey}" data-ztracker-index="${index}" data-ztracker-field="${safeField}"${safeName}${safeId} title="${fieldTitle}${isFieldPending ? ' (pending recreation)' : ''}">${safeField}</div>`;
+                  return `<div class="xutils-array-item-field-regenerate-button${fieldPendingClass}" data-xutils-part="${safeKey}" data-xutils-index="${index}" data-xutils-field="${safeField}"${safeName}${safeId} title="${fieldTitle}${isFieldPending ? ' (pending recreation)' : ''}">${safeField}</div>`;
                 })
                 .join('');
 
-              const fieldsBlock = fieldButtons ? `<div class="ztracker-array-item-fields">${fieldButtons}</div>` : '';
+              const fieldsBlock = fieldButtons ? `<div class="xutils-array-item-fields">${fieldButtons}</div>` : '';
 
-              return `<div class="ztracker-array-item-row">
-                <div class="ztracker-array-item-regenerate-button${itemPendingClass}" data-ztracker-part="${safeKey}" data-ztracker-index="${index}"${safeName}${safeId} title="${itemTitle}">${label}</div>
+              return `<div class="xutils-array-item-row">
+                <div class="xutils-array-item-regenerate-button${itemPendingClass}" data-xutils-part="${safeKey}" data-xutils-index="${index}"${safeName}${safeId} title="${itemTitle}">${label}</div>
                 ${fieldsBlock}
               </div>`;
             })
             .join('')}</div>`
         : '';
 
-      return `<div class="ztracker-part-row">
-        <div class="ztracker-part-regenerate-button${partPendingClass}" data-ztracker-part="${safeKey}" title="Regenerate ${safeKey}${partPendingText}">${safeKey}</div>
+      return `<div class="xutils-part-row">
+        <div class="xutils-part-regenerate-button${partPendingClass}" data-xutils-part="${safeKey}" title="Regenerate ${safeKey}${partPendingText}">${safeKey}</div>
         ${arrayItems}
       </div>`;
     })
     .join('');
 
   const controls = doc.createElement('div');
-  controls.className = 'ztracker-controls';
+  controls.className = 'xutils-controls';
   controls.innerHTML = `
-    <div class="ztracker-regenerate-button fa-solid fa-arrows-rotate" title="Regenerate Tracker"></div>
-    <details class="ztracker-parts-details" title="Regenerate individual parts">
-      <summary class="ztracker-parts-summary fa-solid fa-list"></summary>
-      <div class="ztracker-parts-list">${partsButtons}</div>
+    <div class="xutils-regenerate-button fa-solid fa-arrows-rotate" title="Regenerate Tracker"></div>
+    <details class="xutils-parts-details" title="Regenerate individual parts">
+      <summary class="xutils-parts-summary fa-solid fa-list"></summary>
+      <div class="xutils-parts-list">${partsButtons}</div>
     </details>
-    <div class="ztracker-cleanup-button fa-solid fa-eraser" title="Clear or recreate selected tracker targets"></div>
-    <div class="ztracker-edit-button fa-solid fa-code" title="Edit Tracker Data"></div>
-    <div class="ztracker-delete-button fa-solid fa-trash-can" title="Delete Tracker"></div>
+    <div class="xutils-cleanup-button fa-solid fa-eraser" title="Clear or recreate selected tracker targets"></div>
+    <div class="xutils-edit-button fa-solid fa-code" title="Edit Tracker Data"></div>
+    <div class="xutils-delete-button fa-solid fa-trash-can" title="Delete Tracker"></div>
   `;
 
   if (pendingTargets.length > 0) {
     const pendingStatus = doc.createElement('div');
-    pendingStatus.className = 'ztracker-pending-redactions-status';
+    pendingStatus.className = 'xutils-pending-redactions-status';
     pendingStatus.textContent = `${pendingTargets.length} tracker ${pendingTargets.length === 1 ? 'target' : 'targets'} cleared`;
     container.prepend(pendingStatus);
   }
@@ -219,14 +219,14 @@ export function renderTracker(messageId: number, options: RenderTrackerOptions):
 
 // Keeps the embedded tracker speaker label aligned with the existing configurable header.
 function deriveEmbeddedTrackerSpeakerName(settings: ExtensionSettings): string {
-  const header = settings.embedZTrackerSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER;
+  const header = settings.embedXUtilsSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER;
   const trimmedLabel = header.replace(/:+\s*$/, '').trim();
   return trimmedLabel || 'Tracker';
 }
 
 const EMBEDDED_TRACKER_SNAPSHOT_MARKER = Symbol('embeddedTrackerSnapshot');
 
-type IncludeZTrackerMessagesOptions = {
+type IncludeXUtilsMessagesOptions = {
   /**
    * Text-completion instruct templates only allow cleanly alternating dialogue turns.
    * Inline tracker snapshots into user messages when a standalone injected turn would
@@ -247,9 +247,9 @@ type IncludeZTrackerMessagesOptions = {
 
 function resolveEmbeddedTrackerRole(
   settings: ExtensionSettings,
-  options: IncludeZTrackerMessagesOptions,
-): ExtensionSettings['embedZTrackerRole'] {
-  const configuredRole = settings.embedZTrackerRole ?? 'user';
+  options: IncludeXUtilsMessagesOptions,
+): ExtensionSettings['embedXUtilsRole'] {
+  const configuredRole = settings.embedXUtilsRole ?? 'user';
   if (!options.preserveTextCompletionTurnAlternation || configuredRole !== 'system') {
     return configuredRole;
   }
@@ -275,7 +275,7 @@ function isAssistantConversationTurn(message: { role?: string; is_user?: boolean
 
 function canInlineEmbeddedTracker(
   message: { role?: string; is_user?: boolean; is_system?: boolean },
-  embedRole: ExtensionSettings['embedZTrackerRole'],
+  embedRole: ExtensionSettings['embedXUtilsRole'],
 ): boolean {
   if (embedRole === 'assistant') {
     return isAssistantConversationTurn(message);
@@ -337,10 +337,10 @@ function getSingleAssistantReplyLabel(
   return assistantLabel;
 }
 
-export function includeZTrackerMessages<T extends Message | ChatMessage>(
+export function includeXUtilsMessages<T extends Message | ChatMessage>(
   messages: T[],
   settings: ExtensionSettings,
-  options: IncludeZTrackerMessagesOptions = {},
+  options: IncludeXUtilsMessagesOptions = {},
 ): T[] {
   // SillyTavern sometimes keeps speaker attribution only on source.name.
   // Promote it onto cloned chat turns so instruct-mode prompt assembly can still emit named dialogue.
@@ -362,8 +362,8 @@ export function includeZTrackerMessages<T extends Message | ChatMessage>(
       ? options.assistantReplyLabel.trim()
       : undefined;
 
-  if (settings.includeLastXZTrackerMessages > 0) {
-    for (let i = 0; i < settings.includeLastXZTrackerMessages; i++) {
+  if (settings.includeLastXXUtilsMessages > 0) {
+    for (let i = 0; i < settings.includeLastXXUtilsMessages; i++) {
       let foundMessage: T | null = null;
       let foundIndex = -1;
       // SillyTavern may pass a chat array that ends on the most recent user message
@@ -373,9 +373,9 @@ export function includeZTrackerMessages<T extends Message | ChatMessage>(
         const message = copyMessages[j];
         const extra = 'source' in message ? (message as Message).source?.extra : (message as ChatMessage).extra;
         // @ts-ignore - we avoid mutating the original object across include iterations
-        if (!message.zTrackerFound && extra?.[EXTENSION_KEY]?.[CHAT_MESSAGE_SCHEMA_VALUE_KEY]) {
+        if (!message.xUtilsFound && extra?.[EXTENSION_KEY]?.[CHAT_MESSAGE_SCHEMA_VALUE_KEY]) {
           // @ts-ignore - mark so we do not reuse the same tracker entry twice
-          message.zTrackerFound = true;
+          message.xUtilsFound = true;
           foundMessage = message;
           foundIndex = j;
           break;
@@ -388,8 +388,8 @@ export function includeZTrackerMessages<T extends Message | ChatMessage>(
             ? (foundMessage as Message).source?.extra
             : (foundMessage as ChatMessage).extra;
         const trackerValue = extra?.[EXTENSION_KEY]?.[CHAT_MESSAGE_SCHEMA_VALUE_KEY] || {};
-        const useCharacterName = settings.embedZTrackerAsCharacter ?? false;
-        const header = settings.embedZTrackerSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER;
+        const useCharacterName = settings.embedXUtilsAsCharacter ?? false;
+        const header = settings.embedXUtilsSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER;
         const { lang, text, wrapInCodeFence } = formatEmbeddedTrackerSnapshot(trackerValue, settings);
         const speakerName = useCharacterName ? deriveEmbeddedTrackerSpeakerName(settings) : undefined;
         const prefix = !useCharacterName && header ? `${header}\n` : '';
@@ -577,7 +577,7 @@ function insertUserAlignmentMessage<
 
 /**
  * Reduces prompt messages to the fields the generator request actually needs.
- * This keeps SillyTavern/UI metadata and zTracker's temporary discovery markers
+ * This keeps SillyTavern/UI metadata and xUtils's temporary discovery markers
  * out of tracker-generation requests while preserving instruct-relevant speaker attribution.
  */
 export function sanitizeMessagesForGeneration<
@@ -760,7 +760,7 @@ function warnOnDependentArrayMismatches(
         .filter((value) => value.length > 0 && !availableIds.has(value));
 
       if (missingIds.length > 0) {
-        console.warn('zTracker: dependent array mismatch', {
+        console.warn('xUtils: dependent array mismatch', {
           partKey,
           dependsOn: dependencyKey,
           idKey,

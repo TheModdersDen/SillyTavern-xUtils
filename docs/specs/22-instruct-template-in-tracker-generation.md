@@ -7,13 +7,13 @@ Last updated: 2026-04-15
 
 Before this fix, tracker generation prompts sent to text-completion APIs (e.g. llamacpp, koboldcpp, Ollama text-completion endpoints) could still reach the model as a flat concatenation of system instructions, chat messages, previous tracker data, and schema/format instructions — with **no effective instruct template applied**. The prompt that reached the model was then an unstructured wall of text that lacked the turn-delimiter tokens the model was fine-tuned to expect (e.g. `<|im_start|>`, `[INST]`, `### Human:`).
 
-Upstream verification showed SillyTavern already owns instruct formatting for text-completion requests. The initial transport mismatch around `instruct` was real, but it was only part of the larger problem: tracker generation was still resolving several prompt selectors from the saved zTracker connection profile even when SillyTavern's active runtime prompt configuration had changed.
+Upstream verification showed SillyTavern already owns instruct formatting for text-completion requests. The initial transport mismatch around `instruct` was real, but it was only part of the larger problem: tracker generation was still resolving several prompt selectors from the saved xUtils connection profile even when SillyTavern's active runtime prompt configuration had changed.
 
 The implemented fix therefore broadened the behavior from "mirror the active instruct preset during transport" to "use the currently active SillyTavern prompt configuration wherever tracker generation depends on host-owned prompt assembly." In practice this means:
 
 - text-completion tracker requests now use the active runtime instruct preset, not just the saved profile field;
 - tracker generation no longer forwards saved `preset` and `context` selector names that may be stale relative to the host;
-- tracker system prompt resolution now uses the active SillyTavern system prompt in profile mode, while still preserving zTracker's explicit saved tracker-system-prompt override mode;
+- tracker system prompt resolution now uses the active SillyTavern system prompt in profile mode, while still preserving xUtils's explicit saved tracker-system-prompt override mode;
 - tracker injection required no behavioral code change because it already runs against SillyTavern's live host-built prompt chat array.
 
 ## Evidence: Captured request
@@ -81,7 +81,7 @@ The exact tokens vary by instruct template (Llama 3, Alpaca, Vicuna, etc.) — t
 
 1. **`buildPrompt()`** from `sillytavern-utils-lib` returns a `Message[]` array. When called with `instructName`, it resolves the instruct preset and **may format system prompts and examples** with instruct wrappers, but the returned array still contains individual `Message` objects with `role` and `content` fields.
 
-2. **`includeZTrackerMessages()`** injects previous tracker snapshots as system-role messages into the array.
+2. **`includeXUtilsMessages()`** injects previous tracker snapshots as system-role messages into the array.
 
 3. **`sanitizeMessagesForGeneration()`** strips SillyTavern metadata and preserves speaker attribution. For `textgenerationwebui` APIs, speaker names are inlined into content (`"Bar: content"`) but no instruct wrapping is applied.
 
@@ -94,7 +94,7 @@ The exact tokens vary by instruct template (Llama 3, Alpaca, Vicuna, etc.) — t
 
 ### Why the instruct template is not applied
 
-The earlier hypothesis in this spec was wrong: the problem is **not** that zTracker fails to set `includeInstruct: true`.
+The earlier hypothesis in this spec was wrong: the problem is **not** that xUtils fails to set `includeInstruct: true`.
 
 Verified upstream behavior:
 
@@ -112,7 +112,7 @@ buildPrompt(...) uses: profile.instruct ?? activeInstructName
 sendRequest(...) uses: profile.instruct only
 ```
 
-So when the connection profile does not explicitly store an instruct preset, but SillyTavern still has an active/global instruct preset selected, zTracker can build prompt content using one instruct-context assumption while the transport layer formats the final flattened prompt with **no instruct template at all**.
+So when the connection profile does not explicitly store an instruct preset, but SillyTavern still has an active/global instruct preset selected, xUtils can build prompt content using one instruct-context assumption while the transport layer formats the final flattened prompt with **no instruct template at all**.
 
 ### Verified upstream behavior
 
@@ -154,7 +154,7 @@ The following host facts are now verified against current upstream SillyTavern b
 
 Tracker generation originally resolved prompt configuration from a mixture of two sources:
 
-- **Saved zTracker connection-profile fields** such as `profile.preset`, `profile.context`, `profile.sysprompt`, and `profile.instruct`
+- **Saved xUtils connection-profile fields** such as `profile.preset`, `profile.context`, `profile.sysprompt`, and `profile.instruct`
 - **Active SillyTavern runtime settings** such as `context.powerUserSettings.sysprompt.name` and `context.powerUserSettings.instruct.preset`
 
 The instruct mismatch was the most visible breakage:
@@ -176,7 +176,7 @@ That applies to:
 
 ### Additional audit result: tracker injection already uses active host prompt config
 
-The later extension-wide audit confirmed that the injection path did not need the same fix. `generate_interceptor` receives the chat array after SillyTavern has already assembled it with the active host prompt configuration. zTracker only injects tracker context into that live chat array, so injection already inherits the currently active SillyTavern prompt settings by design.
+The later extension-wide audit confirmed that the injection path did not need the same fix. `generate_interceptor` receives the chat array after SillyTavern has already assembled it with the active host prompt configuration. xUtils only injects tracker context into that live chat array, so injection already inherits the currently active SillyTavern prompt settings by design.
 
 ### Additional context: difference between API types
 
@@ -190,7 +190,7 @@ The instruct template is only relevant for text-completion API types. Chat-compl
 ## Impact
 
 - **Degraded output quality**: Instruct-tuned models (which are the vast majority of locally-hosted models) perform poorly when prompts lack the expected turn delimiters. The model cannot reliably distinguish system instructions from chat content from format requirements.
-- **Inconsistent behavior**: The same zTracker configuration produces well-structured prompts for chat-completion APIs (OpenAI, Claude) but broken prompts for text-completion APIs (llamacpp, koboldcpp).
+- **Inconsistent behavior**: The same xUtils configuration produces well-structured prompts for chat-completion APIs (OpenAI, Claude) but broken prompts for text-completion APIs (llamacpp, koboldcpp).
 - **User confusion**: Users who carefully configure their instruct template in SillyTavern expect it to apply to all LLM interactions, including extension-triggered generations.
 
 ## Goals
@@ -200,11 +200,11 @@ The instruct template is only relevant for text-completion API types. Chat-compl
 - Ensure tracker generation follows the active SillyTavern runtime prompt configuration instead of stale saved connection-profile selector fields.
 - Explicitly preserve the current behavior for chat-completion APIs where the backend already receives structured `messages[]` and handles role formatting natively.
 - Ensure the instruct template is applied consistently for all prompt engineering modes (Native, JSON, XML, TOON).
-- Preserve zTracker's explicit saved tracker system prompt override mode where the user intentionally chooses a tracker-specific saved system prompt.
+- Preserve xUtils's explicit saved tracker system prompt override mode where the user intentionally chooses a tracker-specific saved system prompt.
 
 ## Non-goals
 
-- Adding a custom instruct template editor inside zTracker settings — the instruct template is managed by SillyTavern core.
+- Adding a custom instruct template editor inside xUtils settings — the instruct template is managed by SillyTavern core.
 - Changing how `buildPrompt()` from `sillytavern-utils-lib` works internally.
 - Rewriting the `generate_interceptor` injection path, which already operates on SillyTavern's host-built chat array.
 - Changing how chat-completion APIs receive the prompt.
@@ -213,7 +213,7 @@ The instruct template is only relevant for text-completion API types. Chat-compl
 
 ### Align tracker generation with active SillyTavern runtime selectors
 
-The implemented direction keeps prompt formatting host-owned. zTracker does not build instruct wrappers locally. Instead, tracker generation now prefers active SillyTavern runtime configuration anywhere the extension depends on host-owned prompt assembly and transport.
+The implemented direction keeps prompt formatting host-owned. xUtils does not build instruct wrappers locally. Instead, tracker generation now prefers active SillyTavern runtime configuration anywhere the extension depends on host-owned prompt assembly and transport.
 
 The effective behavior is:
 
@@ -240,14 +240,14 @@ if (selectedApi === 'textgenerationwebui') {
 }
 ```
 
-This keeps instruct-token application inside SillyTavern's own text-completion service while making tracker generation respect the active host prompt state instead of whichever selector values happened to be saved on the chosen zTracker profile. Because the stable request-service path still does not expose an `instructName` override, the implementation currently uses `SillyTavern.getContext().TextCompletionService.processRequest()` as an isolated bridge. That dependency is intentional technical debt and should move back to the stable request service once upstream exposes the needed override.
+This keeps instruct-token application inside SillyTavern's own text-completion service while making tracker generation respect the active host prompt state instead of whichever selector values happened to be saved on the chosen xUtils profile. Because the stable request-service path still does not expose an `instructName` override, the implementation currently uses `SillyTavern.getContext().TextCompletionService.processRequest()` as an isolated bridge. That dependency is intentional technical debt and should move back to the stable request service once upstream exposes the needed override.
 
 ### Implemented behavior
 
 1. `getPromptPresetSelections()` no longer forwards saved `profile.preset` and `profile.context` selector names for tracker generation.
 2. For text-completion tracker generation, `instructName` now resolves from the active SillyTavern runtime instruct preset.
 3. `resolveTrackerSystemPromptName()` now uses the active SillyTavern global system prompt in profile mode instead of `profile.sysprompt`.
-4. zTracker still preserves the explicit saved tracker-system-prompt override when `trackerSystemPromptMode === 'saved'`.
+4. xUtils still preserves the explicit saved tracker-system-prompt override when `trackerSystemPromptMode === 'saved'`.
 5. `prepareTrackerGeneration()` returns the resolved transport instruct name alongside the built messages.
 6. `makeRequestFactory()` routes text-completion tracker requests through a request-local helper that calls SillyTavern's `TextCompletionService.processRequest()` with the resolved `instructName` instead of mutating the shared profile.
 7. The text-completion helper keeps its own abort controller and pending-request bookkeeping so cancellation still works without touching the shared profile state.
@@ -271,12 +271,12 @@ The following product and design decisions are now fixed for this spec:
   - Injection behavior is part of the audit scope, but no code change is required there because it already follows active host prompt state.
 
 2. **Ownership**
-  - zTracker should prefer SillyTavern request-service support.
-  - zTracker should not implement its own instruct-template formatter unless a separate future spec explicitly chooses that path.
-  - Until SillyTavern exposes an instruct-name override on the stable request-service path, zTracker may use the isolated `TextCompletionService.processRequest()` bridge described above as a compatibility stopgap.
+  - xUtils should prefer SillyTavern request-service support.
+  - xUtils should not implement its own instruct-template formatter unless a separate future spec explicitly chooses that path.
+  - Until SillyTavern exposes an instruct-name override on the stable request-service path, xUtils may use the isolated `TextCompletionService.processRequest()` bridge described above as a compatibility stopgap.
 
 3. **Fallback policy**
-  - The current implementation does not introduce a zTracker-local instruct formatter.
+  - The current implementation does not introduce a xUtils-local instruct formatter.
   - The remaining upstream gap is only the lack of a stable request-service override for `instructName`; once that exists, this implementation should move back to the stable request-service path.
 
 4. **Injected-message roles**
@@ -286,7 +286,7 @@ The following product and design decisions are now fixed for this spec:
 
 5. **Active-vs-saved selector policy**
   - Tracker-generation and injection requests must follow the configs currently active in SillyTavern.
-  - Saved zTracker profile selector fields must not override active host prompt configuration unless the setting explicitly represents a tracker-owned override.
+  - Saved xUtils profile selector fields must not override active host prompt configuration unless the setting explicitly represents a tracker-owned override.
 
 6. **Double-wrapping policy**
   - Avoid double-wrapping even if that requires extra verification work.
@@ -304,7 +304,7 @@ When the instruct template is applied, each message in the `Message[]` array sho
 
 | Message origin | Current role | Instruct behavior |
 |----------------|-------------|-------------------|
-| System prompt (zTracker preset or profile) | `system` | System wrapper (e.g. `<\|im_start\|>system … <\|im_end\|>`) |
+| System prompt (xUtils preset or profile) | `system` | System wrapper (e.g. `<\|im_start\|>system … <\|im_end\|>`) |
 | Chat messages (user turns) | `user` | User/input wrapper |
 | Chat messages (assistant turns) | `assistant` | Assistant/output wrapper |
 | Previous tracker snapshot | `system` | System wrapper |
@@ -317,7 +317,7 @@ For a text-completion API with instruct template applied:
 
 ```
 [System wrapper start]
-  zTracker system prompt
+  xUtils system prompt
 [System wrapper end]
 
 [User wrapper start]
@@ -373,7 +373,7 @@ For a text-completion API with instruct template applied:
 - Verify that the final text-completion request follows the active SillyTavern instruct preset instead of degrading to blank-line concatenation.
 - Verify that tracker-generation system prompt selection follows the active SillyTavern system prompt when tracker system prompt mode is not `saved`.
 - Verify that the selected connection profile stays unchanged after the request completes.
-- Verify that injection still reflects the active SillyTavern prompt configuration without additional zTracker prompt rebuilding.
+- Verify that injection still reflects the active SillyTavern prompt configuration without additional xUtils prompt rebuilding.
 
 ### Regression
 

@@ -1,27 +1,27 @@
 import type { ExtensionSettings } from '../config.js';
 import {
   extractLeadingSystemPrompt,
-  includeZTrackerMessages,
+  includeXUtilsMessages,
   normalizeTrackerGenerationConversationRoles,
   sanitizeMessagesForGeneration,
   CHAT_MESSAGE_SCHEMA_VALUE_KEY,
 } from '../tracker.js';
 import { EXTENSION_KEY } from '../extension-metadata.js';
 
-describe('includeZTrackerMessages', () => {
+describe('includeXUtilsMessages', () => {
   const makeSettings = (
     count: number,
-    role?: ExtensionSettings['embedZTrackerRole'],
+    role?: ExtensionSettings['embedXUtilsRole'],
     asCharacter = false,
     header = 'Tracker:',
   ) => {
     return {
-      includeLastXZTrackerMessages: count,
-      embedZTrackerRole: role,
-      embedZTrackerAsCharacter: asCharacter,
-      embedZTrackerSnapshotHeader: header,
-      embedZTrackerSnapshotTransformPreset: 'default',
-      embedZTrackerSnapshotTransformPresets: {
+      includeLastXXUtilsMessages: count,
+      embedXUtilsRole: role,
+      embedXUtilsAsCharacter: asCharacter,
+      embedXUtilsSnapshotHeader: header,
+      embedXUtilsSnapshotTransformPreset: 'default',
+      embedXUtilsSnapshotTransformPresets: {
         default: {
           name: 'Default (JSON)',
           input: 'pretty_json',
@@ -88,7 +88,7 @@ describe('includeZTrackerMessages', () => {
       buildMessageWithTracker({ id: 1 }),
       { content: 'current', role: 'user' },
     ];
-    const result = includeZTrackerMessages(messages as any, makeSettings(1)) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(1)) as any[];
     expect(result).toHaveLength(3);
     expect(result[1].content).toContain('Tracker:');
     expect(result[1].content).toContain('```json');
@@ -102,7 +102,7 @@ describe('includeZTrackerMessages', () => {
       { content: 'current', role: 'user' },
     ];
 
-    const result = includeZTrackerMessages(messages as any, makeSettings(1, 'assistant', true)) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(1, 'assistant', true)) as any[];
 
     expect(result).toHaveLength(3);
     expect(result[1].role).toBe('assistant');
@@ -117,7 +117,7 @@ describe('includeZTrackerMessages', () => {
       { content: 'current', role: 'user' },
     ];
 
-    const result = includeZTrackerMessages(messages as any, makeSettings(1, 'system', true, '   ')) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(1, 'system', true, '   ')) as any[];
 
     expect(result[1].role).toBe('system');
     expect(result[1].name).toBe('Tracker');
@@ -130,7 +130,7 @@ describe('includeZTrackerMessages', () => {
       { content: 'current', role: 'user' },
     ];
 
-    const result = includeZTrackerMessages(messages as any, makeSettings(1, 'assistant', true, 'Tracker Log:  ')) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(1, 'assistant', true, 'Tracker Log:  ')) as any[];
 
     expect(result[1].name).toBe('Tracker Log');
   });
@@ -140,7 +140,7 @@ describe('includeZTrackerMessages', () => {
       { content: 'first', role: 'user' },
       buildMessageWithTracker({ id: 1 }),
     ];
-    const result = includeZTrackerMessages(messages as any, makeSettings(1)) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(1)) as any[];
     expect(result).toHaveLength(3);
     expect(result[2].content).toContain('Tracker:');
     expect(result[2].content).toContain('```json');
@@ -152,9 +152,9 @@ describe('includeZTrackerMessages', () => {
       { content: 'current', role: 'user' },
     ];
     const settings = makeSettings(1);
-    settings.embedZTrackerSnapshotTransformPreset = 'minimal';
+    settings.embedXUtilsSnapshotTransformPreset = 'minimal';
 
-    const result = includeZTrackerMessages(messages as any, settings) as any[];
+    const result = includeXUtilsMessages(messages as any, settings) as any[];
     expect(result).toHaveLength(3);
 
     const injected = result[1].content as string;
@@ -183,9 +183,9 @@ describe('includeZTrackerMessages', () => {
       { content: 'current', role: 'user' },
     ];
     const settings = makeSettings(1);
-    settings.embedZTrackerSnapshotTransformPreset = 'toon';
+    settings.embedXUtilsSnapshotTransformPreset = 'toon';
 
-    const result = includeZTrackerMessages(messages as any, settings) as any[];
+    const result = includeXUtilsMessages(messages as any, settings) as any[];
     expect(result).toHaveLength(3);
 
     const injected = result[1].content as string;
@@ -201,7 +201,7 @@ describe('includeZTrackerMessages', () => {
       buildMessageWithTracker({ id: 1 }),
       { content: 'current', role: 'user' },
     ];
-    const result = includeZTrackerMessages(messages as any, makeSettings(1, 'system')) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(1, 'system')) as any[];
     expect(result).toHaveLength(3);
     expect(result[1].role).toBe('system');
     expect(result[1]).not.toHaveProperty('name');
@@ -213,7 +213,7 @@ describe('includeZTrackerMessages', () => {
       { content: 'current', role: 'assistant' },
     ];
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       makeSettings(1, 'system', true, 'Scene details:'),
       { preserveTextCompletionTurnAlternation: true },
@@ -243,7 +243,7 @@ describe('includeZTrackerMessages', () => {
       },
     ];
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       makeSettings(1, 'system', true, 'Scene details:'),
       { preserveTextCompletionTurnAlternation: true },
@@ -273,7 +273,7 @@ describe('includeZTrackerMessages', () => {
       },
     ];
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       makeSettings(1, 'system', true, 'Scene details:'),
       { preserveTextCompletionTurnAlternation: true },
@@ -303,7 +303,7 @@ describe('includeZTrackerMessages', () => {
       },
     ];
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       makeSettings(1, 'system', true, 'Scene details:'),
       { preserveTextCompletionTurnAlternation: true },
@@ -338,9 +338,9 @@ describe('includeZTrackerMessages', () => {
     ];
 
     const settings = makeSettings(1, 'assistant', true, 'Scene details:');
-    settings.embedZTrackerSnapshotTransformPreset = 'minimal';
+    settings.embedXUtilsSnapshotTransformPreset = 'minimal';
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       settings,
       { preserveTextCompletionTurnAlternation: true, isGroupChat: false },
@@ -391,9 +391,9 @@ describe('includeZTrackerMessages', () => {
     ];
 
     const settings = makeSettings(1, 'assistant', true, 'Scene details:');
-    settings.embedZTrackerSnapshotTransformPreset = 'minimal';
+    settings.embedXUtilsSnapshotTransformPreset = 'minimal';
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       settings,
       { preserveTextCompletionTurnAlternation: true, isGroupChat: false },
@@ -433,9 +433,9 @@ describe('includeZTrackerMessages', () => {
     ];
 
     const settings = makeSettings(1, 'assistant', true, 'Scene tracker:');
-    settings.embedZTrackerSnapshotTransformPreset = 'minimal';
+    settings.embedXUtilsSnapshotTransformPreset = 'minimal';
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       settings,
       { preserveTextCompletionTurnAlternation: true, isGroupChat: false },
@@ -470,9 +470,9 @@ describe('includeZTrackerMessages', () => {
     ];
 
     const settings = makeSettings(1, 'assistant', true, 'Scene tracker:');
-    settings.embedZTrackerSnapshotTransformPreset = 'minimal';
+    settings.embedXUtilsSnapshotTransformPreset = 'minimal';
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       settings,
       {
@@ -508,9 +508,9 @@ describe('includeZTrackerMessages', () => {
     ];
 
     const settings = makeSettings(1, 'assistant', true, 'Scene tracker:');
-    settings.embedZTrackerSnapshotTransformPreset = 'minimal';
+    settings.embedXUtilsSnapshotTransformPreset = 'minimal';
 
-    const prompt = formatTextCompletionPrompt(includeZTrackerMessages(
+    const prompt = formatTextCompletionPrompt(includeXUtilsMessages(
       messages as any,
       settings,
       {
@@ -547,9 +547,9 @@ describe('includeZTrackerMessages', () => {
     ];
 
     const settings = makeSettings(1, 'assistant', true, 'Scene tracker:');
-    settings.embedZTrackerSnapshotTransformPreset = 'minimal';
+    settings.embedXUtilsSnapshotTransformPreset = 'minimal';
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       settings,
       { preserveTextCompletionTurnAlternation: true, isGroupChat: true },
@@ -580,9 +580,9 @@ describe('includeZTrackerMessages', () => {
     ];
 
     const settings = makeSettings(1, 'assistant', true, 'Scene details:');
-    settings.embedZTrackerSnapshotTransformPreset = 'minimal';
+    settings.embedXUtilsSnapshotTransformPreset = 'minimal';
 
-    const result = includeZTrackerMessages(
+    const result = includeXUtilsMessages(
       messages as any,
       settings,
       { preserveTextCompletionTurnAlternation: true },
@@ -600,7 +600,7 @@ describe('includeZTrackerMessages', () => {
       buildMessageWithTracker({ id: 1 }),
       { content: 'current', role: 'user' },
     ];
-    const result = includeZTrackerMessages(messages as any, makeSettings(1, 'assistant')) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(1, 'assistant')) as any[];
     expect(result).toHaveLength(3);
     expect(result[1].role).toBe('assistant');
     expect(result[1]).not.toHaveProperty('name');
@@ -611,7 +611,7 @@ describe('includeZTrackerMessages', () => {
       { content: 'first', role: 'user' },
       { content: 'current', role: 'assistant' },
     ];
-    const result = includeZTrackerMessages(messages as any, makeSettings(2)) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(2)) as any[];
     expect(result).toHaveLength(messages.length);
     expect(result).not.toBe(messages);
   });
@@ -624,7 +624,7 @@ describe('includeZTrackerMessages', () => {
       { content: 'current', role: 'user' },
     ];
 
-    const result = includeZTrackerMessages(messages as any, makeSettings(2)) as any[];
+    const result = includeXUtilsMessages(messages as any, makeSettings(2)) as any[];
 
     // Original 4 + 2 injected
     expect(result).toHaveLength(6);
@@ -650,7 +650,7 @@ describe('includeZTrackerMessages', () => {
         ignoreInstruct: true,
         source: { extra: { [EXTENSION_KEY]: { [CHAT_MESSAGE_SCHEMA_VALUE_KEY]: { id: 1 } } } },
         extra: { uiOnly: true },
-        zTrackerFound: true,
+        xUtilsFound: true,
         mes: 'base',
         is_user: false,
         is_system: false,
@@ -715,7 +715,7 @@ describe('includeZTrackerMessages', () => {
       },
     ] as any;
 
-    const result = includeZTrackerMessages(messages, makeSettings(1)) as any[];
+    const result = includeXUtilsMessages(messages, makeSettings(1)) as any[];
 
     expect(result[0]).toMatchObject({
       role: 'assistant',
@@ -753,7 +753,7 @@ describe('includeZTrackerMessages', () => {
       },
     ] as any;
 
-    const result = includeZTrackerMessages(messages, makeSettings(1, 'assistant', true)) as any[];
+    const result = includeXUtilsMessages(messages, makeSettings(1, 'assistant', true)) as any[];
 
     expect(result[0]).toMatchObject({
       role: 'assistant',
@@ -963,7 +963,7 @@ describe('includeZTrackerMessages', () => {
   });
 
   it('leaves embedded tracker snapshot roles unchanged during normalization', () => {
-    const messages = includeZTrackerMessages([
+    const messages = includeXUtilsMessages([
       buildMessageWithTracker({ id: 7 }),
       { content: 'Current turn', role: 'user' },
     ] as any, makeSettings(1)) as any[];

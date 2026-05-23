@@ -30,7 +30,7 @@ export const DiagnosticsSection: FC<{
     }
 
     const lines: string[] = [];
-    lines.push(`zTracker diagnostics`);
+    lines.push(`xUtils diagnostics`);
     lines.push(`time: ${new Date().toISOString()}`);
     lines.push(`origin: ${window.location.origin}`);
     lines.push(`resolvedBasePath: ${basePath}`);
@@ -68,7 +68,7 @@ export const DiagnosticsSection: FC<{
 
       <div className="setting-row">
         <div className="title_restorable">
-          <span title="Checks whether required zTracker HTML templates are reachable from SillyTavern (helps debug 404s).">Diagnostics</span>
+          <span title="Checks whether required xUtils HTML templates are reachable from SillyTavern (helps debug 404s).">Diagnostics</span>
           <STButton className="fa-solid fa-stethoscope" title="Run diagnostics" onClick={runDiagnostics} />
         </div>
         <textarea

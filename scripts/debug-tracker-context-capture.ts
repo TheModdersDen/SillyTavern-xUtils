@@ -45,7 +45,7 @@ export type CapturedTrackerContext = {
 	scenario: {
 		promptEngineeringMode: string;
 		includeLastXMessages: number;
-		includeLastXZTrackerMessages: number;
+		includeLastXXUtilsMessages: number;
 		trackerSystemPromptMode: string;
 	};
 	request: Record<string, unknown>;
@@ -171,7 +171,7 @@ export async function captureTrackerContext(
 		scenario: {
 			promptEngineeringMode: settings.promptEngineeringMode,
 			includeLastXMessages: settings.includeLastXMessages,
-			includeLastXZTrackerMessages: settings.includeLastXZTrackerMessages,
+			includeLastXXUtilsMessages: settings.includeLastXXUtilsMessages,
 			trackerSystemPromptMode: settings.trackerSystemPromptMode,
 		},
 		request: capturedRequests[0],
@@ -187,7 +187,7 @@ export function expectLiveLikeTrackerContext(
 
 	expect(captured.scenario.promptEngineeringMode).toBe(mode);
 	expect(captured.scenario.includeLastXMessages).toBe(4);
-	expect(captured.scenario.includeLastXZTrackerMessages).toBe(2);
+	expect(captured.scenario.includeLastXXUtilsMessages).toBe(2);
 	expect(captured.scenario.trackerSystemPromptMode).toBe('saved');
 	expect(promptMessages.map((message) => message.role)).toEqual(EXPECTED_PROMPT_ROLES);
 	expect(promptMessages[0]).toEqual({
@@ -221,7 +221,7 @@ export function expectLiveLikeTrackerContext(
 	expect(captured.request.overridePayload).toEqual({});
 
 	for (const promptMessage of promptMessages) {
-		expect(promptMessage).not.toHaveProperty('zTrackerFound');
+		expect(promptMessage).not.toHaveProperty('xUtilsFound');
 		expect(promptMessage).not.toHaveProperty('source');
 		expect(promptMessage).not.toHaveProperty('is_user');
 		expect(promptMessage).not.toHaveProperty('mes');

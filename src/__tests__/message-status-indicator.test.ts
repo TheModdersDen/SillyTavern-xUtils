@@ -26,11 +26,11 @@ describe('message status indicator helper', () => {
       statusClassName: CONTEXT_MENU_STATUS_CLASS,
     });
 
-    expect(document.querySelector('.ztracker-context-menu-status')?.textContent).toContain('Updating tracker from menu');
+    expect(document.querySelector('.xutils-context-menu-status')?.textContent).toContain('Updating tracker from menu');
 
     clearMessageStatusIndicator({ statusClassName: CONTEXT_MENU_STATUS_CLASS });
 
-    expect(document.querySelector('.ztracker-context-menu-status')).toBeNull();
+    expect(document.querySelector('.xutils-context-menu-status')).toBeNull();
   });
 
   test('cleans up the badge after async work resolves', async () => {
@@ -46,18 +46,18 @@ describe('message status indicator helper', () => {
         statusClassName: CONTEXT_MENU_STATUS_CLASS,
       },
       async () => {
-        expect(document.querySelector('.ztracker-context-menu-status')).not.toBeNull();
+        expect(document.querySelector('.xutils-context-menu-status')).not.toBeNull();
         await work;
       },
     );
 
     await Promise.resolve();
-    expect(document.querySelector('.ztracker-context-menu-status')).not.toBeNull();
+    expect(document.querySelector('.xutils-context-menu-status')).not.toBeNull();
 
     finishWork?.();
     await pending;
 
-    expect(document.querySelector('.ztracker-context-menu-status')).toBeNull();
+    expect(document.querySelector('.xutils-context-menu-status')).toBeNull();
   });
 
   test('cleans up the badge after async work rejects', async () => {
@@ -69,13 +69,13 @@ describe('message status indicator helper', () => {
           statusClassName: CONTEXT_MENU_STATUS_CLASS,
         },
         async () => {
-          expect(document.querySelector('.ztracker-context-menu-status')).not.toBeNull();
+          expect(document.querySelector('.xutils-context-menu-status')).not.toBeNull();
           throw new Error('boom');
         },
       ),
     ).rejects.toThrow('boom');
 
-    expect(document.querySelector('.ztracker-context-menu-status')).toBeNull();
+    expect(document.querySelector('.xutils-context-menu-status')).toBeNull();
   });
 
   test('clears only the targeted message when a message id is provided', () => {
@@ -94,7 +94,7 @@ describe('message status indicator helper', () => {
 
     clearMessageStatusIndicator({ statusClassName: CONTEXT_MENU_STATUS_CLASS, messageId: 0 });
 
-    expect(document.querySelector('.mes[mesid="0"] .ztracker-context-menu-status')).toBeNull();
-    expect(document.querySelector('.mes[mesid="1"] .ztracker-context-menu-status')).not.toBeNull();
+    expect(document.querySelector('.mes[mesid="0"] .xutils-context-menu-status')).toBeNull();
+    expect(document.querySelector('.mes[mesid="1"] .xutils-context-menu-status')).not.toBeNull();
   });
 });

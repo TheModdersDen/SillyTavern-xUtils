@@ -47,15 +47,15 @@ type ConnectionDebugFieldKey = (typeof CONNECTION_DEBUG_FIELD_KEYS)[number];
 
 type ConnectionDebugFields = Pick<TrackerRequestDebugSnapshot, ConnectionDebugFieldKey>;
 
-type ZTrackerDiagnosticsState = {
+type XUtilsDiagnosticsState = {
   templateChecks?: unknown;
   lastTrackerRequest?: TrackerRequestDebugSnapshot;
 };
 
-function getDiagnosticsState(): ZTrackerDiagnosticsState {
-  const globalValue = globalThis as typeof globalThis & { zTrackerDiagnostics?: ZTrackerDiagnosticsState };
-  globalValue.zTrackerDiagnostics ??= {};
-  return globalValue.zTrackerDiagnostics;
+function getDiagnosticsState(): XUtilsDiagnosticsState {
+  const globalValue = globalThis as typeof globalThis & { xUtilsDiagnostics?: XUtilsDiagnosticsState };
+  globalValue.xUtilsDiagnostics ??= {};
+  return globalValue.xUtilsDiagnostics;
 }
 
 function toPromptDebugMessage(message: {
@@ -142,7 +142,7 @@ export function captureTrackerRequestDebugSnapshot(
     ...pickConnectionDebugFields(snapshot),
     promptEngineeringMode: snapshot.promptEngineeringMode,
     maxTokens: snapshot.maxTokens,
-    embedSnapshotHeader: settings.embedZTrackerSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER,
+    embedSnapshotHeader: settings.embedXUtilsSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER,
     overridePayload: snapshot.overridePayload,
     requestMessages,
     sanitizedPrompt,
@@ -172,7 +172,7 @@ export function formatTrackerRequestDebugSnapshot(snapshot?: TrackerRequestDebug
     `requestMessages: ${snapshot.requestMessages.length}`,
     `sanitizedPrompt: ${snapshot.sanitizedPrompt.length}`,
     `overridePayload: ${JSON.stringify(snapshot.overridePayload ?? {})}`,
-    'note: embedSnapshotHeader is the active zTracker-injected snapshot label, not the input placeholder.',
+    'note: embedSnapshotHeader is the active xUtils-injected snapshot label, not the input placeholder.',
     '',
     'flattenedRequestMessages:',
     snapshot.flattenedRequestMessages,
@@ -197,5 +197,5 @@ export function isDebugLoggingEnabled(settingsManager: ExtensionSettingsManager<
 export function debugLog(settingsManager: ExtensionSettingsManager<ExtensionSettings>, ...args: unknown[]) {
   if (!isDebugLoggingEnabled(settingsManager)) return;
   // eslint-disable-next-line no-console
-  console.debug('zTracker:', ...args);
+  console.debug('xUtils:', ...args);
 }

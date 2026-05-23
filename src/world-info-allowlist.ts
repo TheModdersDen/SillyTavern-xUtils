@@ -41,7 +41,7 @@ export async function buildAllowlistedWorldInfoText(options: {
   try {
     worldInfos = (await options.getActiveWorldInfos()) ?? {};
   } catch (err) {
-    if (options.debug) console.debug('zTracker: getActiveWorldInfos failed', err);
+    if (options.debug) console.debug('xUtils: getActiveWorldInfos failed', err);
   }
 
   if (allowlistBookNames.length > 0) {

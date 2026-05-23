@@ -66,7 +66,7 @@ describe('createTrackerActions prompt engineering', () => {
     await actions.generateTracker(0);
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'zTracker: malformed prompt-engineered payload',
+      'xUtils: malformed prompt-engineered payload',
       expect.objectContaining({
         format: 'toon',
         reason: 'parse failure',
@@ -123,7 +123,7 @@ describe('createTrackerActions prompt engineering', () => {
     await actions.generateTracker(0);
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'zTracker: malformed prompt-engineered payload',
+      'xUtils: malformed prompt-engineered payload',
       expect.objectContaining({
         format: 'toon',
         reason: 'render rollback',

@@ -1,10 +1,12 @@
-# SillyTavern zTracker
+# SillyTavern xUtils
 
 ## Overview
 
 A [SillyTavern](https://docs.sillytavern.app/) extension that helps you track your chat stats with LLMs using [connection profiles](https://docs.sillytavern.app/usage/core-concepts/connection-profiles/).
 
 Forked from [SillyTavern WTracker](https://github.com/bmen25124/SillyTavern-WTracker).
+
+xUtils is intended to keep mechanical tracking separate from narrative memory workflows: tracker snapshots are for scene/state mechanics, while MemoryBooks remain the place for condensed long-term narrative recall.
 
 ## Highlights (since the fork)
 
@@ -14,14 +16,14 @@ Forked from [SillyTavern WTracker](https://github.com/bmen25124/SillyTavern-WTra
 - **Clear and recreate stale tracker sections** with a cleanup action when several parts are wrong at once.
 - Manual tracker generation now shows a message-local status badge while the full tracker or a parts-menu update is in flight, so the active tracker job stays visible even if the initiating control scrolls away.
 - **Filter World Info used for tracker generation** (allow only selected lorebooks/entries when needed).
-- **Exclude specific characters from Auto Mode** directly from the character panel when you do not want zTracker to auto-generate trackers for them.
+- **Exclude specific characters from Auto Mode** directly from the character panel when you do not want xUtils to auto-generate trackers for them.
 - Optional **embed recent tracker snapshots** into normal generations for better continuity (either full JSON or a compact plain-text format).
 - Tracker generation now preserves speaker labels in prompt context where available, so turns like `Tobias:` and `Bar:` stay clearer for pronoun-heavy scenes.
 - Normal instruct-mode chat interception also preserves speaker labels when SillyTavern stores them on source messages instead of flattening them directly into turn content.
 
 ---
 
-zTracker follows the SillyTavern chat type of whichever connection it is currently using for tracker generation. In **Connection Source = Use current active SillyTavern connection** mode, zTracker resolves tracker-generation connection state from the live SillyTavern runtime, including the currently active prompt selectors and any host-exposed active connection changes. In **Connection Source = Use selected saved connection profile** mode, zTracker uses the pinned saved profile you selected in zTracker settings.
+xUtils follows the SillyTavern chat type of whichever connection it is currently using for tracker generation. In **Connection Source = Use current active SillyTavern connection** mode, xUtils resolves tracker-generation connection state from the live SillyTavern runtime, including the currently active prompt selectors and any host-exposed active connection changes. In **Connection Source = Use selected saved connection profile** mode, xUtils uses the pinned saved profile you selected in xUtils settings.
 
 ---
 
@@ -30,7 +32,7 @@ zTracker follows the SillyTavern chat type of whichever connection it is current
 Install via the SillyTavern extension installer:
 
 ```txt
-https://github.com/Zaakh/SillyTavern-zTracker
+https://github.com/Zaakh/SillyTavern-xUtils
 ```
 
 ## FAQ
@@ -39,53 +41,74 @@ https://github.com/Zaakh/SillyTavern-zTracker
 
 Your API/model might not support structured output. Change `Prompt Engineering` mode from `Native API` to `JSON`, `XML`, or `TOON`.
 
-> zTracker UI buttons / schema popup are broken (template 404).
+> xUtils UI buttons / schema popup are broken (template 404).
 
-In **Extensions → zTracker**, enable **Debug logging** and use the **Diagnostics** panel (stethoscope button) to print template URL checks to the console. This helps confirm whether SillyTavern can access the extension’s HTML templates.
+In **Extensions → xUtils**, enable **Debug logging** and use the **Diagnostics** panel (stethoscope button) to print template URL checks to the console. This helps confirm whether SillyTavern can access the extension’s HTML templates.
+
+## xAI / Grok setup
+
+xUtils can target xAI through a normal SillyTavern chat-completion profile that points at the xAI OpenAI-compatible endpoint.
+
+Example connection profile:
+
+```txt
+API: OpenAI-compatible / Chat Completions
+API Server: https://api.x.ai/v1
+Model: grok-3-latest
+```
+
+Recommended xUtils settings for xAI:
+
+- Keep **Connection Source** on the active SillyTavern connection while you test profile changes.
+- Start with **Prompt Engineering = Native API** if the model/profile supports structured output.
+- If the backend rejects structured-output parameters, switch to **JSON**, **XML**, or **TOON**.
+- Enable **Debug logging** while troubleshooting so you can inspect the exact tracker request shape.
+
+xUtils now strips unsupported SillyTavern message fields before xAI requests, validates message roles and tool-call structure, and logs a precise formatter error before a bad payload reaches the API. This reduces the common 400-series failures caused by extra fields such as `name` or other host-only message metadata.
 
 ## Connection source for tracker generation
 
-zTracker can now choose where tracker-generation connection settings come from:
+xUtils can now choose where tracker-generation connection settings come from:
 - **Use current active SillyTavern connection**: resolve tracker-generation connection data from the live SillyTavern runtime, including the currently active prompt selectors and any host-exposed active connection changes.
 - **Use selected saved connection profile**: keep tracker generation pinned to a specific saved SillyTavern connection profile.
 
-This is useful when you want tracker generation to automatically follow your current SillyTavern connection during experimentation, while still keeping the option to pin zTracker to a dedicated extraction profile when needed. If you rely on live unsaved host changes, do a quick smoke test after SillyTavern upgrades.
+This is useful when you want tracker generation to automatically follow your current SillyTavern connection during experimentation, while still keeping the option to pin xUtils to a dedicated extraction profile when needed. If you rely on live unsaved host changes, do a quick smoke test after SillyTavern upgrades.
 
 ## System prompt selection for tracker generation
 
-zTracker can now choose the system prompt used during tracker generation:
+xUtils can now choose the system prompt used during tracker generation:
 - **From active SillyTavern presets**: use the currently active host prompt settings.
-- **From selected connection profile**: use the prompt selectors stored on the chosen zTracker connection profile. For Chat Completion profiles, zTracker uses the profile preset. For Text Completion profiles, zTracker uses the profile's instruct, context, and system-prompt slots.
+- **From selected connection profile**: use the prompt selectors stored on the chosen xUtils connection profile. For Chat Completion profiles, xUtils uses the profile preset. For Text Completion profiles, xUtils uses the profile's instruct, context, and system-prompt slots.
 - **From saved ST prompt**: pick a saved SillyTavern system prompt specifically for tracker extraction.
 
-On startup, zTracker installs a recommended versioned system prompt preset such as **zTracker-1.3.1** if it does not already exist. You can select it in **Extensions → zTracker → System Prompt Source**, and edit it later in SillyTavern's own **System Prompt** manager. Older zTracker prompt presets are not deleted automatically.
+On startup, xUtils installs a recommended versioned system prompt preset such as **xUtils-1.3.1** if it does not already exist. You can select it in **Extensions → xUtils → System Prompt Source**, and edit it later in SillyTavern's own **System Prompt** manager. Older xUtils prompt presets are not deleted automatically.
 
 This is especially useful for smaller models: you can keep your roleplay-oriented system prompt for normal chat, while using a lean extraction-oriented prompt for tracker generation.
 
 ## Sequential generation & per-part regeneration
 
-In **Extensions → zTracker**, enable **Sequential generation** to have zTracker generate tracker fields one-by-one (smaller, sequential requests).
+In **Extensions → xUtils**, enable **Sequential generation** to have xUtils generate tracker fields one-by-one (smaller, sequential requests).
 
-If you want to avoid low-context tracker updates at the start of a chat, set **Skip First X Messages** in **Extensions → zTracker**. A value of `0` keeps the old behavior; higher values prevent first-time tracker generation on early messages until the threshold is reached. Explicit full redo of an already existing tracker still works there.
+If you want to avoid low-context tracker updates at the start of a chat, set **Skip First X Messages** in **Extensions → xUtils**. A value of `0` keeps the old behavior; higher values prevent first-time tracker generation on early messages until the threshold is reached. Explicit full redo of an already existing tracker still works there.
 
-If character-card prose is adding noise to extraction, enable **Skip character card in tracker generation** in **Extensions → zTracker**. The setting is off by default, and when enabled it makes tracker generation ignore character-card prompt fields such as description, personality, and scenario.
+If character-card prose is adding noise to extraction, enable **Skip character card in tracker generation** in **Extensions → xUtils**. The setting is off by default, and when enabled it makes tracker generation ignore character-card prompt fields such as description, personality, and scenario.
 
-If the model seems to over-weight who said a line instead of the scene content itself, change **Conversation role handling** in **Extensions → zTracker** from **Preserve user and assistant roles** to **Treat all chat turns as assistant**. This only changes how zTracker labels chat turns during tracker-generation requests; it does not affect normal chat generation or tracker snapshot injection.
+If the model seems to over-weight who said a line instead of the scene content itself, change **Conversation role handling** in **Extensions → xUtils** from **Preserve user and assistant roles** to **Treat all chat turns as assistant**. This only changes how xUtils labels chat turns during tracker-generation requests; it does not affect normal chat generation or tracker snapshot injection.
 
-If a specific character should never trigger zTracker automatically, open that character's panel and click the zTracker truck toggle in the avatar action row. This excludes that character from **Auto Mode** only; manual tracker generation from message controls still works.
+If a specific character should never trigger xUtils automatically, open that character's panel and click the xUtils truck toggle in the avatar action row. This excludes that character from **Auto Mode** only; manual tracker generation from message controls still works.
 
 When a tracker is rendered on a message, use the tracker controls:
 - **Regenerate Tracker** (rotate icon) regenerates the whole tracker.
 - **Parts menu** (list icon) lets you regenerate an individual top-level field (e.g. `time`, `location`, `topics`) without regenerating everything.
 - **Cleanup** (eraser icon) lets you clear several wrong tracker targets at once, then either leave them pending or recreate them in one coordinated run.
 
-While a manual full tracker generation or regeneration is running, zTracker shows a message-local `Updating tracker` badge above the target message. Auto Mode keeps using its existing `Generating tracker before reply` hold indicator instead.
+While a manual full tracker generation or regeneration is running, xUtils shows a message-local `Updating tracker` badge above the target message. Auto Mode keeps using its existing `Generating tracker before reply` hold indicator instead.
 
 For array parts (e.g. `characters`), the parts menu also exposes:
 - Per-item regeneration (by stable identity when available).
 - Per-field regeneration inside an item (e.g. regenerate `characters (Silvia).outfit`).
 
-While one of those menu actions is running, zTracker shows a message-local `Updating tracker from menu` badge above the target message. This keeps the active job visible without hijacking the main send button or implying that normal chat generation is paused.
+While one of those menu actions is running, xUtils shows a message-local `Updating tracker from menu` badge above the target message. This keeps the active job visible without hijacking the main send button or implying that normal chat generation is paused.
 
 If several related tracker values are wrong at once, use **Cleanup** instead of fixing them one by one. You can select top-level parts, whole array items, or specific item fields, then choose either:
 - **Clear and recreate selected targets** to remove stale values before regenerating them.
@@ -93,39 +116,39 @@ If several related tracker values are wrong at once, use **Cleanup** instead of 
 
 Pending cleanup targets stay visible in the tracker UI so you can see which sections were intentionally cleared and still need attention.
 
-Tracker templates now escape normal tracker values by default. If you previously relied on raw HTML inside tracker data fields, update the template to opt out deliberately instead of assuming those values will render as live markup. When a saved tracker can no longer render with the current template, zTracker keeps the stored data and shows a message-local warning so you can repair the template or tracker JSON without losing the underlying tracker.
+Tracker templates now escape normal tracker values by default. If you previously relied on raw HTML inside tracker data fields, update the template to opt out deliberately instead of assuming those values will render as live markup. When a saved tracker can no longer render with the current template, xUtils keeps the stored data and shows a message-local warning so you can repair the template or tracker JSON without losing the underlying tracker.
 
-Optional (advanced): you can annotate your JSON schema preset to help zTracker keep interdependent sections ordered and array items stable:
-- `x-ztracker-dependsOn`: top-level part ordering hints for sequential generation.
-- `x-ztracker-idKey`: which string field to use as the array-item identity for per-item regeneration (defaults to `name`).
+Optional (advanced): you can annotate your JSON schema preset to help xUtils keep interdependent sections ordered and array items stable:
+- `x-xutils-dependsOn`: top-level part ordering hints for sequential generation.
+- `x-xutils-idKey`: which string field to use as the array-item identity for per-item regeneration (defaults to `name`).
 
-When editing a schema preset's JSON or HTML in **Extensions → zTracker**, changes stay local until you click a Save icon. Saving either editor now persists the current JSON and HTML preset pair together. The save controls stay disabled while the paired draft is unchanged or invalid, and invalid drafts show an inline error instead of overwriting the saved preset.
+When editing a schema preset's JSON or HTML in **Extensions → xUtils**, changes stay local until you click a Save icon. Saving either editor now persists the current JSON and HTML preset pair together. The save controls stay disabled while the paired draft is unchanged or invalid, and invalid drafts show an inline error instead of overwriting the saved preset.
 
-In **Extensions → zTracker**, **Default Schema Preset** controls which preset definition you are editing and which preset new chats start from. Existing chats keep their own **Current Chat Schema Preset**, which you can change from the settings UI or **Extensions → Modify zTracker schema**.
+In **Extensions → xUtils**, **Default Schema Preset** controls which preset definition you are editing and which preset new chats start from. Existing chats keep their own **Current Chat Schema Preset**, which you can change from the settings UI or **Extensions → Modify xUtils schema**.
 
 Changing the current chat schema preset is still a lazy switch, not a chat-wide migration. Future full tracker generations in that chat use the current chat schema preset, while existing trackers on older messages keep their saved message schema until you run a full tracker regeneration on that specific message. Parts-menu regeneration continues to use the saved message schema and tells you when a full tracker regeneration is required to move that message onto the current chat schema.
 
-If a dependency-linked array becomes inconsistent during generation, zTracker now logs a warning in the browser console. Example: `charactersPresent` lists a character name but `characters` has no matching object for that name.
+If a dependency-linked array becomes inconsistent during generation, xUtils now logs a warning in the browser console. Example: `charactersPresent` lists a character name but `characters` has no matching object for that name.
 
 ## World Info (lorebooks)
 
-In **Extensions → zTracker**, you can control World Info during tracker generation: include all (default), exclude all, or allowlist specific lorebook **book names** (case-insensitive) and/or entry **UIDs** (numbers). This only affects zTracker tracker generation (button / Auto Mode), not normal SillyTavern generations.
+In **Extensions → xUtils**, you can control World Info during tracker generation: include all (default), exclude all, or allowlist specific lorebook **book names** (case-insensitive) and/or entry **UIDs** (numbers). This only affects xUtils tracker generation (button / Auto Mode), not normal SillyTavern generations.
 
-In allowlist mode, zTracker loads the allowlisted lorebooks by name and injects their matching entries into the tracker-generation prompt, even if those lorebooks are not currently active in SillyTavern.
+In allowlist mode, xUtils loads the allowlisted lorebooks by name and injects their matching entries into the tracker-generation prompt, even if those lorebooks are not currently active in SillyTavern.
 
 When using **Allow only specified books/UIDs**, you can click **Refresh book list** to detect available books, search/select them, and **Add** them to the allowlist (with quick remove buttons). A manual textarea is still available under “Advanced”.
 
 ## Embedding tracker snapshots into normal generations
 
-zTracker can optionally embed the last $X$ tracker snapshots into the prompt chat array via its `generate_interceptor` (controlled by **Include Last X zTracker Messages**).
+xUtils can optionally embed the last $X$ tracker snapshots into the prompt chat array via its `generate_interceptor` (controlled by **Include Last X xUtils Messages**).
 
-You can also control what **role** those embedded snapshots use (**User**, **System**, or **Assistant**) via **Embed zTracker snapshots as**. This setting only affects embedding; it does not change how zTracker generates trackers.
+You can also control what **role** those embedded snapshots use (**User**, **System**, or **Assistant**) via **Embed xUtils snapshots as**. This setting only affects embedding; it does not change how xUtils generates trackers.
 
-For **Text Completion** chats, assistant-role snapshots stay as assistant turns when zTracker can preserve a clear reply cue, such as SillyTavern's trailing assistant prefill turn or a host-confirmed solo-chat speaker label. When the host cannot confirm a single reply speaker, zTracker only falls back to inlining the snapshot into the final user turn when a standalone terminal assistant block would otherwise leave the prompt framing ambiguous.
+For **Text Completion** chats, assistant-role snapshots stay as assistant turns when xUtils can preserve a clear reply cue, such as SillyTavern's trailing assistant prefill turn or a host-confirmed solo-chat speaker label. When the host cannot confirm a single reply speaker, xUtils only falls back to inlining the snapshot into the final user turn when a standalone terminal assistant block would otherwise leave the prompt framing ambiguous.
 
 If SillyTavern's prompt formatting is producing awkward prefixes like `Assistant: Tracker:`, enable **Inject as virtual character**. This uses the embed snapshot header as the injected speaker name and removes the duplicated header prefix from the embedded snapshot body.
 
-In the text-completion-safe terminal assistant fallback, zTracker still keeps the tracker label inside the raw injected content so the prompt can end on the real assistant reply cue. See `docs/TRACKER_INJECTION_BEHAVIOR.md` for the current behavior matrix, including when that reply cue is host-confirmed versus inferred from prior assistant history.
+In the text-completion-safe terminal assistant fallback, xUtils still keeps the tracker label inside the raw injected content so the prompt can end on the real assistant reply cue. See `docs/TRACKER_INJECTION_BEHAVIOR.md` for the current behavior matrix, including when that reply cue is host-confirmed versus inferred from prior assistant history.
 
 You can also apply a **regex-based transform** to the embedded snapshot text (for prompt-friendly formatting) via **Embed snapshot transform preset**.
 

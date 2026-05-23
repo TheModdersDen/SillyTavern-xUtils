@@ -36,7 +36,7 @@ jest.unstable_mockModule('sillytavern-utils-lib/types', () => ({
 }));
 
 jest.unstable_mockModule('../tracker.js', () => ({
-  includeZTrackerMessages: (chat: unknown[]) => chat,
+  includeXUtilsMessages: (chat: unknown[]) => chat,
 }));
 
 const { initializeGlobalUI } = await import('../ui/ui-init.js');
@@ -65,7 +65,7 @@ async function initializeRerenderHarness(options: {
     chat: [
       {
         extra: {
-          zTracker: {
+          xUtils: {
             value: { time: '09:00:00' },
             html: '<div>{{data.time}}</div>',
           },
@@ -81,7 +81,7 @@ async function initializeRerenderHarness(options: {
   await initializeGlobalUI({
     globalContext: host.context,
     settingsManager: {
-      getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXZTrackerMessages: 0 })),
+      getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXXUtilsMessages: 0 })),
     } as any,
     actions: createActions(),
     renderTrackerWithDeps: options.renderTrackerWithDeps,
@@ -104,15 +104,15 @@ describe('initializeGlobalUI chat rerender failures', () => {
 
     host.events.emit('CHAT_CHANGED');
 
-    expect((host.context.chat as any[])[0].extra.zTracker).toEqual({
+    expect((host.context.chat as any[])[0].extra.xUtils).toEqual({
       value: { time: '09:00:00' },
       html: '<div>{{data.time}}</div>',
     });
-    expect(document.querySelector('.ztracker-render-error-status')?.textContent).toContain('zTracker failed to render. Stored data was kept.');
+    expect(document.querySelector('.xutils-render-error-status')?.textContent).toContain('xUtils failed to render. Stored data was kept.');
     expect(host.spies.saveChat).not.toHaveBeenCalled();
     expect(stEchoMock).toHaveBeenCalledWith(
       'error',
-      'A zTracker template failed to render for one or more messages. Tracker data was kept.',
+      'A xUtils template failed to render for one or more messages. Tracker data was kept.',
     );
   });
 
@@ -126,11 +126,11 @@ describe('initializeGlobalUI chat rerender failures', () => {
     const host = await initializeRerenderHarness({ renderTrackerWithDeps });
 
     host.events.emit('CHAT_CHANGED');
-    expect(document.querySelector('.ztracker-render-error-status')).not.toBeNull();
+    expect(document.querySelector('.xutils-render-error-status')).not.toBeNull();
 
     shouldFail = false;
     host.events.emit('CHAT_CHANGED');
 
-    expect(document.querySelector('.ztracker-render-error-status')).toBeNull();
+    expect(document.querySelector('.xutils-render-error-status')).toBeNull();
   });
 });

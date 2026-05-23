@@ -24,12 +24,12 @@ describe('createTrackerActions modifyChatMetadata', () => {
   test('updates the chat schema through the rendered menu button and popup flow', async () => {
     const renderExtensionTemplateAsync = jest.fn(async (_root: string, templatePath: string, templateData?: any) => {
       if (templatePath === 'dist/templates/buttons') {
-        return '<div id="ztracker_modify_schema_preset" class="list-group-item">Modify zTracker schema</div>';
+        return '<div id="xutils_modify_schema_preset" class="list-group-item">Modify xUtils schema</div>';
       }
 
       if (templatePath === 'dist/templates/modify_schema_popup') {
         return `
-          <select id="ztracker-chat-schema-select">
+          <select id="xutils-chat-schema-select">
             <option value="default">Default</option>
             <option value="alternate">Alternate</option>
           </select>
@@ -42,7 +42,7 @@ describe('createTrackerActions modifyChatMetadata', () => {
     const callGenericPopup = jest.fn(async (content: string, _type: unknown, _title: string, options: any) => {
       document.body.insertAdjacentHTML('beforeend', content);
 
-      const select = document.querySelector('#ztracker-chat-schema-select') as HTMLSelectElement | null;
+      const select = document.querySelector('#xutils-chat-schema-select') as HTMLSelectElement | null;
       expect(select).not.toBeNull();
       select!.value = 'alternate';
 
@@ -51,7 +51,7 @@ describe('createTrackerActions modifyChatMetadata', () => {
 
     const saveMetadataDebounced = jest.fn();
     const context = SillyTavern.getContext() as any;
-    context.chatMetadata = { zTracker: { schemaKey: 'default' } };
+    context.chatMetadata = { xUtils: { schemaKey: 'default' } };
     context.saveMetadataDebounced = saveMetadataDebounced;
 
     const actions = createTrackerActions({
@@ -89,7 +89,7 @@ describe('createTrackerActions modifyChatMetadata', () => {
 
     await actions.renderExtensionTemplates();
 
-    const menuButton = document.querySelector('#ztracker_modify_schema_preset') as HTMLElement | null;
+    const menuButton = document.querySelector('#xutils_modify_schema_preset') as HTMLElement | null;
     expect(menuButton).not.toBeNull();
 
     menuButton!.click();
@@ -97,7 +97,7 @@ describe('createTrackerActions modifyChatMetadata', () => {
 
     expect(renderExtensionTemplateAsync).toHaveBeenCalledWith('root', 'dist/templates/modify_schema_popup', expect.any(Object));
     expect(callGenericPopup).toHaveBeenCalled();
-    expect(context.chatMetadata).toEqual({ zTracker: { schemaKey: 'alternate' } });
+    expect(context.chatMetadata).toEqual({ xUtils: { schemaKey: 'alternate' } });
     expect(saveMetadataDebounced).toHaveBeenCalledTimes(1);
     expect(stEchoMock).toHaveBeenCalledWith(
       'success',

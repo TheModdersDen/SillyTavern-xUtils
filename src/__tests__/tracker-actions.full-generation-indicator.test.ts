@@ -26,8 +26,8 @@ function buildMessage(messageId: number): string {
     <div id="extensionsMenu"></div>
     <div class="mes" mesid="${messageId}">
       <div class="mes_text">Message ${messageId}</div>
-      <div class="mes_button mes_ztracker_button"></div>
-      <div class="ztracker-regenerate-button"></div>
+      <div class="mes_button mes_xutils_button"></div>
+      <div class="xutils-regenerate-button"></div>
     </div>
   `;
 }
@@ -88,16 +88,16 @@ describe('createTrackerActions full generation indicator', () => {
     const pending = actions.generateTracker(0, { showStatusIndicator: true });
     await flushAsyncWork();
 
-    expect(document.querySelector('.ztracker-full-tracker-status')?.textContent).toContain('Updating tracker');
-    expect(document.querySelector('.mes_ztracker_button')?.classList.contains('spinning')).toBe(true);
-    expect(document.querySelector('.ztracker-regenerate-button')?.classList.contains('spinning')).toBe(true);
+    expect(document.querySelector('.xutils-full-tracker-status')?.textContent).toContain('Updating tracker');
+    expect(document.querySelector('.mes_xutils_button')?.classList.contains('spinning')).toBe(true);
+    expect(document.querySelector('.xutils-regenerate-button')?.classList.contains('spinning')).toBe(true);
 
     finishRequest?.();
     await pending;
 
-    expect(document.querySelector('.ztracker-full-tracker-status')).toBeNull();
-    expect(document.querySelector('.mes_ztracker_button')?.classList.contains('spinning')).toBe(false);
-    expect(document.querySelector('.ztracker-regenerate-button')?.classList.contains('spinning')).toBe(false);
+    expect(document.querySelector('.xutils-full-tracker-status')).toBeNull();
+    expect(document.querySelector('.mes_xutils_button')?.classList.contains('spinning')).toBe(false);
+    expect(document.querySelector('.xutils-regenerate-button')?.classList.contains('spinning')).toBe(false);
   });
 
   test('shows the same badge during sequential full tracker regeneration', async () => {
@@ -126,12 +126,12 @@ describe('createTrackerActions full generation indicator', () => {
     const pending = actions.generateTracker(0, { showStatusIndicator: true });
     await flushAsyncWork();
 
-    expect(document.querySelector('.ztracker-full-tracker-status')?.textContent).toContain('Updating tracker');
+    expect(document.querySelector('.xutils-full-tracker-status')?.textContent).toContain('Updating tracker');
 
     finishRequest?.();
     await pending;
 
-    expect(document.querySelector('.ztracker-full-tracker-status')).toBeNull();
+    expect(document.querySelector('.xutils-full-tracker-status')).toBeNull();
   });
 
   test('does not show the manual full-tracker badge for silent generation', async () => {
@@ -160,8 +160,8 @@ describe('createTrackerActions full generation indicator', () => {
     const pending = actions.generateTracker(0, { silent: true });
     await flushAsyncWork();
 
-    expect(document.querySelector('.ztracker-full-tracker-status')).toBeNull();
-    expect(document.querySelector('.mes_ztracker_button')?.classList.contains('spinning')).toBe(true);
+    expect(document.querySelector('.xutils-full-tracker-status')).toBeNull();
+    expect(document.querySelector('.mes_xutils_button')?.classList.contains('spinning')).toBe(true);
 
     finishRequest?.();
     await pending;

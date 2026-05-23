@@ -7,7 +7,7 @@ import { jest } from '@jest/globals';
 const settingsManager = {
   getSettings: () => ({
     debugLogging: true,
-    embedZTrackerSnapshotHeader: 'Tracker:',
+    embedXUtilsSnapshotHeader: 'Tracker:',
   }),
 } as any;
 
@@ -19,7 +19,7 @@ const {
 
 describe('tracker request debug snapshots', () => {
   beforeEach(() => {
-    delete (globalThis as any).zTrackerDiagnostics;
+    delete (globalThis as any).xUtilsDiagnostics;
     jest.restoreAllMocks();
   });
 
@@ -136,6 +136,6 @@ describe('tracker request debug snapshots', () => {
     expect(lines.join('\n')).toContain('embedSnapshotHeader: Scene details:');
     expect(lines.join('\n')).toContain('flattenedSanitizedPrompt:');
     expect(lines.join('\n')).toContain('Bar: hello');
-    expect(lines.join('\n')).toContain('embedSnapshotHeader is the active zTracker-injected snapshot label');
+    expect(lines.join('\n')).toContain('embedSnapshotHeader is the active xUtils-injected snapshot label');
   });
 });

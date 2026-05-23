@@ -1,5 +1,5 @@
 import type { ExtensionSettings } from './config.js';
-import { ZTRACKER_SYSTEM_PROMPT_PRESET_NAME, ZTRACKER_SYSTEM_PROMPT_TEXT } from './config.js';
+import { XUTILS_SYSTEM_PROMPT_PRESET_NAME, XUTILS_SYSTEM_PROMPT_TEXT } from './config.js';
 
 type SystemPromptPreset = {
   name: string;
@@ -89,16 +89,16 @@ export function shouldWarnAboutSharedSystemPromptSelection(
   return trackerPromptName.toLowerCase() === globalPromptName.toLowerCase();
 }
 
-export async function ensureZTrackerSystemPromptPresetInstalled(
+export async function ensureXUtilsSystemPromptPresetInstalled(
   context: SillyTavernContextLike = SillyTavern.getContext(),
 ): Promise<boolean> {
   const manager = getSystemPromptPresetManager(context);
   if (!manager?.savePreset) return false;
-  if (manager.getCompletionPresetByName(ZTRACKER_SYSTEM_PROMPT_PRESET_NAME)) return false;
+  if (manager.getCompletionPresetByName(XUTILS_SYSTEM_PROMPT_PRESET_NAME)) return false;
 
-  await manager.savePreset(ZTRACKER_SYSTEM_PROMPT_PRESET_NAME, {
-    name: ZTRACKER_SYSTEM_PROMPT_PRESET_NAME,
-    content: ZTRACKER_SYSTEM_PROMPT_TEXT,
+  await manager.savePreset(XUTILS_SYSTEM_PROMPT_PRESET_NAME, {
+    name: XUTILS_SYSTEM_PROMPT_PRESET_NAME,
+    content: XUTILS_SYSTEM_PROMPT_TEXT,
   });
 
   return true;

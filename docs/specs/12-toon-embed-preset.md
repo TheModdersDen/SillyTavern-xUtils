@@ -46,7 +46,7 @@ TOON sits between the two: it is more compact than JSON (~40 % fewer tokens on t
 - Adding TOON as a prompt-engineering output mode (no `PromptEngineeringMode.TOON`).
 - Replacing the existing `default` or `minimal` presets; this is an additive change.
 - Migrating existing users to the new preset; default remains `Default (JSON)`.
-- Supporting TOON decode/parsing anywhere in zTracker.
+- Supporting TOON decode/parsing anywhere in xUtils.
 
 ## Codebase verification
 
@@ -65,7 +65,7 @@ The library is TypeScript-native, ESM-compatible, and tree-shakeable. Only `enco
 | Item | Current | Change |
 |------|---------|--------|
 | `EmbedSnapshotTransformInput` | `'pretty_json' \| 'top_level_lines'` | Add `'toon'` to the union |
-| `defaultSettings.embedZTrackerSnapshotTransformPresets` | `{ default, minimal }` | Add `toon` preset entry |
+| `defaultSettings.embedXUtilsSnapshotTransformPresets` | `{ default, minimal }` | Add `toon` preset entry |
 
 New preset definition:
 ```ts
@@ -131,9 +131,9 @@ Change: add a third option:
 <option value="toon">TOON (compact)</option>
 ```
 
-### Injection path (`src/tracker.ts` → `includeZTrackerMessages`)
+### Injection path (`src/tracker.ts` → `includeXUtilsMessages`)
 
-No changes. `includeZTrackerMessages` already calls `formatEmbeddedTrackerSnapshot()` and assembles the result into a message string. The TOON output is just another string — the injection path is format-agnostic.
+No changes. `includeXUtilsMessages` already calls `formatEmbeddedTrackerSnapshot()` and assembles the result into a message string. The TOON output is just another string — the injection path is format-agnostic.
 
 ### Webpack (`webpack.config.cjs`)
 
@@ -141,9 +141,9 @@ Verify `@toon-format/toon` is bundled correctly. The library is ESM + TS-native,
 
 ### Settings migration
 
-Review finding: the original assumption above was wrong. Existing users **do** receive the new `toon` preset automatically because zTracker initializes settings with `ExtensionSettingsManager.initializeSettings()` using the default recursive merge strategy, which fills in missing nested keys from `defaultSettings`.
+Review finding: the original assumption above was wrong. Existing users **do** receive the new `toon` preset automatically because xUtils initializes settings with `ExtensionSettingsManager.initializeSettings()` using the default recursive merge strategy, which fills in missing nested keys from `defaultSettings`.
 
-That means adding `embedZTrackerSnapshotTransformPresets.toon` is an additive persisted-settings change on startup even without a `formatVersion` bump. No explicit migration code is required, but the effect is still observable for existing installs and should be documented accurately.
+That means adding `embedXUtilsSnapshotTransformPresets.toon` is an additive persisted-settings change on startup even without a `formatVersion` bump. No explicit migration code is required, but the effect is still observable for existing installs and should be documented accurately.
 
 ### Bundle size impact
 
@@ -204,7 +204,7 @@ Implemented choice: use a tab delimiter (`'\t'`) for TOON output. This avoids am
 
 ### Integration test (`src/__tests__/tracker-include.test.ts`)
 
-5. **Injection with TOON preset**: extend the existing `'can apply a minimal formatting preset during embedding'` pattern. Create a settings object with TOON preset selected, call `includeZTrackerMessages()`, and verify:
+5. **Injection with TOON preset**: extend the existing `'can apply a minimal formatting preset during embedding'` pattern. Create a settings object with TOON preset selected, call `includeXUtilsMessages()`, and verify:
    - Injected message content contains the header (`Tracker:`)
    - Content is wrapped in `` ```toon `` fences
    - Content does not start with `{` (not raw JSON)
@@ -231,18 +231,18 @@ Implemented choice: use a tab delimiter (`'\t'`) for TOON output. This avoids am
 ## Resolved notes
 
 1. **Delimiter choice**: resolved. The implementation uses tab-delimited TOON (`delimiter: '\t'`) because tracker values frequently contain commas in outfit/location text.
-2. **Cloned tracker values**: resolved. `includeZTrackerMessages()` clones messages via `structuredClone()`, and the TOON encoder treated those cloned tracker objects as non-JSON input. The implementation normalizes tracker values through `JSON.stringify()` / `JSON.parse()` before TOON encoding.
+2. **Cloned tracker values**: resolved. `includeXUtilsMessages()` clones messages via `structuredClone()`, and the TOON encoder treated those cloned tracker objects as non-JSON input. The implementation normalizes tracker values through `JSON.stringify()` / `JSON.parse()` before TOON encoding.
 3. **Bundle size**: verified. After `npm run build`, `dist/index.js` grew from `510005` bytes on `main` to `554030` bytes on this branch (`+44025` bytes).
 4. **Settings merge behavior**: corrected after review. Existing installs automatically gain the built-in `toon` preset because missing nested default settings are recursively merged at startup.
 5. **Parser architecture follow-up**: completed separately from the embed feature. Structured reply repair now lives behind a shared parser workflow with format-specific JSON, XML, and TOON modules, which keeps `src/parser.ts` as a small entrypoint instead of a monolithic mixed-logic file.
-6. **Spec stability**: still acceptable for the original feature. zTracker only encodes TOON for prompt input in the embed flow; the parser-side TOON/XML repair workflow is supporting infrastructure rather than a change to the embed preset itself.
+6. **Spec stability**: still acceptable for the original feature. xUtils only encodes TOON for prompt input in the embed flow; the parser-side TOON/XML repair workflow is supporting infrastructure rather than a change to the embed preset itself.
 
 ## 2026-03-20 live smoke follow-up
 
 ### Smoke plan executed
 
 The live SillyTavern follow-up focused on the `Bar` chat with the existing Tobias tracker and covered:
-- JSON prompt-engineering regeneration with the versioned saved prompt preset `zTracker-1.2.1`
+- JSON prompt-engineering regeneration with the versioned saved prompt preset `xUtils-1.2.1`
 - XML prompt-engineering regeneration with the same preset, including capture of the outgoing prompt and raw model reply
 - TOON prompt-engineering regeneration with the same preset, including capture of the outgoing prompt and raw model reply
 - validation that malformed live replies were either repairable by conservative parser steps or still rejected when they would require unsafe inference
@@ -250,7 +250,7 @@ The live SillyTavern follow-up focused on the `Bar` chat with the existing Tobia
 
 ### Live findings
 
-1. JSON prompt-engineering succeeded end-to-end in the live `Bar` chat. The outgoing request used the saved `zTracker-1.2.1` system prompt and the model returned valid fenced JSON.
+1. JSON prompt-engineering succeeded end-to-end in the live `Bar` chat. The outgoing request used the saved `xUtils-1.2.1` system prompt and the model returned valid fenced JSON.
 2. XML prompt-engineering exposed two separate issues:
   - the saved XML prompt template in settings still wrapped `{{schema}}` inside `<schema>...</schema>`, which duplicated the schema wrapper when paired with the earlier XML prompt-schema renderer
   - the model returned a repairable malformed XML reply where the first `<time>` opening bracket was missing (`time>...`)
@@ -260,24 +260,24 @@ The live SillyTavern follow-up focused on the `Bar` chat with the existing Tobia
 
 ## 2026-03-20 post-commit live verification
 
-After committing `ee81c9f` (`fix: log malformed payloads uniformly`) and reloading SillyTavern, the extension manager reported `zTracker 1.2.1 (feat/toon-embed-preset-ee81c9f)`, confirming the live instance was running the committed diagnostics build.
+After committing `ee81c9f` (`fix: log malformed payloads uniformly`) and reloading SillyTavern, the extension manager reported `xUtils 1.2.1 (feat/toon-embed-preset-ee81c9f)`, confirming the live instance was running the committed diagnostics build.
 
 ### Result
 
-1. Re-entered the `Bar` chat from the startup assistant state and kept zTracker configured for `Prompt Engineering (TOON)` with the `Default` schema preset and saved prompt `zTracker-1.2.1`.
+1. Re-entered the `Bar` chat from the startup assistant state and kept xUtils configured for `Prompt Engineering (TOON)` with the `Default` schema preset and saved prompt `xUtils-1.2.1`.
 2. Sent a fresh Tobias user message so the live path exercised the current `Process inputs` auto-mode rather than a stale pre-refresh message.
-3. zTracker completed successfully on the committed build. The browser console reported:
-  - `zTracker: repaired TOON response { appliedSteps: Array(2), originalLength: 727, repairedLength: 715 }`
-  - no `zTracker: malformed payload`
-  - no `zTracker: malformed prompt-engineered payload`
+3. xUtils completed successfully on the committed build. The browser console reported:
+  - `xUtils: repaired TOON response { appliedSteps: Array(2), originalLength: 727, repairedLength: 715 }`
+  - no `xUtils: malformed payload`
+  - no `xUtils: malformed prompt-engineered payload`
   - no `dependent array mismatch`
   - no strict render rollback
 4. The new Tobias message rendered with a saved tracker block above it, confirming the repaired TOON reply parsed and rendered cleanly in the live UI.
-5. The only runtime failure during this pass was unrelated to zTracker parsing/rendering: the normal assistant reply hit an upstream provider rate limit (`429`) after tracker generation had already completed. Two concurrent `Preset undefined not found` console errors were also emitted by SillyTavern core, but they did not block tracker generation.
+5. The only runtime failure during this pass was unrelated to xUtils parsing/rendering: the normal assistant reply hit an upstream provider rate limit (`429`) after tracker generation had already completed. Two concurrent `Preset undefined not found` console errors were also emitted by SillyTavern core, but they did not block tracker generation.
 
 ### Conclusion
 
-The previously observed live TOON failure was not reproducible on the committed `ee81c9f` build. The remaining live error in this pass belongs to the provider / SillyTavern generation path, not to zTracker's TOON parsing or rendering pipeline.
+The previously observed live TOON failure was not reproducible on the committed `ee81c9f` build. The remaining live error in this pass belongs to the provider / SillyTavern generation path, not to xUtils's TOON parsing or rendering pipeline.
 
 ### Fixes implemented from this smoke pass
 
@@ -285,14 +285,14 @@ The previously observed live TOON failure was not reproducible on the committed 
 - XML prompt-template migration now upgrades both the old JSON-based XML template and the previously shipped XML-wrapper template to the current default.
 - XML parsing now rejects text-only parses and repairs the specific missing-opening-bracket shape observed in the live smoke test.
 - TOON parsing now repairs the live single-item object-array block form by converting it into the canonical tabular TOON row format before decoding.
-- `applyTrackerUpdateAndRender()` now logs `zTracker: dependent array mismatch` warnings when a detail array such as `characters` is missing entries declared by its dependency array such as `charactersPresent`.
+- `applyTrackerUpdateAndRender()` now logs `xUtils: dependent array mismatch` warnings when a detail array such as `characters` is missing entries declared by its dependency array such as `charactersPresent`.
 - Regression fixtures and tests were added for the live malformed XML and TOON replies.
 
 ## 2026-03-20 post-update live smoke
 
 ### Environment confirmed
 
-- SillyTavern loaded `zTracker 1.2.1 (feat/toon-embed-preset-d7352fa)` from the updated extension folder.
+- SillyTavern loaded `xUtils 1.2.1 (feat/toon-embed-preset-d7352fa)` from the updated extension folder.
 - The repo state used for the smoke pass was commit `d7352faa447ab9397bbb37fb7238f3e8a4e24452`.
 - Because the refreshed page reopened to the startup assistant instead of restoring the prior chat selection, the live pass resumed in the `Bar` chat and used fresh Tobias user messages to exercise tracker generation end-to-end.
 
@@ -302,10 +302,10 @@ The previously observed live TOON failure was not reproducible on the committed 
 2. XML prompt-engineering also passed on the updated build. A fresh Tobias user message received a tracker with the expected top-level fields and no XML parser/render failure was surfaced.
 3. TOON prompt-engineering still fails in live use on the updated build. A fresh Tobias user message triggered tracker generation, but no tracker was saved.
 4. The TOON failure is no longer the earlier parser hard-stop. The live console now shows:
-  - `zTracker: dependent array mismatch` for `characters` depending on `charactersPresent`
+  - `xUtils: dependent array mismatch` for `characters` depending on `charactersPresent`
   - `Error generating tracker: Error: Generated data failed to render with the current template. Not saved.`
 5. The most likely live failure shape is now a partially valid TOON reply that parses into data where dependency-linked arrays drift apart or one or more strict-template fields are still missing. The parser gets far enough for post-parse validation/render to run, but the final rendered tracker is rejected and rolled back.
-6. Separate from zTracker itself, the active global SillyTavern system prompt was still `zTracker-1.2.1`, so normal assistant chat generation in the same session was contaminated and produced structured JSON instead of roleplay text. This matches the warning already shown in zTracker settings and is an environment/configuration issue rather than a new extension regression.
+6. Separate from xUtils itself, the active global SillyTavern system prompt was still `xUtils-1.2.1`, so normal assistant chat generation in the same session was contaminated and produced structured JSON instead of roleplay text. This matches the warning already shown in xUtils settings and is an environment/configuration issue rather than a new extension regression.
 
 ### Follow-up needed
 
@@ -349,11 +349,11 @@ The previously observed live TOON failure was not reproducible on the committed 
   - `dist/index.js` size changed from `510005` bytes on `main` to `558398` bytes on this branch.
   - Webpack performance warnings are now disabled for production builds because this extension intentionally ships as a single local bundle and the default web-app thresholds were producing noisy, non-actionable warnings.
 - Manual SillyTavern smoke test was run against the `Bar` chat in a live SillyTavern instance.
-  - zTracker prompt-engineering mode was switched to TOON successfully.
+  - xUtils prompt-engineering mode was switched to TOON successfully.
   - Tracker regeneration failed because the model returned JSON wrapped in a `toon` fence instead of valid TOON.
   - The captured prompt, malformed reply shape, and existing tracker context were converted into dedicated parser repair fixtures for unit and future e2e coverage.
-  - After the root-cause fix was implemented, a second live verification attempt showed that the running SillyTavern instance was still serving an older `dist/index.js` from `/scripts/extensions/third-party/SillyTavern-zTracker/dist/index.js`.
-  - The served bundle still contained the old `**JSON SCHEMA TO FOLLOW:**` XML/TOON templates and the old saved prompt name `zTracker`, while the workspace build already contained `XML SCHEMA DESCRIPTION TO FOLLOW`, `TOON SCHEMA DESCRIPTION TO FOLLOW`, and the versioned preset name. The code fix is built and tested locally, but the live smoke re-check remains blocked until SillyTavern reloads the current extension bundle.
+  - After the root-cause fix was implemented, a second live verification attempt showed that the running SillyTavern instance was still serving an older `dist/index.js` from `/scripts/extensions/third-party/SillyTavern-xUtils/dist/index.js`.
+  - The served bundle still contained the old `**JSON SCHEMA TO FOLLOW:**` XML/TOON templates and the old saved prompt name `xUtils`, while the workspace build already contained `XML SCHEMA DESCRIPTION TO FOLLOW`, `TOON SCHEMA DESCRIPTION TO FOLLOW`, and the versioned preset name. The code fix is built and tested locally, but the live smoke re-check remains blocked until SillyTavern reloads the current extension bundle.
 
 ## Recommended next steps
 
@@ -368,8 +368,8 @@ The previously observed live TOON failure was not reproducible on the committed 
 - Moved schema-based array coercion into the shared parse flow so TOON prompt-engineered replies now normalize singleton arrays the same way XML replies do.
 - Tightened code-fence extraction so inline triple-backtick text inside scalar values does not truncate fenced parser content.
 - Added coverage for nested TOON schema examples, TOON schema-based array normalization, strict TOON scalar spacing, and fenced JSON values that contain literal triple backticks.
-- zTracker now keeps one canonical JSON schema in settings and translates it into XML or TOON only when building the corresponding prompt-engineering request.
-- The shared zTracker system prompt is now format-agnostic, and the shipped saved prompt preset name is versioned (for example `zTracker-1.2.1`) so older saved prompts can coexist without being overwritten.
+- xUtils now keeps one canonical JSON schema in settings and translates it into XML or TOON only when building the corresponding prompt-engineering request.
+- The shared xUtils system prompt is now format-agnostic, and the shipped saved prompt preset name is versioned (for example `xUtils-1.2.1`) so older saved prompts can coexist without being overwritten.
 - Existing XML/TOON prompt templates stored in extension settings are migrated only when they still match the old built-in defaults, so users get the schema-translation fix without losing custom prompt edits.
 
 ## Historical critical review (2026-03-20)

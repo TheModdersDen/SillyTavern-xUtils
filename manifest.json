@@ -1,5 +1,5 @@
 {
-    "display_name": "zTracker",
+    "display_name": "xUtils",
     "loading_order": 300,
     "requires": [],
     "optional": [],
@@ -8,6 +8,6 @@
     "author": "Zaakh",
     "version": "1.12.1",
     "minimum_client_version": "1.17.0",
-    "homePage": "https://github.com/Zaakh/SillyTavern-zTracker",
-    "generate_interceptor": "ztrackerGenerateInterceptor"
+    "homePage": "https://github.com/Zaakh/SillyTavern-xUtils",
+    "generate_interceptor": "xutilsGenerateInterceptor"
 }

@@ -37,10 +37,10 @@ describe('renderTracker', () => {
     const context = createContext();
     renderTracker(0, { context, document, handlebars: Handlebars });
 
-    const tracker = document.querySelector('.mes_ztracker');
+    const tracker = document.querySelector('.mes_xutils');
     expect(tracker).not.toBeNull();
     expect(tracker?.querySelector('.tracker-content')?.textContent).toBe('10:00');
-    expect(tracker?.querySelector('.ztracker-controls')).not.toBeNull();
+    expect(tracker?.querySelector('.xutils-controls')).not.toBeNull();
   });
 
   it('escapes tracker values instead of rendering them as live HTML', () => {
@@ -59,7 +59,7 @@ describe('renderTracker', () => {
 
     renderTracker(0, { context, document, handlebars: Handlebars });
 
-    const tracker = document.querySelector('.mes_ztracker');
+    const tracker = document.querySelector('.mes_xutils');
     expect(tracker?.querySelector('.tracker-content')?.textContent).toBe('<img src=x onerror="alert(1)">');
     expect(tracker?.querySelector('.tracker-content img')).toBeNull();
   });
@@ -84,7 +84,7 @@ describe('renderTracker', () => {
     renderTracker(0, { context, document, handlebars: Handlebars });
 
     const items = Array.from(
-      document.querySelectorAll('.ztracker-array-item-regenerate-button[data-ztracker-part="charactersPresent"]'),
+      document.querySelectorAll('.xutils-array-item-regenerate-button[data-xutils-part="charactersPresent"]'),
     ).map((el) => (el as HTMLElement).textContent);
 
     expect(items).toEqual(['Alice', 'Bob']);
@@ -117,7 +117,7 @@ describe('renderTracker', () => {
 
     const outfitButtons = Array.from(
       document.querySelectorAll(
-        '.ztracker-array-item-field-regenerate-button[data-ztracker-part="characters"][data-ztracker-field="outfit"]',
+        '.xutils-array-item-field-regenerate-button[data-xutils-part="characters"][data-xutils-field="outfit"]',
       ),
     ).map((el) => (el as HTMLElement).textContent);
 
@@ -147,7 +147,7 @@ describe('renderTracker', () => {
     renderTracker(0, { context, document, handlebars: Handlebars });
 
     const fieldButtons = Array.from(
-      document.querySelectorAll('.ztracker-array-item-field-regenerate-button[data-ztracker-part="characters"]'),
+      document.querySelectorAll('.xutils-array-item-field-regenerate-button[data-xutils-part="characters"]'),
     ).map((el) => (el as HTMLElement).textContent);
 
     expect(fieldButtons).toEqual(['outfit']);
@@ -177,7 +177,7 @@ describe('renderTracker', () => {
     renderTracker(0, { context, document, handlebars: Handlebars });
 
     const fieldButtons = Array.from(
-      document.querySelectorAll('.ztracker-array-item-field-regenerate-button[data-ztracker-part="characters"]'),
+      document.querySelectorAll('.xutils-array-item-field-regenerate-button[data-xutils-part="characters"]'),
     ).map((el) => (el as HTMLElement).textContent);
 
     // Sorted fallback field list should include both keys for each item.
@@ -191,7 +191,7 @@ describe('renderTracker', () => {
     delete context.chat[0].extra?.[EXTENSION_KEY]?.[CHAT_MESSAGE_SCHEMA_VALUE_KEY];
     renderTracker(0, { context, document, handlebars: Handlebars });
 
-    expect(document.querySelector('.mes_ztracker')).toBeNull();
+    expect(document.querySelector('.mes_xutils')).toBeNull();
   });
 
   it('renders the cleanup control and persisted pending-redaction markers', () => {
@@ -220,13 +220,13 @@ describe('renderTracker', () => {
 
     renderTracker(0, { context, document, handlebars: Handlebars });
 
-    expect(document.querySelector('.ztracker-cleanup-button')).not.toBeNull();
-    expect(document.querySelector('.ztracker-pending-redactions-status')?.textContent).toContain('2 tracker targets cleared');
+    expect(document.querySelector('.xutils-cleanup-button')).not.toBeNull();
+    expect(document.querySelector('.xutils-pending-redactions-status')?.textContent).toContain('2 tracker targets cleared');
     expect(
       document
-        .querySelector('.ztracker-part-regenerate-button[data-ztracker-part="charactersPresent"]')
+        .querySelector('.xutils-part-regenerate-button[data-xutils-part="charactersPresent"]')
         ?.classList.contains('is-pending-redaction'),
     ).toBe(true);
-    expect(document.querySelector('.ztracker-array-item-regenerate-button')?.textContent).toBe('Alice');
+    expect(document.querySelector('.xutils-array-item-regenerate-button')?.textContent).toBe('Alice');
   });
 });

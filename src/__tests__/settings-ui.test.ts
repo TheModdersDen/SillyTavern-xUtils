@@ -199,12 +199,12 @@ function createMockSettings() {
     includeLastXMessages: 0,
     skipCharacterCardInTrackerGeneration: false,
     trackerGenerationConversationRoleMode: 'preserve',
-    includeLastXZTrackerMessages: 0,
-    embedZTrackerRole: 'user',
-    embedZTrackerAsCharacter: false,
-    embedZTrackerSnapshotHeader: 'Tracker:',
-    embedZTrackerSnapshotTransformPreset: 'default',
-    embedZTrackerSnapshotTransformPresets: {},
+    includeLastXXUtilsMessages: 0,
+    embedXUtilsRole: 'user',
+    embedXUtilsAsCharacter: false,
+    embedXUtilsSnapshotHeader: 'Tracker:',
+    embedXUtilsSnapshotTransformPreset: 'default',
+    embedXUtilsSnapshotTransformPresets: {},
     promptEngineeringMode: 'native',
     debugLogging: false,
     trackerWorldInfoPolicyMode: 'include_all',
@@ -410,9 +410,9 @@ jest.unstable_mockModule('../components/settings/DiagnosticsSection.js', () => (
   DiagnosticsSection: () => React.createElement('div', null, 'diagnostics'),
 }));
 
-const { ZTrackerSettings } = await import('../components/Settings.js');
+const { XUtilsSettings } = await import('../components/Settings.js');
 
-describe('zTracker settings connection source UI', () => {
+describe('xUtils settings connection source UI', () => {
   let root: Root | undefined;
 
   beforeEach(() => {
@@ -433,7 +433,7 @@ describe('zTracker settings connection source UI', () => {
     validateSchemaPresetDraftPairMock.mockClear();
     document.body.innerHTML = '<div id="root"></div>';
     sillyTavernContext = {
-      chatMetadata: { zTracker: { schemaKey: 'default' } },
+      chatMetadata: { xUtils: { schemaKey: 'default' } },
       saveMetadataDebounced: jest.fn(),
       Popup: { show: { confirm: jest.fn() } },
     };
@@ -457,7 +457,7 @@ describe('zTracker settings connection source UI', () => {
 
     root = createRoot(container);
     act(() => {
-      root?.render(React.createElement(ZTrackerSettings));
+      root?.render(React.createElement(XUtilsSettings));
     });
     return container;
   }
@@ -537,7 +537,7 @@ describe('zTracker settings connection source UI', () => {
   test('hides the saved profile picker in active connection mode', () => {
     const container = renderSettings();
 
-    expect(container.textContent).toContain('zTracker follows the live SillyTavern connection currently in use');
+    expect(container.textContent).toContain('xUtils follows the live SillyTavern connection currently in use');
     expect(container.querySelector('[data-testid="profile-select"]')).toBeNull();
   });
 
@@ -628,7 +628,7 @@ describe('zTracker settings connection source UI', () => {
 
     const saveMetadataDebounced = jest.fn();
     const context = {
-      chatMetadata: { zTracker: { schemaKey: 'default' } },
+      chatMetadata: { xUtils: { schemaKey: 'default' } },
       saveMetadataDebounced,
       Popup: { show: { confirm: jest.fn() } },
     };
@@ -648,7 +648,7 @@ describe('zTracker settings connection source UI', () => {
       await Promise.resolve();
     });
 
-    expect(context.chatMetadata).toEqual({ zTracker: { schemaKey: 'alternate' } });
+    expect(context.chatMetadata).toEqual({ xUtils: { schemaKey: 'alternate' } });
     expect(saveMetadataDebounced).toHaveBeenCalledTimes(1);
     expect(mockSettings.schemaPreset).toBe('default');
     expect(saveSettingsMock).not.toHaveBeenCalled();
@@ -663,7 +663,7 @@ describe('zTracker settings connection source UI', () => {
 
     const saveMetadataDebounced = jest.fn();
     const saveMetadata = jest.fn();
-    let persistedChatMetadata = { zTracker: { schemaKey: 'default' } };
+    let persistedChatMetadata = { xUtils: { schemaKey: 'default' } };
 
     (globalThis as any).SillyTavern = {
       getContext: () => {
@@ -698,7 +698,7 @@ describe('zTracker settings connection source UI', () => {
       throw new Error('Current chat schema preset select not found after rerender');
     }
 
-    expect(persistedChatMetadata).toEqual({ zTracker: { schemaKey: 'alternate' } });
+    expect(persistedChatMetadata).toEqual({ xUtils: { schemaKey: 'alternate' } });
     expect(saveMetadata).toHaveBeenCalledTimes(1);
     expect(rerenderedSelect.value).toBe('alternate');
     expect(mockSettings.schemaPreset).toBe('default');
@@ -714,7 +714,7 @@ describe('zTracker settings connection source UI', () => {
     const saveMetadataDebounced = jest.fn();
     const saveMetadata = jest.fn(async () => undefined);
     const context = {
-      chatMetadata: { zTracker: { schemaKey: 'default' } },
+      chatMetadata: { xUtils: { schemaKey: 'default' } },
       saveMetadata,
       saveMetadataDebounced,
       Popup: { show: { confirm: jest.fn() } },
@@ -735,7 +735,7 @@ describe('zTracker settings connection source UI', () => {
       await Promise.resolve();
     });
 
-    expect(context.chatMetadata).toEqual({ zTracker: { schemaKey: 'alternate' } });
+    expect(context.chatMetadata).toEqual({ xUtils: { schemaKey: 'alternate' } });
     expect(saveMetadata).toHaveBeenCalledTimes(1);
     expect(saveMetadataDebounced).not.toHaveBeenCalled();
   });
@@ -752,7 +752,7 @@ describe('zTracker settings connection source UI', () => {
       throw new Error('save failed');
     });
     const context = {
-      chatMetadata: { zTracker: { schemaKey: 'default' } },
+      chatMetadata: { xUtils: { schemaKey: 'default' } },
       saveMetadata,
       saveMetadataDebounced: jest.fn(),
       Popup: { show: { confirm: jest.fn() } },
@@ -778,7 +778,7 @@ describe('zTracker settings connection source UI', () => {
       throw new Error('Current chat schema preset select not found after failed save');
     }
 
-    expect(context.chatMetadata).toEqual({ zTracker: { schemaKey: 'default' } });
+    expect(context.chatMetadata).toEqual({ xUtils: { schemaKey: 'default' } });
     expect(rerenderedSelect.value).toBe('default');
     expect(stEchoMock).toHaveBeenCalledWith('error', 'Current chat schema preset could not be saved. The selector was reverted.');
 
@@ -821,7 +821,7 @@ describe('zTracker settings connection source UI', () => {
 
     const saveMetadataDebounced = jest.fn();
     const context = {
-      chatMetadata: { zTracker: { schemaKey: 'custom' } },
+      chatMetadata: { xUtils: { schemaKey: 'custom' } },
       saveMetadataDebounced,
       Popup: { show: { confirm: jest.fn() } },
     };
@@ -840,7 +840,7 @@ describe('zTracker settings connection source UI', () => {
       await Promise.resolve();
     });
 
-    expect(context.chatMetadata).toEqual({ zTracker: { schemaKey: 'default' } });
+    expect(context.chatMetadata).toEqual({ xUtils: { schemaKey: 'default' } });
     expect(saveMetadataDebounced).toHaveBeenCalledTimes(1);
     expect(saveSettingsMock).toHaveBeenCalled();
   });
@@ -862,7 +862,7 @@ describe('zTracker settings connection source UI', () => {
 
     const saveMetadataDebounced = jest.fn();
     const context = {
-      chatMetadata: { zTracker: { schemaKey: 'custom' } },
+      chatMetadata: { xUtils: { schemaKey: 'custom' } },
       saveMetadataDebounced,
       Popup: { show: { confirm: jest.fn() } },
     };
@@ -881,7 +881,7 @@ describe('zTracker settings connection source UI', () => {
       await Promise.resolve();
     });
 
-    expect(context.chatMetadata).toEqual({ zTracker: { schemaKey: 'renamed-custom' } });
+    expect(context.chatMetadata).toEqual({ xUtils: { schemaKey: 'renamed-custom' } });
     expect(saveMetadataDebounced).toHaveBeenCalledTimes(1);
     const currentChatSelect = container.querySelector('[data-testid="preset-select-Current Chat Schema Preset"]');
     if (!(currentChatSelect instanceof HTMLSelectElement)) {
@@ -901,7 +901,7 @@ describe('zTracker settings connection source UI', () => {
     };
 
     const context = {
-      chatMetadata: { zTracker: { schemaKey: 'removed' } },
+      chatMetadata: { xUtils: { schemaKey: 'removed' } },
       saveMetadataDebounced: jest.fn(),
       Popup: { show: { confirm: jest.fn() } },
     };

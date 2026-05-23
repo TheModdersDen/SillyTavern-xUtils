@@ -23,7 +23,7 @@ import {
   CHAT_MESSAGE_SCHEMA_VALUE_KEY,
   CHAT_MESSAGE_PARTS_ORDER_KEY,
   extractLeadingSystemPrompt,
-  includeZTrackerMessages,
+  includeXUtilsMessages,
   normalizeTrackerGenerationConversationRoles,
   sanitizeMessagesForGeneration,
 } from '../tracker.js';
@@ -40,6 +40,7 @@ import {
 } from '../tracker-parts.js';
 import { createPromptEngineeringHelpers } from './prompt-engineering.js';
 import { checkTemplateUrl, getExtensionRoot, getTemplateUrl } from './templates.js';
+import { formatMessagesForXai, isXaiApiServer } from '../xaiMessageFormatter.js';
 import {
   appendCurrentTrackerSnapshot,
   buildPartsMeta,
@@ -184,7 +185,7 @@ async function loadTextCompletionStoryStringFormatter(): Promise<TextCompletionS
       } satisfies TextCompletionStoryStringFormatter;
     })
     .catch((error) => {
-      console.warn('zTracker: failed to load SillyTavern story-string helpers; falling back to direct prompt assembly.', error);
+      console.warn('xUtils: failed to load SillyTavern story-string helpers; falling back to direct prompt assembly.', error);
       return undefined;
     });
 
@@ -568,7 +569,7 @@ export function createTrackerActions(options: {
       } catch (error) {
         if (usesGenericTextCompletionFamily && lacksConcreteActiveTextCompletionType) {
           throw new Error(
-            'Could not resolve the active SillyTavern text-generation backend. The live runtime only exposed the generic textgenerationwebui family without a concrete backend type. Select a saved zTracker connection profile or switch the active SillyTavern backend to one with a concrete runtime type.',
+            'Could not resolve the active SillyTavern text-generation backend. The live runtime only exposed the generic textgenerationwebui family without a concrete backend type. Select a saved xUtils connection profile or switch the active SillyTavern backend to one with a concrete runtime type.',
           );
         }
         throw error;
@@ -592,7 +593,7 @@ export function createTrackerActions(options: {
 
     const profile = extensionSettings.connectionManager?.profiles?.find((p: any) => p.id === settings.profileId);
     if (!profile) {
-      throw new Error('Selected connection profile not found. Please re-select a profile in zTracker settings.');
+      throw new Error('Selected connection profile not found. Please re-select a profile in xUtils settings.');
     }
     if (!profile.api) {
       throw new Error('Selected connection profile is missing an API. Please edit the profile in SillyTavern settings.');
@@ -772,7 +773,7 @@ export function createTrackerActions(options: {
 
   function createLocalRequestId(messageId: number): string {
     nextLocalRequestId += 1;
-    return `ztracker-local-${messageId}-${nextLocalRequestId}`;
+    return `xutils-local-${messageId}-${nextLocalRequestId}`;
   }
 
   // Keep tracker instructions as trailing system messages so they stay non-dialogue and remain at the end of the prompt.
@@ -975,6 +976,7 @@ export function createTrackerActions(options: {
         const profile = resolvedConnection.profile;
         const selectedApiMap = resolvedConnection.apiMap;
         const selectedApi = selectedApiMap?.selected;
+        const apiServer = getProfileApiServer(profile, resolvedConnection.source);
         const sanitizedPrompt = sanitizeMessagesForGeneration(requestMessages, {
           inlineNamesIntoContent: selectedApi === 'textgenerationwebui',
           userAlignmentMessage:
@@ -990,7 +992,7 @@ export function createTrackerActions(options: {
           api: selectedApi,
           apiType: selectedApiMap?.type,
           model: typeof profile?.model === 'string' ? profile.model : undefined,
-          apiServer: getProfileApiServer(profile, resolvedConnection.source),
+          apiServer,
           presetName: typeof profile?.preset === 'string' ? profile.preset : undefined,
           instructName: options.instructName,
           contextName: typeof profile?.context === 'string' ? profile.context : undefined,
@@ -1016,9 +1018,15 @@ export function createTrackerActions(options: {
             return;
           }
 
+          const requestPrompt = isXaiApiServer(apiServer)
+            ? formatMessagesForXai(sanitizedPrompt, {
+                apiServer,
+                requestLabel: `tracker generation for message ${messageId}`,
+              })
+            : sanitizedPrompt;
           beforeRequestStartHook?.();
           const requestParams: any = {
-            prompt: sanitizedPrompt,
+            prompt: requestPrompt,
             maxTokens: settings.maxResponseToken,
             custom: { signal: abortController.signal },
             overridePayload: {
@@ -1089,14 +1097,14 @@ export function createTrackerActions(options: {
     let savedSystemPromptContent: string | undefined;
     if (settings.trackerSystemPromptMode === 'saved') {
       if (!syspromptName) {
-        throw new Error('Please select a saved system prompt in zTracker settings.');
+        throw new Error('Please select a saved system prompt in xUtils settings.');
       }
       if (!hasSystemPromptPreset(syspromptName, context)) {
-        throw new Error(`Saved system prompt not found: ${syspromptName}. Please select another one in zTracker settings.`);
+        throw new Error(`Saved system prompt not found: ${syspromptName}. Please select another one in xUtils settings.`);
       }
       savedSystemPromptContent = getSystemPromptPresetContent(syspromptName, context);
       if (!savedSystemPromptContent) {
-        throw new Error(`Saved system prompt is empty: ${syspromptName}. Please edit it or select another one in zTracker settings.`);
+        throw new Error(`Saved system prompt is empty: ${syspromptName}. Please edit it or select another one in xUtils settings.`);
       }
     }
 
@@ -1127,7 +1135,7 @@ export function createTrackerActions(options: {
       ...(skipCharacterCardInTrackerGeneration ? { ignoreCharacterFields: true } : {}),
     });
 
-    let messages = includeZTrackerMessages(promptResult.result, settings);
+    let messages = includeXUtilsMessages(promptResult.result, settings);
     messages = normalizeTrackerGenerationConversationRoles(messages, settings);
     debugLog(settingsManager, 'prompt built', {
       trackerGenerationConversationRoleMode: settings.trackerGenerationConversationRoleMode ?? 'preserve',
@@ -1173,7 +1181,7 @@ export function createTrackerActions(options: {
             });
           }
         } catch (e) {
-          console.warn('zTracker: failed to load allowlisted World Info; proceeding without it.', e);
+          console.warn('xUtils: failed to load allowlisted World Info; proceeding without it.', e);
         }
       }
     }
@@ -1224,8 +1232,8 @@ export function createTrackerActions(options: {
 
     const popupContent = `
         <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label for="ztracker-edit-textarea">Edit Tracker JSON:</label>
-            <textarea id="ztracker-edit-textarea" class="text_pole" rows="15" style="width: 100%; resize: vertical;"></textarea>
+            <label for="xutils-edit-textarea">Edit Tracker JSON:</label>
+            <textarea id="xutils-edit-textarea" class="text_pole" rows="15" style="width: 100%; resize: vertical;"></textarea>
         </div>
     `;
 
@@ -1233,7 +1241,7 @@ export function createTrackerActions(options: {
       okButton: 'Save',
       onClose: async (popup: any) => {
         if (popup.result === POPUP_RESULT.AFFIRMATIVE) {
-          const textarea = popup.content.querySelector('#ztracker-edit-textarea') as HTMLTextAreaElement;
+          const textarea = popup.content.querySelector('#xutils-edit-textarea') as HTMLTextAreaElement;
           if (textarea) {
             let newData: unknown;
             try {
@@ -1277,7 +1285,7 @@ export function createTrackerActions(options: {
       },
     });
 
-    const textarea = document.querySelector('#ztracker-edit-textarea') as HTMLTextAreaElement;
+    const textarea = document.querySelector('#xutils-edit-textarea') as HTMLTextAreaElement;
     if (textarea) {
       textarea.value = JSON.stringify(currentData, null, 2);
     }
@@ -1292,8 +1300,8 @@ export function createTrackerActions(options: {
     });
 
     const messageBlock = document.querySelector(`.mes[mesid="${id}"]`);
-    const mainButton = messageBlock?.querySelector('.mes_ztracker_button');
-    const regenerateButton = messageBlock?.querySelector('.ztracker-regenerate-button');
+    const mainButton = messageBlock?.querySelector('.mes_xutils_button');
+    const regenerateButton = messageBlock?.querySelector('.xutils-regenerate-button');
     const detailsState = captureDetailsState(id);
     const token = { cancelled: false };
     let activeSchemaPresetLabel: string | undefined;
@@ -1338,7 +1346,7 @@ export function createTrackerActions(options: {
           return false;
         }
 
-        if (!response || Object.keys(response as any).length === 0) throw new Error('Empty response from zTracker.');
+        if (!response || Object.keys(response as any).length === 0) throw new Error('Empty response from xUtils.');
 
         await persistTrackerUpdate({
           messageId: id,
@@ -1369,8 +1377,8 @@ export function createTrackerActions(options: {
   async function generateTrackerSequential(id: number, options?: GenerateTrackerOptions) {
     if (cancelIfPending(id)) return false;
     const messageBlock = document.querySelector(`.mes[mesid="${id}"]`);
-    const mainButton = messageBlock?.querySelector('.mes_ztracker_button');
-    const regenerateButton = messageBlock?.querySelector('.ztracker-regenerate-button');
+    const mainButton = messageBlock?.querySelector('.mes_xutils_button');
+    const regenerateButton = messageBlock?.querySelector('.xutils-regenerate-button');
     const detailsState = captureDetailsState(id);
     let activeSchemaPresetLabel: string | undefined;
 
@@ -1445,7 +1453,7 @@ export function createTrackerActions(options: {
         }
 
         if (!trackerData || Object.keys(trackerData).length === 0) {
-          throw new Error('Empty response from zTracker.');
+          throw new Error('Empty response from xUtils.');
         }
 
         await persistTrackerUpdate({
@@ -1569,9 +1577,9 @@ export function createTrackerActions(options: {
         }
 
         const selectedTargets = Array.from(
-          popup.content.querySelectorAll('[data-ztracker-cleanup-target-index]:checked') as NodeListOf<HTMLInputElement>,
+          popup.content.querySelectorAll('[data-xutils-cleanup-target-index]:checked') as NodeListOf<HTMLInputElement>,
         )
-          .map((input) => rows[Number(input.getAttribute('data-ztracker-cleanup-target-index') ?? '-1')]?.target)
+          .map((input) => rows[Number(input.getAttribute('data-xutils-cleanup-target-index') ?? '-1')]?.target)
           .filter((target): target is TrackerCleanupTarget => !!target);
         const normalizedTargets = normalizeTrackerCleanupTargets(selectedTargets);
         if (normalizedTargets.length === 0) {
@@ -1580,7 +1588,7 @@ export function createTrackerActions(options: {
         }
 
         const mode =
-          (popup.content.querySelector('input[name="ztracker-cleanup-mode"]:checked') as HTMLInputElement | null)?.value ??
+          (popup.content.querySelector('input[name="xutils-cleanup-mode"]:checked') as HTMLInputElement | null)?.value ??
           'clear-and-recreate';
 
         if (mode === 'clear-only') {
@@ -1597,10 +1605,10 @@ export function createTrackerActions(options: {
 
   async function renderExtensionTemplates() {
     const extensionsMenu = document.querySelector('#extensionsMenu');
-    let buttonContainer = document.querySelector('#ztracker_menu_buttons') as HTMLElement | null;
+    let buttonContainer = document.querySelector('#xutils_menu_buttons') as HTMLElement | null;
     if (!buttonContainer) {
       buttonContainer = document.createElement('div');
-      buttonContainer.id = 'ztracker_menu_buttons';
+      buttonContainer.id = 'xutils_menu_buttons';
       buttonContainer.className = 'extension_container';
       extensionsMenu?.appendChild(buttonContainer);
     } else {
@@ -1620,7 +1628,7 @@ export function createTrackerActions(options: {
       const buttonHtml = await globalContext.renderExtensionTemplateAsync(extensionRoot, buttonsTemplatePath);
       buttonContainer.insertAdjacentHTML('beforeend', buttonHtml);
     } catch (error) {
-      console.error('zTracker: failed to render extension menu buttons template', {
+      console.error('xUtils: failed to render extension menu buttons template', {
         extensionName,
         extensionRoot,
         templatePath: buttonsTemplatePath,
@@ -1636,13 +1644,13 @@ export function createTrackerActions(options: {
           checkTemplateUrl({ importMetaUrl, fallbackFolderName: extensionName, templatePathNoExt: 'dist/templates/modify_schema_popup' }),
         ]);
         debugLog(settingsManager, 'Template availability checks', checks);
-        (globalThis as any).zTrackerDiagnostics = { templateChecks: checks };
+        (globalThis as any).xUtilsDiagnostics = { templateChecks: checks };
       }
 
-      st_echo('error', 'zTracker failed to load one or more HTML templates. See console for diagnostics.');
+      st_echo('error', 'xUtils failed to load one or more HTML templates. See console for diagnostics.');
     }
 
-    extensionsMenu?.querySelector('#ztracker_modify_schema_preset')?.addEventListener('click', modifyChatMetadata);
+    extensionsMenu?.querySelector('#xutils_modify_schema_preset')?.addEventListener('click', modifyChatMetadata);
   }
 
   async function modifyChatMetadata() {
@@ -1677,7 +1685,7 @@ export function createTrackerActions(options: {
     try {
       popupContent = await globalContext.renderExtensionTemplateAsync(extensionRoot, popupTemplatePath, templateData);
     } catch (error) {
-      console.error('zTracker: failed to render modify schema popup template', {
+      console.error('xUtils: failed to render modify schema popup template', {
         extensionName,
         extensionRoot,
         templatePath: popupTemplatePath,
@@ -1690,9 +1698,9 @@ export function createTrackerActions(options: {
           checkTemplateUrl({ importMetaUrl, fallbackFolderName: extensionName, templatePathNoExt: 'dist/templates/modify_schema_popup' }),
         ]);
         debugLog(settingsManager, 'Template availability checks', checks);
-        (globalThis as any).zTrackerDiagnostics = { templateChecks: checks };
+        (globalThis as any).xUtilsDiagnostics = { templateChecks: checks };
       }
-      st_echo('error', 'zTracker failed to load the Modify Schema popup template. See console for diagnostics.');
+      st_echo('error', 'xUtils failed to load the Modify Schema popup template. See console for diagnostics.');
       return;
     }
 
@@ -1700,7 +1708,7 @@ export function createTrackerActions(options: {
       okButton: 'Save',
       onClose(popup: any) {
         if (popup.result === POPUP_RESULT.AFFIRMATIVE) {
-          const selectElement = document.getElementById('ztracker-chat-schema-select') as HTMLSelectElement;
+          const selectElement = document.getElementById('xutils-chat-schema-select') as HTMLSelectElement;
           if (selectElement) {
             const newPresetKey = selectElement.value;
             if (newPresetKey !== currentPresetKey) {
@@ -1732,7 +1740,7 @@ export function createTrackerActions(options: {
     generateTrackerArrayItemFieldByIdentity,
     modifyChatMetadata,
     renderExtensionTemplates,
-    /** Lets outgoing auto mode tag zTracker-owned request starts without affecting manual generation flows. */
+    /** Lets outgoing auto mode tag xUtils-owned request starts without affecting manual generation flows. */
     setBeforeRequestStartHook(callback?: () => void) {
       beforeRequestStartHook = callback;
     },

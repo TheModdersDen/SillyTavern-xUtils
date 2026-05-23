@@ -16,7 +16,7 @@ describe('parseResponse JSON repair fixtures', () => {
 
     expect(result).toEqual(barTrackerExpected);
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired JSON response',
+      'xUtils: repaired JSON response',
       expect.objectContaining({
         appliedSteps: expect.arrayContaining([
           'json substring extraction',

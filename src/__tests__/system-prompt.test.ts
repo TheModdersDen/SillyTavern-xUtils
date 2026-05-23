@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { AutoModeOptions } from 'sillytavern-utils-lib/types/translate';
 import {
-  ensureZTrackerSystemPromptPresetInstalled,
+  ensureXUtilsSystemPromptPresetInstalled,
   getCurrentGlobalSystemPromptName,
   getSystemPromptPresetContent,
   hasSystemPromptPreset,
@@ -13,8 +13,8 @@ import {
 import {
   LEGACY_PROMPT_TOON,
   LEGACY_PROMPT_XML,
-  ZTRACKER_SYSTEM_PROMPT_PRESET_NAME,
-  ZTRACKER_SYSTEM_PROMPT_TEXT,
+  XUTILS_SYSTEM_PROMPT_PRESET_NAME,
+  XUTILS_SYSTEM_PROMPT_TEXT,
   DEFAULT_PROMPT_TOON,
   PREVIOUS_DEFAULT_PROMPT_TOON,
   DEFAULT_PROMPT_XML,
@@ -30,13 +30,13 @@ describe('system prompt helpers', () => {
       getPresetManager: () => ({
         getPresetList: () => ({
           presets: [],
-          preset_names: ['Default', 'zTracker'],
+          preset_names: ['Default', 'xUtils'],
         }),
         getCompletionPresetByName: () => undefined,
       }),
     });
 
-    expect(names).toEqual(['Default', 'zTracker']);
+    expect(names).toEqual(['Default', 'xUtils']);
   });
 
   test('lists preset names from object-based preset list', () => {
@@ -44,19 +44,19 @@ describe('system prompt helpers', () => {
       getPresetManager: () => ({
         getPresetList: () => ({
           presets: [],
-          preset_names: { Default: 0, zTracker: 1 },
+          preset_names: { Default: 0, xUtils: 1 },
         }),
         getCompletionPresetByName: () => undefined,
       }),
     });
 
-    expect(names).toEqual(['Default', 'zTracker']);
+    expect(names).toEqual(['Default', 'xUtils']);
   });
 
   test('prefers getAllPresets when available', () => {
     const names = listSystemPromptPresetNames({
       getPresetManager: () => ({
-        getAllPresets: () => ['Default', 'zTracker'],
+        getAllPresets: () => ['Default', 'xUtils'],
         getPresetList: () => ({
           presets: [],
           preset_names: [],
@@ -65,13 +65,13 @@ describe('system prompt helpers', () => {
       }),
     });
 
-    expect(names).toEqual(['Default', 'zTracker']);
+    expect(names).toEqual(['Default', 'xUtils']);
   });
 
-  test('installs shipped zTracker system prompt when missing', async () => {
+  test('installs shipped xUtils system prompt when missing', async () => {
     const savePreset = jest.fn(async () => undefined);
 
-    const installed = await ensureZTrackerSystemPromptPresetInstalled({
+    const installed = await ensureXUtilsSystemPromptPresetInstalled({
       getPresetManager: () => ({
         getCompletionPresetByName: () => undefined,
         getPresetList: () => ({ presets: [], preset_names: [] }),
@@ -80,19 +80,19 @@ describe('system prompt helpers', () => {
     });
 
     expect(installed).toBe(true);
-    expect(savePreset).toHaveBeenCalledWith(ZTRACKER_SYSTEM_PROMPT_PRESET_NAME, {
-      name: ZTRACKER_SYSTEM_PROMPT_PRESET_NAME,
-      content: ZTRACKER_SYSTEM_PROMPT_TEXT,
+    expect(savePreset).toHaveBeenCalledWith(XUTILS_SYSTEM_PROMPT_PRESET_NAME, {
+      name: XUTILS_SYSTEM_PROMPT_PRESET_NAME,
+      content: XUTILS_SYSTEM_PROMPT_TEXT,
     });
   });
 
-  test('does not overwrite existing shipped zTracker system prompt', async () => {
+  test('does not overwrite existing shipped xUtils system prompt', async () => {
     const savePreset = jest.fn(async () => undefined);
 
-    const installed = await ensureZTrackerSystemPromptPresetInstalled({
+    const installed = await ensureXUtilsSystemPromptPresetInstalled({
       getPresetManager: () => ({
         getCompletionPresetByName: () => ({
-          name: ZTRACKER_SYSTEM_PROMPT_PRESET_NAME,
+          name: XUTILS_SYSTEM_PROMPT_PRESET_NAME,
           content: 'customized',
         }),
         getPresetList: () => ({ presets: [], preset_names: [] }),
@@ -106,10 +106,10 @@ describe('system prompt helpers', () => {
 
   test('checks whether a saved preset exists', () => {
     expect(
-      hasSystemPromptPreset('zTracker', {
+      hasSystemPromptPreset('xUtils', {
         getPresetManager: () => ({
           getCompletionPresetByName: (name?: string) =>
-            name === 'zTracker' ? { name: 'zTracker', content: 'x' } : undefined,
+            name === 'xUtils' ? { name: 'xUtils', content: 'x' } : undefined,
           getPresetList: () => ({ presets: [], preset_names: [] }),
         }),
       }),
@@ -127,10 +127,10 @@ describe('system prompt helpers', () => {
 
   test('returns saved preset content when present', () => {
     expect(
-      getSystemPromptPresetContent('zTracker', {
+      getSystemPromptPresetContent('xUtils', {
         getPresetManager: () => ({
           getCompletionPresetByName: (name?: string) =>
-            name === 'zTracker' ? { name: 'zTracker', content: '  extracted prompt  ' } : undefined,
+            name === 'xUtils' ? { name: 'xUtils', content: '  extracted prompt  ' } : undefined,
           getPresetList: () => ({ presets: [], preset_names: [] }),
         }),
       }),
@@ -157,7 +157,7 @@ describe('system prompt helpers', () => {
       resolveTrackerSystemPromptName(
         {
           trackerSystemPromptMode: 'profile',
-          trackerSystemPromptSavedName: 'zTracker',
+          trackerSystemPromptSavedName: 'xUtils',
         },
         {
           getPresetManager: () => ({
@@ -178,7 +178,7 @@ describe('system prompt helpers', () => {
       resolveTrackerSystemPromptName(
         {
           trackerSystemPromptMode: 'saved',
-          trackerSystemPromptSavedName: 'zTracker',
+          trackerSystemPromptSavedName: 'xUtils',
         },
         {
           getPresetManager: () => ({
@@ -191,7 +191,7 @@ describe('system prompt helpers', () => {
           },
         },
       ),
-    ).toBe('zTracker');
+    ).toBe('xUtils');
   });
 
   test('warns when tracker saved prompt matches the active global system prompt', () => {
@@ -199,7 +199,7 @@ describe('system prompt helpers', () => {
       shouldWarnAboutSharedSystemPromptSelection(
         {
           trackerSystemPromptMode: 'saved',
-          trackerSystemPromptSavedName: 'zTracker',
+          trackerSystemPromptSavedName: 'xUtils',
         },
         {
           getPresetManager: () => ({
@@ -207,7 +207,7 @@ describe('system prompt helpers', () => {
           }),
           powerUserSettings: {
             sysprompt: {
-              name: 'ZTRACKER',
+              name: 'XUTILS',
             },
           },
         },
@@ -218,7 +218,7 @@ describe('system prompt helpers', () => {
       shouldWarnAboutSharedSystemPromptSelection(
         {
           trackerSystemPromptMode: 'saved',
-          trackerSystemPromptSavedName: 'zTracker',
+          trackerSystemPromptSavedName: 'xUtils',
         },
         {
           getPresetManager: () => ({

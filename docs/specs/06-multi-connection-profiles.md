@@ -4,12 +4,12 @@ Status: Completed
 Last updated: 2026-01-23
 
 ## Goal
-Support multiple connection profiles in zTracker.
+Support multiple connection profiles in xUtils.
 
 Note: Closed as "not needed" — current single-profile selection is sufficient.
 
 ## Current behavior (today)
-- zTracker already supports selecting **one** connection profile in settings.
+- xUtils already supports selecting **one** connection profile in settings.
 - The selected profile is persisted as `profileId: string`.
 - If `profileId` is empty, generation fails with an actionable error (it does **not** silently reuse a default profile).
 
@@ -42,7 +42,7 @@ Note: Closed as "not needed" — current single-profile selection is sufficient.
 ## Acceptance criteria
 - User can configure >1 connection profile.
 - On generation:
-  - zTracker tries profiles in configured order.
+  - xUtils tries profiles in configured order.
   - On first success, it stops and uses that result.
   - If all fail, it reports an actionable error.
 - Abort/cancel works cleanly.

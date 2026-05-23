@@ -62,7 +62,7 @@ describe('createTrackerActions cleanup flow', () => {
       const container = document.createElement('div');
       container.innerHTML = content;
       document.body.appendChild(container);
-      const checkbox = container.querySelector('[data-ztracker-cleanup-target-index="0"]') as HTMLInputElement;
+      const checkbox = container.querySelector('[data-xutils-cleanup-target-index="0"]') as HTMLInputElement;
       checkbox.checked = true;
       const clearOnlyRadio = container.querySelector('input[value="clear-only"]') as HTMLInputElement;
       clearOnlyRadio.checked = true;
@@ -71,7 +71,7 @@ describe('createTrackerActions cleanup flow', () => {
 
     const actions = createTrackerActions({
       globalContext: {
-        chat: [{ original_avatar: 'avatar.png', extra: { zTracker: { schemaValue: { time: '09:00:00' }, schemaHtml: '<div></div>' } } }],
+        chat: [{ original_avatar: 'avatar.png', extra: { xUtils: { schemaValue: { time: '09:00:00' }, schemaHtml: '<div></div>' } } }],
         saveChat: async () => undefined,
         callGenericPopup,
         extensionSettings: { connectionManager: { profiles: [makeProfile()] } },
@@ -108,7 +108,7 @@ describe('createTrackerActions cleanup flow', () => {
       <div id="extensionsMenu"></div>
       <div class="mes" mesid="0">
         <div class="mes_text">Message 0</div>
-        <div class="ztracker-part-regenerate-button" data-ztracker-part="time"></div>
+        <div class="xutils-part-regenerate-button" data-xutils-part="time"></div>
       </div>
     `;
 
@@ -123,7 +123,7 @@ describe('createTrackerActions cleanup flow', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaValue: { time: '09:00:00' },
                 schemaHtml: '<div></div>',
                 pendingRedactions: { version: 1, targets: [{ kind: 'part', partKey: 'time' }] },
@@ -160,7 +160,7 @@ describe('createTrackerActions cleanup flow', () => {
   });
 
   test('clears all pending metadata after successful full tracker regeneration', async () => {
-    document.body.innerHTML = '<div id="extensionsMenu"></div><div class="mes" mesid="0"><div class="mes_ztracker_button"></div><div class="ztracker-regenerate-button"></div><div class="mes_text"></div></div>';
+    document.body.innerHTML = '<div id="extensionsMenu"></div><div class="mes" mesid="0"><div class="mes_xutils_button"></div><div class="xutils-regenerate-button"></div><div class="mes_text"></div></div>';
 
     const actions = createTrackerActions({
       globalContext: {
@@ -168,7 +168,7 @@ describe('createTrackerActions cleanup flow', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaValue: { time: '09:00:00' },
                 schemaHtml: '<div></div>',
                 pendingRedactions: { version: 1, targets: [{ kind: 'part', partKey: 'time' }] },
@@ -208,7 +208,7 @@ describe('createTrackerActions cleanup flow', () => {
       <div id="extensionsMenu"></div>
       <div class="mes" mesid="0">
         <div class="mes_text">Message 0</div>
-        <div class="ztracker-part-regenerate-button" data-ztracker-part="time"></div>
+        <div class="xutils-part-regenerate-button" data-xutils-part="time"></div>
       </div>
     `;
 
@@ -231,7 +231,7 @@ describe('createTrackerActions cleanup flow', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaKey: 'default',
                 schemaValue: { time: '09:00:00' },
                 schemaHtml: '<div></div>',
@@ -264,12 +264,12 @@ describe('createTrackerActions cleanup flow', () => {
     });
 
     (SillyTavern.getContext() as any).saveMetadataDebounced = saveMetadataDebounced;
-    (SillyTavern.getContext() as any).chatMetadata = { zTracker: { schemaKey: 'alternate' } };
+    (SillyTavern.getContext() as any).chatMetadata = { xUtils: { schemaKey: 'alternate' } };
 
     await actions.generateTrackerPart(0, 'time');
 
     expect(trackerPartsModule.buildTopLevelPartSchema).toHaveBeenCalledWith(defaultSchema, 'time');
-    expect((SillyTavern.getContext() as any).chatMetadata).toEqual({ zTracker: { schemaKey: 'alternate' } });
+    expect((SillyTavern.getContext() as any).chatMetadata).toEqual({ xUtils: { schemaKey: 'alternate' } });
     expect(saveMetadataDebounced).not.toHaveBeenCalled();
   });
 
@@ -278,7 +278,7 @@ describe('createTrackerActions cleanup flow', () => {
       <div id="extensionsMenu"></div>
       <div class="mes" mesid="0">
         <div class="mes_text">Message 0</div>
-        <div class="ztracker-part-regenerate-button" data-ztracker-part="time"></div>
+        <div class="xutils-part-regenerate-button" data-xutils-part="time"></div>
       </div>
     `;
 
@@ -293,7 +293,7 @@ describe('createTrackerActions cleanup flow', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaKey: 'default',
                 schemaValue: { time: '09:00:00' },
                 schemaHtml: '<div></div>',
@@ -329,7 +329,7 @@ describe('createTrackerActions cleanup flow', () => {
       importMetaUrl: TEST_IMPORT_META_URL,
     });
 
-    (SillyTavern.getContext() as any).chatMetadata = { zTracker: { schemaKey: 'alternate' } };
+    (SillyTavern.getContext() as any).chatMetadata = { xUtils: { schemaKey: 'alternate' } };
 
     await actions.generateTrackerPart(0, 'time');
 
@@ -353,7 +353,7 @@ describe('createTrackerActions cleanup flow', () => {
       const container = document.createElement('div');
       container.innerHTML = content;
       document.body.appendChild(container);
-      const checkboxes = Array.from(container.querySelectorAll('[data-ztracker-cleanup-target-index]')) as HTMLInputElement[];
+      const checkboxes = Array.from(container.querySelectorAll('[data-xutils-cleanup-target-index]')) as HTMLInputElement[];
       for (const checkbox of checkboxes) {
         checkbox.checked = true;
       }
@@ -371,7 +371,7 @@ describe('createTrackerActions cleanup flow', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaKey: 'default',
                 schemaValue: { time: '09:00:00', weather: 'Sunny' },
                 schemaHtml: '<div></div>',
@@ -416,7 +416,7 @@ describe('createTrackerActions cleanup flow', () => {
       importMetaUrl: TEST_IMPORT_META_URL,
     });
 
-    (SillyTavern.getContext() as any).chatMetadata = { zTracker: { schemaKey: 'alternate' } };
+    (SillyTavern.getContext() as any).chatMetadata = { xUtils: { schemaKey: 'alternate' } };
 
     await actions.openTrackerCleanup(0);
     await flushAsyncWork();

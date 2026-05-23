@@ -12,7 +12,7 @@ export interface ParseResponseOptions {
 export type ParseResponseFormat = 'xml' | 'json' | 'toon';
 
 function logMalformedPayload(content: string, format: ParseResponseFormat, error: unknown): void {
-  console.warn('zTracker: malformed payload', {
+  console.warn('xUtils: malformed payload', {
     format,
     rawContent: content,
     ...(error instanceof Error ? { error: error.message } : error ? { error: String(error) } : {}),
@@ -36,7 +36,7 @@ export function parseResponse(content: string, format: ParseResponseFormat, opti
     }
   } catch (error: any) {
     if ((format === 'json' || format === 'toon' || format === 'xml') && Array.isArray(error?.attemptedRepairSteps) && error.attemptedRepairSteps.length > 0) {
-      console.info(`zTracker: ${format.toUpperCase()} repair failed`, {
+      console.info(`xUtils: ${format.toUpperCase()} repair failed`, {
         attemptedSteps: error.attemptedRepairSteps,
         originalLength: content.length,
       });

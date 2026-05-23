@@ -4,7 +4,7 @@ Status: Open
 Last updated: 2026-01-21
 
 ## Goal
-Add "host-integration" tests that verify `src/index.tsx` wires zTracker into SillyTavern correctly.
+Add "host-integration" tests that verify `src/index.tsx` wires xUtils into SillyTavern correctly.
 
 These tests are meant to catch regressions in:
 - event listener registration
@@ -27,7 +27,7 @@ Phase 1 tests focus on deterministic modules we own (`parser`, `schema-to-exampl
    - Verify handlers call `generateTracker(messageId)` when appropriate.
 
 2. **Generate interceptor registration**
-   - Verify the global interceptor function is registered (e.g. `globalThis.ztrackerGenerateInterceptor`).
+   - Verify the global interceptor function is registered (e.g. `globalThis.xutilsGenerateInterceptor`).
    - Verify it mutates the provided chat prompt as expected (inserts tracker snapshots) without crashing.
 
 3. **DOM selector assumptions (smoke)**
@@ -65,7 +65,7 @@ To keep tests stable, this likely requires one or more small refactors:
 ## Acceptance criteria
 - A new test suite validates:
   - expected `eventSource.on` registrations are made
-  - `globalThis.ztrackerGenerateInterceptor` is defined and callable
+  - `globalThis.xutilsGenerateInterceptor` is defined and callable
   - UI initialization touches expected selectors without throwing
 - Tests run reliably via `npm test` on Windows.
 

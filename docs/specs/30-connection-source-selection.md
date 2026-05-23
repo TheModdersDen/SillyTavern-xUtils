@@ -2,52 +2,52 @@
 
 ## Summary
 
-Add an explicit zTracker setting that lets the user choose where tracker generation gets its connection configuration:
+Add an explicit xUtils setting that lets the user choose where tracker generation gets its connection configuration:
 
 - `Use current active SillyTavern connection`
 - `Use selected saved connection profile`
 
-This keeps the existing ability to pin zTracker to any saved SillyTavern connection profile, while also allowing zTracker to follow whatever connection/profile is currently active in SillyTavern at generation time.
+This keeps the existing ability to pin xUtils to any saved SillyTavern connection profile, while also allowing xUtils to follow whatever connection/profile is currently active in SillyTavern at generation time.
 
 Confirmed decision:
 - "Current connection settings" means the live connection state currently active in SillyTavern when tracker generation starts.
 - Active mode must not require those settings to already be saved as a named connection profile.
-- If the user has live connection changes that are not saved back into a profile yet, zTracker should still follow those live settings in active mode.
+- If the user has live connection changes that are not saved back into a profile yet, xUtils should still follow those live settings in active mode.
 
 ## Current State
 
 - [src/config.ts](../../src/config.ts) persists exactly one connection reference for tracker generation: `profileId: string`.
 - [src/components/Settings.tsx](../../src/components/Settings.tsx) always shows a single `Connection Profile` selector backed by `settings.profileId`.
 - [src/ui/tracker-actions.ts](../../src/ui/tracker-actions.ts) currently requires `settings.profileId` and throws `Please select a connection profile in settings.` when it is empty.
-- zTracker already has adjacent source-selection UI for prompt state. [src/components/settings/SystemPromptSettingsSection.tsx](../../src/components/settings/SystemPromptSettingsSection.tsx) distinguishes between active SillyTavern presets, connection-profile presets, and saved prompts.
-- Existing docs and specs already treat SillyTavern runtime state as the source of truth for active prompt settings and chat type in several areas; the connection-profile selector is the remaining place where zTracker still requires an explicitly pinned saved profile.
+- xUtils already has adjacent source-selection UI for prompt state. [src/components/settings/SystemPromptSettingsSection.tsx](../../src/components/settings/SystemPromptSettingsSection.tsx) distinguishes between active SillyTavern presets, connection-profile presets, and saved prompts.
+- Existing docs and specs already treat SillyTavern runtime state as the source of truth for active prompt settings and chat type in several areas; the connection-profile selector is the remaining place where xUtils still requires an explicitly pinned saved profile.
 
 ## Problem Statement
 
-Users currently cannot tell zTracker to simply use the connection that is already active in SillyTavern. They must pick and persist a separate saved connection profile inside zTracker, even when they want tracker generation to follow their current SillyTavern selection.
+Users currently cannot tell xUtils to simply use the connection that is already active in SillyTavern. They must pick and persist a separate saved connection profile inside xUtils, even when they want tracker generation to follow their current SillyTavern selection.
 
 That creates avoidable friction and splits ownership:
 
 - SillyTavern already owns the live active connection state.
-- zTracker still forces a second explicit profile choice.
+- xUtils still forces a second explicit profile choice.
 
 The settings UI should make both workflows explicit:
 
 - follow the current active SillyTavern connection, or
-- pin zTracker to a specific saved connection profile.
+- pin xUtils to a specific saved connection profile.
 
 ## User Value
 
-- Reduces duplicate configuration when the user wants zTracker to follow the same connection they are already using in SillyTavern.
+- Reduces duplicate configuration when the user wants xUtils to follow the same connection they are already using in SillyTavern.
 - Preserves the existing advanced workflow where tracker generation should stay pinned to a different saved profile.
 - Makes the connection-selection contract as explicit as the existing system-prompt-source controls.
 
 ## Goals
 
-- Add an explicit connection-source choice to zTracker settings.
+- Add an explicit connection-source choice to xUtils settings.
 - Support both `active` and `saved-profile` behavior without removing the current saved-profile workflow.
 - Resolve the effective connection/profile at generation time so active mode tracks live SillyTavern changes.
-- Keep the UI understandable and consistent with the existing source-selection patterns in zTracker.
+- Keep the UI understandable and consistent with the existing source-selection patterns in xUtils.
 - Preserve backward compatibility for users who already selected a saved profile.
 
 ## Non-Goals
@@ -59,8 +59,8 @@ The settings UI should make both workflows explicit:
 
 ## Open Questions
 
-- Which stable SillyTavern runtime API or context field should zTracker use to resolve the currently active live connection state in 1.17 and later?
-- If some downstream helper still expects a saved profile object or ID, what is the smallest compatibility layer needed so active mode can continue using live unsaved settings without reintroducing a zTracker-local copy of connection policy?
+- Which stable SillyTavern runtime API or context field should xUtils use to resolve the currently active live connection state in 1.17 and later?
+- If some downstream helper still expects a saved profile object or ID, what is the smallest compatibility layer needed so active mode can continue using live unsaved settings without reintroducing a xUtils-local copy of connection policy?
 - In `active` mode, when `System Prompt Source = From connection profile presets`, should that mean the presets attached to the active connection profile at generation time? This is the expected behavior, but it should be verified against the final implementation path.
 
 ## Proposed Approach
@@ -106,7 +106,7 @@ Effect:
 - Add a new `Connection Source` setting and keep the existing profile picker only for the saved-profile mode.
 
 Advantages:
-- Matches zTracker's existing `System Prompt Source` pattern.
+- Matches xUtils's existing `System Prompt Source` pattern.
 - Keeps runtime-owned versus saved-owned behavior explicit.
 - Simplifies validation and migration.
 
@@ -172,7 +172,7 @@ Preferred examples:
 - `No active SillyTavern connection could be resolved for tracker generation.`
 - `The active SillyTavern connection is missing required profile data.`
 
-Avoid errors that still imply the user must always pick a saved zTracker profile when `connectionSource = 'active'`.
+Avoid errors that still imply the user must always pick a saved xUtils profile when `connectionSource = 'active'`.
 
 ## Risks and Dependencies
 
@@ -193,10 +193,10 @@ Avoid errors that still imply the user must always pick a saved zTracker profile
 
 ## Acceptance Criteria
 
-- zTracker settings expose an explicit `Connection Source` choice.
-- Users can choose `Use current active SillyTavern connection` without also selecting a saved zTracker connection profile.
-- Users can still pin zTracker to any saved SillyTavern connection profile.
-- In active mode, changing the active SillyTavern connection and then generating a tracker uses that new active connection without further zTracker changes.
+- xUtils settings expose an explicit `Connection Source` choice.
+- Users can choose `Use current active SillyTavern connection` without also selecting a saved xUtils connection profile.
+- Users can still pin xUtils to any saved SillyTavern connection profile.
+- In active mode, changing the active SillyTavern connection and then generating a tracker uses that new active connection without further xUtils changes.
 - In active mode, live connection changes that are currently active in SillyTavern are used even if they have not been saved into a named connection profile.
 - In saved mode, existing behavior remains unchanged for installs that already use `profileId`.
 - Error messages distinguish between active-mode resolution failures and saved-profile-selection failures.

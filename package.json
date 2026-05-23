@@ -1,7 +1,7 @@
 {
-    "name": "sillytavern-ztracker",
+    "name": "sillytavern-xutils",
     "version": "1.12.1",
-    "description": "SillyTavern zTracker extension.",
+    "description": "SillyTavern xUtils extension.",
     "type": "module",
     "main": "src/scripts/main.js",
     "scripts": {

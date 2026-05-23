@@ -72,7 +72,7 @@ export const SchemaPresetSection: FC<{
   );
   const isReadOnlySchemaPreset = READ_ONLY_SCHEMA_PRESET_VALUES.includes(schemaPresetKey);
   const currentChatSchemaPresetTitle = currentChatSchemaPresetHasStoredValue && !currentChatSchemaPresetHasValidStoredValue
-    ? `This chat still references unavailable schema preset "${currentChatSchemaPresetStoredKey}". zTracker is currently showing the fallback preset "${currentChatSchemaPresetLabel ?? currentChatSchemaPresetKey}" until you choose or generate with a valid chat schema.`
+    ? `This chat still references unavailable schema preset "${currentChatSchemaPresetStoredKey}". xUtils is currently showing the fallback preset "${currentChatSchemaPresetLabel ?? currentChatSchemaPresetKey}" until you choose or generate with a valid chat schema.`
     : currentChatSchemaPresetHasStoredValue
       ? `Uses "${currentChatSchemaPresetLabel ?? currentChatSchemaPresetKey}" for full tracker generation and full Regenerate Tracker in the current chat. Partial regeneration still uses each message's saved schema.`
       : currentChatSchemaPresetUsesDefault
@@ -156,7 +156,7 @@ export const SchemaPresetSection: FC<{
       <label title="Selects the default schema preset for new chats and which preset definition you are editing below. You can create, rename, and delete presets.">
         Default Schema Preset
       </label>
-      <div className="ztracker-preset-select-row">
+      <div className="xutils-preset-select-row">
         <STSelect
           value={schemaPresetKey}
           title="Selects which global schema preset definition the JSON and HTML editors below are modifying."
@@ -221,13 +221,13 @@ export const SchemaPresetSection: FC<{
         value={schemaText}
         onChange={(e) => handleSchemaValueChange(e.target.value)}
         rows={4}
-        className={schemaTextHasError ? 'ztracker-schema-textarea is-invalid' : 'ztracker-schema-textarea'}
+        className={schemaTextHasError ? 'xutils-schema-textarea is-invalid' : 'xutils-schema-textarea'}
         aria-invalid={schemaTextHasError}
       />
       {schemaTextHasError ? (
-        <div className="notes ztracker-schema-error">{schemaTextError ?? 'Invalid JSON.'}</div>
+        <div className="notes xutils-schema-error">{schemaTextError ?? 'Invalid JSON.'}</div>
       ) : schemaTextHasUnsavedChanges ? (
-        <div className="notes ztracker-schema-status">Valid JSON. Save to apply the current schema preset pair.</div>
+        <div className="notes xutils-schema-status">Valid JSON. Save to apply the current schema preset pair.</div>
       ) : null}
 
       <div className="title_restorable">
@@ -244,18 +244,18 @@ export const SchemaPresetSection: FC<{
         value={schemaHtmlText}
         onChange={(e) => handleSchemaHtmlChange(e.target.value)}
         rows={4}
-        className={schemaHtmlTextHasError ? 'ztracker-schema-textarea is-invalid' : 'ztracker-schema-textarea'}
+        className={schemaHtmlTextHasError ? 'xutils-schema-textarea is-invalid' : 'xutils-schema-textarea'}
         aria-invalid={schemaHtmlTextHasError}
         placeholder="Enter your schema HTML here..."
       />
       {schemaHtmlTextHasError ? (
-        <div className="notes ztracker-schema-error">{schemaHtmlTextError ?? 'Invalid Handlebars template.'}</div>
+        <div className="notes xutils-schema-error">{schemaHtmlTextError ?? 'Invalid Handlebars template.'}</div>
       ) : schemaHtmlTextHasUnsavedChanges ? (
-        <div className="notes ztracker-schema-status">Valid template. Save to apply the current schema preset pair.</div>
+        <div className="notes xutils-schema-status">Valid template. Save to apply the current schema preset pair.</div>
       ) : null}
 
       {schemaPresetPairError ? (
-        <div className="notes ztracker-schema-error">{schemaPresetPairError}</div>
+        <div className="notes xutils-schema-error">{schemaPresetPairError}</div>
       ) : null}
     </div>
   );

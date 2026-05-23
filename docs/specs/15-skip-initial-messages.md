@@ -5,7 +5,7 @@ Last updated: 2026-03-30
 
 ## Goal
 
-Allow users to configure a minimum chat length before zTracker starts generating trackers. This prevents tracker generation on the first few messages of a conversation, where there is typically too little context to produce useful tracker data.
+Allow users to configure a minimum chat length before xUtils starts generating trackers. This prevents tracker generation on the first few messages of a conversation, where there is typically too little context to produce useful tracker data.
 
 ## Background / Current behavior
 
@@ -17,7 +17,7 @@ Allow users to configure a minimum chat length before zTracker starts generating
 ## Definitions
 
 - **Chat length**: total number of messages in the active chat (`globalContext.chat.length`), counting from index 0.
-- **Skip threshold** (`skipFirstXMessages`): the minimum number of messages that must exist in the chat **before** zTracker will generate a tracker. A value of 0 disables the guard (current behavior).
+- **Skip threshold** (`skipFirstXMessages`): the minimum number of messages that must exist in the chat **before** xUtils will generate a tracker. A value of 0 disables the guard (current behavior).
 - **Scan window** (`includeLastXMessages`): the existing setting that controls how many messages are included in the generation prompt. This is **not** changed by this spec.
 
 ## Proposed behavior
@@ -54,9 +54,9 @@ Example: `skipFirstXMessages = 6`, `includeLastXMessages = 4`
 
 ### UI
 
-- Add a number input to the zTracker settings panel, near the existing `includeLastXMessages` control.
+- Add a number input to the xUtils settings panel, near the existing `includeLastXMessages` control.
 - Label: *"Skip First X Messages"*
-- Tooltip/title: *"Minimum number of messages before zTracker starts generating trackers. 0 disables this threshold."*
+- Tooltip/title: *"Minimum number of messages before xUtils starts generating trackers. 0 disables this threshold."*
 
 ## Decisions (closed)
 

@@ -25,7 +25,7 @@ function buildMessage(messageId: number): string {
     <div id="extensionsMenu"></div>
     <div class="mes" mesid="${messageId}">
       <div class="mes_text">Message ${messageId}</div>
-      <div class="ztracker-part-regenerate-button" data-ztracker-part="time"></div>
+      <div class="xutils-part-regenerate-button" data-xutils-part="time"></div>
     </div>
   `;
 }
@@ -71,7 +71,7 @@ describe('createTrackerActions context-menu indicator', () => {
 
     const actions = createTrackerActions({
       globalContext: {
-        chat: [{ original_avatar: 'avatar.png', extra: { zTracker: { schemaValue: { time: '09:00:00' } } } }],
+        chat: [{ original_avatar: 'avatar.png', extra: { xUtils: { schemaValue: { time: '09:00:00' } } } }],
         saveChat: async () => undefined,
         extensionSettings: { connectionManager: { profiles: [makeProfile()] } },
         CONNECT_API_MAP: { openai: { selected: 'openai' } },
@@ -86,14 +86,14 @@ describe('createTrackerActions context-menu indicator', () => {
     const pending = actions.generateTrackerPart(0, 'time');
     await flushAsyncWork();
 
-    expect(document.querySelector('.ztracker-context-menu-status')?.textContent).toContain('Updating tracker from menu');
-    expect(document.querySelector('.ztracker-part-regenerate-button')?.classList.contains('spinning')).toBe(true);
+    expect(document.querySelector('.xutils-context-menu-status')?.textContent).toContain('Updating tracker from menu');
+    expect(document.querySelector('.xutils-part-regenerate-button')?.classList.contains('spinning')).toBe(true);
 
     finishRequest?.();
     await pending;
 
-    expect(document.querySelector('.ztracker-context-menu-status')).toBeNull();
-    expect(document.querySelector('.ztracker-part-regenerate-button')?.classList.contains('spinning')).toBe(false);
+    expect(document.querySelector('.xutils-context-menu-status')).toBeNull();
+    expect(document.querySelector('.xutils-part-regenerate-button')?.classList.contains('spinning')).toBe(false);
     expect(applyTrackerUpdateAndRenderMock).toHaveBeenCalled();
   });
 });

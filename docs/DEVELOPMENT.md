@@ -1,10 +1,10 @@
-# Development (zTracker)
+# Development (xUtils)
 
 This document is for contributors and maintainers. It covers local development, testing, and versioning/release workflow for this repository.
 
 ## Maintainer docs
 
-- Use [WORKFLOW_INDEX.md](WORKFLOW_INDEX.md) as the canonical index of zTracker user controls, runtime events, and testing gaps.
+- Use [WORKFLOW_INDEX.md](WORKFLOW_INDEX.md) as the canonical index of xUtils user controls, runtime events, and testing gaps.
 - Use [TRACKER_INJECTION_BEHAVIOR.md](TRACKER_INJECTION_BEHAVIOR.md) for the detailed runtime contract of tracker snapshot injection.
 - Use [specs/specs-index.md](specs/specs-index.md) for living feature specs and historical design intent.
 
@@ -15,7 +15,7 @@ Working on the extension locally?
 - Install dependencies once with `npm install`.
 - Run `npm test` to execute the Jest suite (parser/schema helpers + jsdom render tests).
 - Run `npm run dev` for a watch build while you iterate.
-- Run `npm run debug:tracker-context:json` to print one sample JSON-mode tracker-generation request, including the final prompt array after zTracker snapshot injection and the `json_schema` payload passed to the generator.
+- Run `npm run debug:tracker-context:json` to print one sample JSON-mode tracker-generation request, including the final prompt array after xUtils snapshot injection and the `json_schema` payload passed to the generator.
 - Run `npm run debug:tracker-context:xml` to print one sample XML prompt-engineering tracker-generation request, including the final prompt array and rendered XML instructions.
 - Run `npm run debug:tracker-context:toon` to print one sample TOON prompt-engineering tracker-generation request, including the final prompt array and rendered TOON instructions.
 
@@ -34,7 +34,7 @@ Test boundaries to remember:
 For GitHub Copilot or other coding agents:
 
 - Use `.github/skills/sillytavern-extension-development/` for general SillyTavern extension knowledge such as manifest fields, `SillyTavern.getContext()`, events, interceptors, upstream compatibility, and generic host-level validation strategy.
-- Use this document for zTracker-specific commands, local build and test workflow, release steps, and contributor operations in this repository.
+- Use this document for xUtils-specific commands, local build and test workflow, release steps, and contributor operations in this repository.
 - Keep repo-only procedures here instead of moving them into the general skill.
 
 ## Versioning

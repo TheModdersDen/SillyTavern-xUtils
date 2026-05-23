@@ -5,7 +5,7 @@ Last updated: 2026-04-17
 
 ## Summary
 
-Show a visible message-level status indicator when zTracker generation is triggered from the tracker context menu. This should reuse the same visual language as the existing outgoing auto-mode badge that appears when a normal sent message pauses reply generation to build a tracker first.
+Show a visible message-level status indicator when xUtils generation is triggered from the tracker context menu. This should reuse the same visual language as the existing outgoing auto-mode badge that appears when a normal sent message pauses reply generation to build a tracker first.
 
 The current context-menu path only spins the clicked regenerate control inside the parts menu. The new behavior should add a message-level badge on the target message for the lifetime of the request, while keeping the clicked control spinner.
 
@@ -21,7 +21,7 @@ That is technically correct, but it is easy to miss in practice:
 
 - The parts menu is portaled and can be visually separated from the message.
 - The clicked control may scroll out of view during longer requests.
-- The menu-level spinner does not give the same clear “zTracker is busy on this message” signal that users already get during outgoing auto-mode.
+- The menu-level spinner does not give the same clear “xUtils is busy on this message” signal that users already get during outgoing auto-mode.
 
 By contrast, outgoing auto-mode adds a clear badge above the pending message with the text `Generating tracker before reply`, which makes the tracker operation obvious even when the user is focused on the message body rather than the initiating control.
 
@@ -35,8 +35,8 @@ This feature closes that UX gap and makes manual context-menu-triggered generati
 
 `src/ui/outgoing-auto-mode.ts` then:
 
-- adds `.ztracker-auto-mode-hold` to the message block;
-- injects a `.ztracker-auto-mode-status` badge before `.mes_text`;
+- adds `.xutils-auto-mode-hold` to the message block;
+- injects a `.xutils-auto-mode-status` badge before `.mes_text`;
 - renders the text `Generating tracker before reply`;
 - swaps the host send button into a stop button;
 - removes the indicator when tracker generation completes.
@@ -61,7 +61,7 @@ They do not add any message-level indicator and they do not involve `outgoing-au
 ## Goals
 
 - Show a visible message-level status indicator while any context-menu tracker regeneration request is in flight.
-- Reuse the existing zTracker indicator styling and placement so the UI stays consistent.
+- Reuse the existing xUtils indicator styling and placement so the UI stays consistent.
 - Keep the current clicked-button spinner so users still see which specific part/item/field was targeted.
 - Remove the indicator reliably on success, failure, or cancellation.
 - Scope the indicator to the affected message only.
@@ -101,7 +101,7 @@ Why this text:
 - it still reads as tracker-generation work;
 - it avoids implying that a normal chat reply is being held.
 
-The existing truck-fast icon can be reused so the indicator remains visually tied to zTracker.
+The existing truck-fast icon can be reused so the indicator remains visually tied to xUtils.
 
 ### Lifecycle
 
@@ -123,7 +123,7 @@ Context-menu generation only needs the first responsibility. The implementation 
 
 Preferred direction:
 
-- extract a small shared helper for the message-level zTracker status badge;
+- extract a small shared helper for the message-level xUtils status badge;
 - keep outgoing auto-mode send-button behavior inside `outgoing-auto-mode.ts`;
 - let `tracker-actions.ts` use the shared badge helper directly.
 
@@ -135,9 +135,9 @@ This keeps the change local and avoids inventing a fake “pending outgoing auto
 
 Move the badge DOM creation/removal logic behind a helper that can:
 
-- add a zTracker status badge to a specific message id;
-- remove a zTracker status badge from a specific message id;
-- optionally preserve the existing `.ztracker-auto-mode-hold` behavior for outgoing auto-mode.
+- add a xUtils status badge to a specific message id;
+- remove a xUtils status badge from a specific message id;
+- optionally preserve the existing `.xutils-auto-mode-hold` behavior for outgoing auto-mode.
 
 The helper should stay DOM-focused and should not know about host generation suppression or resume logic.
 

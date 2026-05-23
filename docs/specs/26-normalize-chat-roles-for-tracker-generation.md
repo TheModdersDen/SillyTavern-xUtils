@@ -5,11 +5,11 @@ Last updated: 2026-04-21
 
 ## Summary
 
-Add a tracker-generation-only prompt-assembly mode that treats all recent chat turns as `assistant` messages before zTracker sends the request to the model.
+Add a tracker-generation-only prompt-assembly mode that treats all recent chat turns as `assistant` messages before xUtils sends the request to the model.
 
 The goal is to reduce model bias around "who said it" during tracker extraction. From the tracker's point of view, the important part is usually the scene content itself, not whether a turn came from the user or the character. System-role messages remain reserved for tracker-generation instructions and other host-owned prompt context.
 
-This is a prompt-assembly feature only. It does not change message rendering, stored chat history, tracker injection into normal generations, or SillyTavern's live chat prompt outside zTracker's tracker-generation flow.
+This is a prompt-assembly feature only. It does not change message rendering, stored chat history, tracker injection into normal generations, or SillyTavern's live chat prompt outside xUtils's tracker-generation flow.
 
 ## Motivation
 
@@ -19,7 +19,7 @@ Current tracker generation preserves the user/assistant split that comes back fr
 - users may feel pressure to tune prompts around role labels even when they only want the model to summarize content changes;
 - the feature request is fundamentally about lowering the model's "mental load" so tracker generation can focus on content rather than dialogue ownership.
 
-This is especially plausible for tracker generation because zTracker is not asking the model to continue the scene. It is asking the model to interpret the scene and produce structured state.
+This is especially plausible for tracker generation because xUtils is not asking the model to continue the scene. It is asking the model to interpret the scene and produce structured state.
 
 ## Current behavior (verified)
 
@@ -28,7 +28,7 @@ This is especially plausible for tracker generation because zTracker is not aski
 The current tracker-generation path is:
 
 1. `prepareTrackerGeneration()` in `src/ui/tracker-actions.ts` calls `buildPrompt(...)` to get the recent prompt messages for the selected API.
-2. The result is passed through `includeZTrackerMessages(...)` from `src/tracker.ts`, which can inject prior tracker snapshots into that message list.
+2. The result is passed through `includeXUtilsMessages(...)` from `src/tracker.ts`, which can inject prior tracker snapshots into that message list.
 3. Optional allowlisted World Info is inserted as a `system` message.
 4. `requestStructuredTrackerContent()` appends the final tracker-generation instruction as a trailing `system` message.
 5. `makeRequestFactory()` calls `sanitizeMessagesForGeneration(...)` before the request is sent.
@@ -51,13 +51,13 @@ The tracker-generation settings live in the `Tracker Generation` section, curren
 - `GenerationPromptTemplatesSection.tsx`
 - `WorldInfoPolicySection.tsx`
 
-There is already an injection-only role setting, `embedZTrackerRole`, exposed in `TrackerInjectionSection.tsx` as `Embed zTracker snapshots as`.
+There is already an injection-only role setting, `embedXUtilsRole`, exposed in `TrackerInjectionSection.tsx` as `Embed xUtils snapshots as`.
 
 Codebase verification shows that this existing injection role setting must not be reused for the new feature:
 
 - the UI copy describes it as affecting normal-generation injection only;
 - the user request is specifically about tracker generation;
-- `includeZTrackerMessages(...)` is shared by both tracker generation and `generate_interceptor`, so piggybacking on that setting would make the UX harder to reason about.
+- `includeXUtilsMessages(...)` is shared by both tracker generation and `generate_interceptor`, so piggybacking on that setting would make the UX harder to reason about.
 
 The new feature therefore needs its own tracker-generation-local setting and its own normalization step.
 
@@ -130,7 +130,7 @@ Reasoning:
 
 Recommended tooltip copy:
 
-"Controls how recent chat messages are labeled during tracker generation. This only affects zTracker's tracker request, not normal chat generation or tracker injection."
+"Controls how recent chat messages are labeled during tracker generation. This only affects xUtils's tracker request, not normal chat generation or tracker injection."
 
 Optional helper text when the non-default mode is selected:
 

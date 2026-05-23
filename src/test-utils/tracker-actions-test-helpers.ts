@@ -10,7 +10,7 @@ export const buildPromptMock = jest.fn<() => Promise<{ result: Array<{ role: str
 export const applyTrackerUpdateAndRenderMock = jest.fn();
 export const renderTrackerWithDepsMock = jest.fn();
 export const stEchoMock = jest.fn();
-export const includeZTrackerMessagesMock = jest.fn((messages: Array<unknown>) => [...messages]);
+export const includeXUtilsMessagesMock = jest.fn((messages: Array<unknown>) => [...messages]);
 const embeddedTrackerSnapshotMarker = Symbol('embeddedTrackerSnapshot');
 
 function resolveMockSpeakerName(message: { name?: unknown; source?: { name?: unknown } }): string | undefined {
@@ -159,7 +159,7 @@ jest.unstable_mockModule('../tracker.js', () => ({
       remainingMessages: firstNonSystemIndex === -1 ? [] : messages.slice(firstNonSystemIndex),
     };
   }),
-  includeZTrackerMessages: includeZTrackerMessagesMock,
+  includeXUtilsMessages: includeXUtilsMessagesMock,
   normalizeTrackerGenerationConversationRoles: normalizeTrackerGenerationConversationRolesMock,
   sanitizeMessagesForGeneration: sanitizeMessagesForGenerationMock,
 }));
@@ -302,7 +302,7 @@ export function makeSettings(overrides: Record<string, unknown> = {}) {
     connectionSource: 'saved',
     profileId: 'profile-1',
     trackerSystemPromptMode: 'saved',
-    trackerSystemPromptSavedName: 'zTracker',
+    trackerSystemPromptSavedName: 'xUtils',
     maxResponseToken: 512,
     promptEngineeringMode: PromptEngineeringMode.NATIVE,
     prompt: 'Generate tracker JSON',
@@ -313,8 +313,8 @@ export function makeSettings(overrides: Record<string, unknown> = {}) {
     includeLastXMessages: 0,
     skipCharacterCardInTrackerGeneration: false,
     trackerGenerationConversationRoleMode: 'preserve',
-    includeLastXZTrackerMessages: 0,
-    embedZTrackerAsCharacter: false,
+    includeLastXXUtilsMessages: 0,
+    embedXUtilsAsCharacter: false,
     sequentialPartGeneration: false,
     trackerWorldInfoPolicyMode: TrackerWorldInfoPolicyMode.INCLUDE_ALL,
     trackerWorldInfoAllowlistBookNames: [],
@@ -370,8 +370,8 @@ export function makeContext(options: {
 } = {}) {
   const savedPromptPreset = {
     getCompletionPresetByName: (name?: string) =>
-      name === 'zTracker' ? { name: 'zTracker', content: 'Saved tracker system prompt' } : undefined,
-    getPresetList: () => ({ presets: [], preset_names: ['zTracker'] }),
+      name === 'xUtils' ? { name: 'xUtils', content: 'Saved tracker system prompt' } : undefined,
+    getPresetList: () => ({ presets: [], preset_names: ['xUtils'] }),
   };
 
   const host = createSillyTavernHost({
@@ -432,8 +432,8 @@ export function resetTrackerActionTestState(): void {
   jest.clearAllMocks();
   buildPromptMock.mockReset();
   applyTrackerUpdateAndRenderMock.mockReset();
-  includeZTrackerMessagesMock.mockReset();
-  includeZTrackerMessagesMock.mockImplementation((messages: Array<unknown>) => [...messages]);
+  includeXUtilsMessagesMock.mockReset();
+  includeXUtilsMessagesMock.mockImplementation((messages: Array<unknown>) => [...messages]);
   normalizeTrackerGenerationConversationRolesMock.mockReset();
   normalizeTrackerGenerationConversationRolesMock.mockImplementation(normalizeTrackerGenerationConversationRolesImpl);
   renderTrackerWithDepsMock.mockReset();

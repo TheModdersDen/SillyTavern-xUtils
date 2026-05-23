@@ -20,7 +20,7 @@ describe('parseResponse XML repair fixtures', () => {
     const result = parseResponse(damagedXmlReplyFromBarChat, 'xml', { schema: sceneTrackerSchema });
 
     expect(result).toEqual(barTrackerExpected);
-    expect(consoleInfoSpy).not.toHaveBeenCalledWith('zTracker: XML repair failed', expect.anything());
+    expect(consoleInfoSpy).not.toHaveBeenCalledWith('xUtils: XML repair failed', expect.anything());
   });
 
   it('repairs the live smoke-test XML reply when the first opening bracket is missing', () => {
@@ -30,7 +30,7 @@ describe('parseResponse XML repair fixtures', () => {
 
     expect(result).toEqual(barTrackerExpected);
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired XML response',
+      'xUtils: repaired XML response',
       expect.objectContaining({
         appliedSteps: expect.arrayContaining(['xml opening bracket repair']),
       }),

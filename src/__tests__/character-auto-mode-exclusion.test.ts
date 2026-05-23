@@ -28,7 +28,7 @@ describe('character auto-mode exclusion helpers', () => {
     ).toBe(1);
   });
 
-  test('reads exclusion state from the zTracker character extension payload', () => {
+  test('reads exclusion state from the xUtils character extension payload', () => {
     expect(
       isCharacterAutoModeExcluded({
         data: { extensions: { [EXTENSION_KEY]: { autoModeExcluded: true } } },

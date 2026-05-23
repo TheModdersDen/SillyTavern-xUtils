@@ -9,12 +9,12 @@ export const GenerationBehaviorSection: FC<SettingsSectionProps> = ({ settings, 
   return (
     <>
       <div className="setting-row">
-        <label title="Controls when zTracker automatically generates trackers: never, on incoming assistant messages, on your inputs, or both.">
+        <label title="Controls when xUtils automatically generates trackers: never, on incoming assistant messages, on your inputs, or both.">
           Auto Mode
         </label>
         <select
           className="text_pole"
-          title="Controls when zTracker automatically generates trackers: never, on incoming assistant messages, on your inputs, or both."
+          title="Controls when xUtils automatically generates trackers: never, on incoming assistant messages, on your inputs, or both."
           value={settings.autoMode}
           onChange={(e) =>
             updateAndRefresh((s) => {
@@ -30,7 +30,7 @@ export const GenerationBehaviorSection: FC<SettingsSectionProps> = ({ settings, 
       </div>
 
       <div className="setting-row">
-        <label title="When enabled, zTracker generates tracker fields sequentially (smaller requests) and enables per-part regeneration controls.">
+        <label title="When enabled, xUtils generates tracker fields sequentially (smaller requests) and enables per-part regeneration controls.">
           Sequential generation
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -48,13 +48,13 @@ export const GenerationBehaviorSection: FC<SettingsSectionProps> = ({ settings, 
       </div>
 
       <div className="setting-row">
-        <label title="Max tokens zTracker requests for the model response during tracker generation.">Max Response Tokens</label>
+        <label title="Max tokens xUtils requests for the model response during tracker generation.">Max Response Tokens</label>
         <input
           type="number"
           className="text_pole"
           min="1"
           step="1"
-          title="Max tokens zTracker requests for the model response during tracker generation."
+          title="Max tokens xUtils requests for the model response during tracker generation."
           value={settings.maxResponseToken}
           onChange={(e) =>
             updateAndRefresh((s) => {
@@ -65,7 +65,7 @@ export const GenerationBehaviorSection: FC<SettingsSectionProps> = ({ settings, 
       </div>
 
       <div className="setting-row">
-        <label title="Minimum number of messages before zTracker starts generating trackers. 0 disables this threshold.">
+        <label title="Minimum number of messages before xUtils starts generating trackers. 0 disables this threshold.">
           Skip First X Messages
         </label>
         <input
@@ -73,7 +73,7 @@ export const GenerationBehaviorSection: FC<SettingsSectionProps> = ({ settings, 
           className="text_pole"
           min="0"
           step="1"
-          title="Minimum number of messages before zTracker starts generating trackers. 0 disables this threshold."
+          title="Minimum number of messages before xUtils starts generating trackers. 0 disables this threshold."
           value={settings.skipFirstXMessages}
           onChange={(e) =>
             updateAndRefresh((s) => {
@@ -103,12 +103,12 @@ export const GenerationBehaviorSection: FC<SettingsSectionProps> = ({ settings, 
       </div>
 
       <div className="setting-row">
-        <label title="Controls how recent chat messages are labeled during tracker generation. This only affects zTracker's tracker request, not normal chat generation or tracker injection.">
+        <label title="Controls how recent chat messages are labeled during tracker generation. This only affects xUtils's tracker request, not normal chat generation or tracker injection.">
           Conversation role handling
         </label>
         <select
           className="text_pole"
-          title="Controls how recent chat messages are labeled during tracker generation. This only affects zTracker's tracker request, not normal chat generation or tracker injection."
+          title="Controls how recent chat messages are labeled during tracker generation. This only affects xUtils's tracker request, not normal chat generation or tracker injection."
           value={settings.trackerGenerationConversationRoleMode ?? 'preserve'}
           onChange={(e) =>
             updateAndRefresh((s) => {

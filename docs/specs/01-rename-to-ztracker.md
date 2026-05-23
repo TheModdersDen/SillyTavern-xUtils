@@ -1,10 +1,10 @@
-# Spec: Rename extension to zTracker
+# Spec: Rename extension to xUtils
 
 Status: Completed
 Last updated: 2026-01-21
 
 ## Goal
-Rename the extension to **zTracker** in a way that is clear to users and does not accidentally break existing stored tracker data.
+Rename the extension to **xUtils** in a way that is clear to users and does not accidentally break existing stored tracker data.
 
 ## Scope
 - Rename user-facing extension name in UI and metadata.
@@ -17,25 +17,25 @@ Rename the extension to **zTracker** in a way that is clear to users and does no
 
 ## Open questions to clarify first
 1. Migration policy:
-   - Do we want a non-breaking migration from the legacy keys to new keys (`zTracker`), or is this a breaking fork?
+   - Do we want a non-breaking migration from the legacy keys to new keys (`xUtils`), or is this a breaking fork?
 2. Folder name / install path:
    - What will the extension folder be named in SillyTavern after installation? (This affects template paths like `third-party/<folder>`.)
 3. Branding:
-   - Is the display name exactly `zTracker` (lowercase z) or `ZTracker`?
+   - Is the display name exactly `xUtils` (lowercase z) or `XUtils`?
 4. Backward compatibility window:
    - If we migrate, do we keep reading the legacy key for a while, or do a one-time copy and then drop support?
 
 ## Decisions (chosen)
-- Chosen display name: `zTracker`
-- Chosen internal key (settings/extras/metadata): `zTracker`
-- Chosen extension folder name (for templates): `SillyTavern-zTracker`
+- Chosen display name: `xUtils`
+- Chosen internal key (settings/extras/metadata): `xUtils`
+- Chosen extension folder name (for templates): `SillyTavern-xUtils`
 - Migration approach: none (fresh start)
-- Legacy read-compat window: none (no backward compatibility before first zTracker release)
+- Legacy read-compat window: none (no backward compatibility before first xUtils release)
 
 ## Clarifications checklist (answer these before coding)
-- [x] Confirm display name: `zTracker`
-- [x] Confirm internal key: `zTracker`
-- [x] Confirm template folder name used by ST installer: `SillyTavern-zTracker`
+- [x] Confirm display name: `xUtils`
+- [x] Confirm internal key: `xUtils`
+- [x] Confirm template folder name used by ST installer: `SillyTavern-xUtils`
 - [x] Confirm migration: no
 - [x] Confirm legacy read-compat window: none
 
@@ -46,7 +46,7 @@ Rename the extension to **zTracker** in a way that is clear to users and does no
 - Do not include any migration/back-compat logic for legacy tracker data.
 
 ## Acceptance criteria
-- Shows as `zTracker` in Manage Extensions.
+- Shows as `xUtils` in Manage Extensions.
 - Tracker generation, rendering, edit/delete/regenerate still works.
 - Existing chats created before the rename are not supported (fresh start).
 - No console errors related to template loading or missing interceptor.
@@ -60,7 +60,7 @@ Rename the extension to **zTracker** in a way that is clear to users and does no
 - [skippped] Add/update tests covering migration behavior *(explicitly deferred; test coverage will be added in a later spec)*
  
 ## Notes / consequences
-- Old stored data (message extras / settings / chat metadata) created under the previous name will be ignored by zTracker.
+- Old stored data (message extras / settings / chat metadata) created under the previous name will be ignored by xUtils.
 - This simplifies the code but is a breaking change for existing users of the legacy tracker build.
 
 ## Notes

@@ -11,7 +11,7 @@ import {
   installSillyTavernHost,
 } from '../test-utils/sillytavern-host-harness.js';
 
-const includeZTrackerMessagesMock = jest.fn((chat: unknown[], ..._rest: unknown[]) => [...chat]);
+const includeXUtilsMessagesMock = jest.fn((chat: unknown[], ..._rest: unknown[]) => [...chat]);
 
 jest.unstable_mockModule('sillytavern-utils-lib/config', () => ({
   st_echo: jest.fn(),
@@ -38,7 +38,7 @@ jest.unstable_mockModule('sillytavern-utils-lib/types', () => ({
 }));
 
 jest.unstable_mockModule('../tracker.js', () => ({
-  includeZTrackerMessages: includeZTrackerMessagesMock,
+  includeXUtilsMessages: includeXUtilsMessagesMock,
 }));
 
 const { initializeGlobalUI } = await import('../ui/ui-init.js');
@@ -62,7 +62,7 @@ function createUiInitActions() {
 describe('initializeGlobalUI idempotence', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
-    includeZTrackerMessagesMock.mockClear();
+    includeXUtilsMessagesMock.mockClear();
   });
 
   test('does not duplicate injected UI or click handlers when initialized twice', async () => {
@@ -72,13 +72,13 @@ describe('initializeGlobalUI idempotence', () => {
     installExtensionsMenuDom();
     installMessageTemplateDom();
     installChatMessageDom(0, {
-      innerHtml: '<div class="mes_button mes_ztracker_button"></div><div class="mes_text">Message 0</div>',
+      innerHtml: '<div class="mes_button mes_xutils_button"></div><div class="mes_text">Message 0</div>',
     });
 
     await initializeGlobalUI({
       globalContext: host.context,
       settingsManager: {
-        getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXZTrackerMessages: 1 })),
+        getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXXUtilsMessages: 1 })),
       } as any,
       actions,
       renderTrackerWithDeps: jest.fn(),
@@ -87,15 +87,15 @@ describe('initializeGlobalUI idempotence', () => {
     await initializeGlobalUI({
       globalContext: host.context,
       settingsManager: {
-        getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXZTrackerMessages: 1 })),
+        getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXXUtilsMessages: 1 })),
       } as any,
       actions,
       renderTrackerWithDeps: jest.fn(),
     });
 
-    expect(document.querySelectorAll('#message_template .mes_ztracker_button')).toHaveLength(1);
+    expect(document.querySelectorAll('#message_template .mes_xutils_button')).toHaveLength(1);
 
-    (document.querySelector('.mes[mesid="0"] .mes_ztracker_button') as HTMLElement).dispatchEvent(
+    (document.querySelector('.mes[mesid="0"] .mes_xutils_button') as HTMLElement).dispatchEvent(
       new MouseEvent('click', { bubbles: true }),
     );
 
@@ -110,19 +110,19 @@ describe('initializeGlobalUI idempotence', () => {
     installExtensionsMenuDom();
     installMessageTemplateDom();
     installChatMessageDom(0, {
-      innerHtml: '<div class="ztracker-regenerate-button"></div><div class="mes_text">Message 0</div>',
+      innerHtml: '<div class="xutils-regenerate-button"></div><div class="mes_text">Message 0</div>',
     });
 
     await initializeGlobalUI({
       globalContext: host.context,
       settingsManager: {
-        getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXZTrackerMessages: 1 })),
+        getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXXUtilsMessages: 1 })),
       } as any,
       actions,
       renderTrackerWithDeps: jest.fn(),
     });
 
-    (document.querySelector('.mes[mesid="0"] .ztracker-regenerate-button') as HTMLElement).dispatchEvent(
+    (document.querySelector('.mes[mesid="0"] .xutils-regenerate-button') as HTMLElement).dispatchEvent(
       new MouseEvent('click', { bubbles: true }),
     );
 

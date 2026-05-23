@@ -76,37 +76,37 @@ export function createOutgoingAutoModeController(options: { actions: TrackerActi
     }
 
     if (state.pendingMessageId === null) {
-      if (sendButton.dataset.ztrackerAutoModeManaged !== 'true') {
+      if (sendButton.dataset.xutilsAutoModeManaged !== 'true') {
         return;
       }
 
-      const originalClassName = sendButton.dataset.ztrackerOriginalClassName;
+      const originalClassName = sendButton.dataset.xutilsOriginalClassName;
       if (originalClassName) {
         sendButton.className = originalClassName;
       }
 
-      sendButton.title = sendButton.dataset.ztrackerOriginalTitle ?? '';
-      const originalAriaLabel = sendButton.dataset.ztrackerOriginalAriaLabel;
+      sendButton.title = sendButton.dataset.xutilsOriginalTitle ?? '';
+      const originalAriaLabel = sendButton.dataset.xutilsOriginalAriaLabel;
       if (originalAriaLabel) {
         sendButton.setAttribute('aria-label', originalAriaLabel);
       } else {
         sendButton.removeAttribute('aria-label');
       }
 
-      delete sendButton.dataset.ztrackerAutoModeManaged;
-      delete sendButton.dataset.ztrackerOriginalClassName;
-      delete sendButton.dataset.ztrackerOriginalTitle;
-      delete sendButton.dataset.ztrackerOriginalAriaLabel;
+      delete sendButton.dataset.xutilsAutoModeManaged;
+      delete sendButton.dataset.xutilsOriginalClassName;
+      delete sendButton.dataset.xutilsOriginalTitle;
+      delete sendButton.dataset.xutilsOriginalAriaLabel;
       return;
     }
 
-    if (sendButton.dataset.ztrackerAutoModeManaged !== 'true') {
-      sendButton.dataset.ztrackerAutoModeManaged = 'true';
-      sendButton.dataset.ztrackerOriginalClassName = sendButton.className;
-      sendButton.dataset.ztrackerOriginalTitle = sendButton.getAttribute('title') ?? '';
+    if (sendButton.dataset.xutilsAutoModeManaged !== 'true') {
+      sendButton.dataset.xutilsAutoModeManaged = 'true';
+      sendButton.dataset.xutilsOriginalClassName = sendButton.className;
+      sendButton.dataset.xutilsOriginalTitle = sendButton.getAttribute('title') ?? '';
       const originalAriaLabel = sendButton.getAttribute('aria-label');
       if (originalAriaLabel !== null) {
-        sendButton.dataset.ztrackerOriginalAriaLabel = originalAriaLabel;
+        sendButton.dataset.xutilsOriginalAriaLabel = originalAriaLabel;
       }
     }
 
@@ -166,7 +166,7 @@ export function createOutgoingAutoModeController(options: { actions: TrackerActi
     }
   };
 
-  /** Marks that zTracker is about to dispatch one of its own tracker requests while the outgoing hold is active. */
+  /** Marks that xUtils is about to dispatch one of its own tracker requests while the outgoing hold is active. */
   const noteTrackerRequestStart = () => {
     if (state.pendingMessageId === null) {
       return;
@@ -234,7 +234,7 @@ export function createOutgoingAutoModeController(options: { actions: TrackerActi
     syncUi();
   };
 
-  /** Prevents the host from racing ahead while zTracker still owns the outgoing turn. */
+  /** Prevents the host from racing ahead while xUtils still owns the outgoing turn. */
   const handleGenerationStarted = () => {
     if (state.pendingMessageId === null) {
       return;

@@ -1,4 +1,4 @@
-// Realistic parser-repair fixtures derived from zTracker-style chat exchanges.
+// Realistic parser-repair fixtures derived from xUtils-style chat exchanges.
 
 const TRIPLE_BACKTICKS = '```';
 

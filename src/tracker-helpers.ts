@@ -1,9 +1,10 @@
 /** Shares small tracker helpers across render, cleanup, and schema modules. */
+import { LEGACY_SCHEMA_ID_KEY, XUTILS_SCHEMA_ID_KEY } from './extension-metadata.js';
 
 /** Resolves the stable identity field for object-array tracker parts. */
 export function getArrayItemIdentityKey(schema: any, partKey: string): string {
   const partDef = schema?.properties?.[partKey];
-  const key = partDef?.['x-ztracker-idKey'];
+  const key = partDef?.[XUTILS_SCHEMA_ID_KEY] ?? partDef?.[LEGACY_SCHEMA_ID_KEY];
   return typeof key === 'string' && key.trim() ? key.trim() : 'name';
 }
 

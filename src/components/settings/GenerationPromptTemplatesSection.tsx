@@ -41,12 +41,12 @@ export const GenerationPromptTemplatesSection: FC<SettingsSectionProps> = ({ set
   return (
     <>
       <div className="setting-row">
-        <label title="Chooses how zTracker asks the model for structured output: use the native API format, or use JSON/XML/TOON prompt-engineering templates.">
+        <label title="Chooses how xUtils asks the model for structured output: use the native API format, or use JSON/XML/TOON prompt-engineering templates.">
           Prompt Engineering
         </label>
         <select
           className="text_pole"
-          title="Chooses how zTracker asks the model for structured output: use the native API format, or use JSON/XML/TOON prompt-engineering templates."
+          title="Chooses how xUtils asks the model for structured output: use the native API format, or use JSON/XML/TOON prompt-engineering templates."
           value={settings.promptEngineeringMode}
           onChange={(e) =>
             updateAndRefresh((s) => {

@@ -12,7 +12,7 @@ import {
   installSillyTavernHost,
 } from '../test-utils/sillytavern-host-harness.js';
 
-const includeZTrackerMessagesMock = jest.fn((chat: unknown[], ..._rest: unknown[]) => [...chat]);
+const includeXUtilsMessagesMock = jest.fn((chat: unknown[], ..._rest: unknown[]) => [...chat]);
 
 jest.unstable_mockModule('sillytavern-utils-lib/config', () => ({
   st_echo: jest.fn(),
@@ -37,7 +37,7 @@ jest.unstable_mockModule('sillytavern-utils-lib/types', () => ({
 }));
 
 jest.unstable_mockModule('../tracker.js', () => ({
-  includeZTrackerMessages: includeZTrackerMessagesMock,
+  includeXUtilsMessages: includeXUtilsMessagesMock,
 }));
 
 const { initializeGlobalUI } = await import('../ui/ui-init.js');
@@ -67,10 +67,10 @@ function buildMessageWithPartsMenu(messageId: number, label: string): HTMLElemen
   wrapper.className = 'mes';
   wrapper.setAttribute('mesid', String(messageId));
   wrapper.innerHTML = `
-    <div class="mes_ztracker">
-      <details class="ztracker-parts-details">
+    <div class="mes_xutils">
+      <details class="xutils-parts-details">
         <summary>${label}</summary>
-        <ul class="ztracker-parts-list">
+        <ul class="xutils-parts-list">
           <li>item</li>
         </ul>
       </details>
@@ -92,7 +92,7 @@ async function initializeTrackerActionHarness(overrides: Record<string, unknown>
     boot: () => initializeGlobalUI({
       globalContext: host.context,
       settingsManager: {
-        getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXZTrackerMessages: 1 })),
+        getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXXUtilsMessages: 1 })),
       } as any,
       actions,
       renderTrackerWithDeps: () => undefined,
@@ -113,7 +113,7 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
       boot: () => initializeGlobalUI({
         globalContext: sharedUiInitHost.context,
         settingsManager: {
-          getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXZTrackerMessages: 1 })),
+          getSettings: jest.fn(() => ({ autoMode: 'none', includeLastXXUtilsMessages: 1 })),
         } as any,
         actions: createUiInitActions(),
         renderTrackerWithDeps: () => undefined,
@@ -123,7 +123,7 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
 
   beforeEach(() => {
     document.body.innerHTML = '';
-    includeZTrackerMessagesMock.mockClear();
+    includeXUtilsMessagesMock.mockClear();
     globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) => {
       cb(0);
       return 0;
@@ -139,22 +139,22 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
   test('does not keep orphaned portaled menu after tracker rerender and reopening menu', () => {
     const oldMessage = buildMessageWithPartsMenu(0, 'old');
     document.body.append(oldMessage);
-    const oldDetails = oldMessage.querySelector('.ztracker-parts-details') as HTMLDetailsElement;
+    const oldDetails = oldMessage.querySelector('.xutils-parts-details') as HTMLDetailsElement;
     oldDetails.open = true;
     oldDetails.dispatchEvent(new Event('toggle', { bubbles: true }));
-    const oldPortaledList = document.querySelector('.ztracker-parts-list-portal') as HTMLElement;
+    const oldPortaledList = document.querySelector('.xutils-parts-list-portal') as HTMLElement;
 
-    expect(document.querySelectorAll('.ztracker-parts-list-portal')).toHaveLength(1);
+    expect(document.querySelectorAll('.xutils-parts-list-portal')).toHaveLength(1);
 
     oldMessage.remove();
 
     const newMessage = buildMessageWithPartsMenu(0, 'new');
     document.body.append(newMessage);
-    const newDetails = newMessage.querySelector('.ztracker-parts-details') as HTMLDetailsElement;
+    const newDetails = newMessage.querySelector('.xutils-parts-details') as HTMLDetailsElement;
     newDetails.open = true;
     newDetails.dispatchEvent(new Event('toggle', { bubbles: true }));
 
-    expect(document.querySelectorAll('.ztracker-parts-list-portal')).toHaveLength(1);
+    expect(document.querySelectorAll('.xutils-parts-list-portal')).toHaveLength(1);
     expect(document.body.contains(oldPortaledList)).toBe(false);
   });
 
@@ -163,21 +163,21 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
     const messageB = buildMessageWithPartsMenu(1, 'b');
     document.body.append(messageA, messageB);
 
-    const detailsA = messageA.querySelector('.ztracker-parts-details') as HTMLDetailsElement;
-    const detailsB = messageB.querySelector('.ztracker-parts-details') as HTMLDetailsElement;
+    const detailsA = messageA.querySelector('.xutils-parts-details') as HTMLDetailsElement;
+    const detailsB = messageB.querySelector('.xutils-parts-details') as HTMLDetailsElement;
 
     detailsA.open = true;
     detailsA.dispatchEvent(new Event('toggle', { bubbles: true }));
 
-    const oldPortaledList = document.querySelector('.ztracker-parts-list-portal') as HTMLElement;
+    const oldPortaledList = document.querySelector('.xutils-parts-list-portal') as HTMLElement;
     expect(oldPortaledList).not.toBeNull();
-    expect(document.querySelectorAll('.ztracker-parts-list-portal')).toHaveLength(1);
+    expect(document.querySelectorAll('.xutils-parts-list-portal')).toHaveLength(1);
 
     detailsB.open = true;
     detailsB.dispatchEvent(new Event('toggle', { bubbles: true }));
 
-    expect(document.querySelectorAll('.ztracker-parts-list-portal')).toHaveLength(1);
-    expect(oldPortaledList.classList.contains('ztracker-parts-list-portal')).toBe(false);
+    expect(document.querySelectorAll('.xutils-parts-list-portal')).toHaveLength(1);
+    expect(oldPortaledList.classList.contains('xutils-parts-list-portal')).toBe(false);
     expect(oldPortaledList.parentElement).not.toBe(document.body);
   });
 
@@ -196,7 +196,7 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
       sharedUiInitHost.events.emit('CHAT_CHANGED');
       jest.advanceTimersByTime(25);
 
-      const button = buttonRow.querySelector('#ztracker-character-auto-mode-toggle') as HTMLElement | null;
+      const button = buttonRow.querySelector('#xutils-character-auto-mode-toggle') as HTMLElement | null;
       expect(button).not.toBeNull();
       expect(button?.dataset.excluded).toBe('false');
       expect(button?.title).toContain('Auto mode is disabled globally');
@@ -206,7 +206,7 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
   });
 
   test('passes text-completion and group-chat hints to the generate interceptor', () => {
-    includeZTrackerMessagesMock.mockImplementationOnce(() => [{ mes: 'group result' }]);
+    includeXUtilsMessagesMock.mockImplementationOnce(() => [{ mes: 'group result' }]);
     const chat = [{ mes: 'hello' }];
     installSillyTavernHost(createSillyTavernHost({
       mainApi: 'textgenerationwebui',
@@ -214,10 +214,10 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
       name2: 'Bar',
     }).context);
 
-    (globalThis as any).ztrackerGenerateInterceptor(chat);
+    (globalThis as any).xutilsGenerateInterceptor(chat);
 
-    expect(includeZTrackerMessagesMock.mock.calls[0][1]).toEqual(expect.objectContaining({ includeLastXZTrackerMessages: 1 }));
-    expect(includeZTrackerMessagesMock.mock.calls[0][2]).toEqual({
+    expect(includeXUtilsMessagesMock.mock.calls[0][1]).toEqual(expect.objectContaining({ includeLastXXUtilsMessages: 1 }));
+    expect(includeXUtilsMessagesMock.mock.calls[0][2]).toEqual({
       preserveTextCompletionTurnAlternation: true,
       isGroupChat: true,
       assistantReplyLabel: undefined,
@@ -226,7 +226,7 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
   });
 
   test('passes host-confirmed solo reply labels to the generate interceptor and replaces the chat contents', () => {
-    includeZTrackerMessagesMock.mockImplementationOnce(() => [{ mes: 'solo result' }]);
+    includeXUtilsMessagesMock.mockImplementationOnce(() => [{ mes: 'solo result' }]);
     const chat = [{ mes: 'hello' }];
     installSillyTavernHost(createSillyTavernHost({
       mainApi: 'textgenerationwebui',
@@ -234,10 +234,10 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
       name2: 'Bar',
     }).context);
 
-    (globalThis as any).ztrackerGenerateInterceptor(chat);
+    (globalThis as any).xutilsGenerateInterceptor(chat);
 
-    expect(includeZTrackerMessagesMock.mock.calls[0][1]).toEqual(expect.objectContaining({ includeLastXZTrackerMessages: 1 }));
-    expect(includeZTrackerMessagesMock.mock.calls[0][2]).toEqual({
+    expect(includeXUtilsMessagesMock.mock.calls[0][1]).toEqual(expect.objectContaining({ includeLastXXUtilsMessages: 1 }));
+    expect(includeXUtilsMessagesMock.mock.calls[0][2]).toEqual({
       preserveTextCompletionTurnAlternation: true,
       isGroupChat: false,
       assistantReplyLabel: 'Bar',
@@ -246,7 +246,7 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
   });
 
   test('falls back to the active character name when name2 is unavailable', () => {
-    includeZTrackerMessagesMock.mockImplementationOnce(() => [{ mes: 'character result' }]);
+    includeXUtilsMessagesMock.mockImplementationOnce(() => [{ mes: 'character result' }]);
     const chat = [{ mes: 'hello' }];
     installSillyTavernHost(createSillyTavernHost({
       mainApi: 'openai',
@@ -256,9 +256,9 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
       characters: [{ name: 'Bar' }],
     }).context);
 
-    (globalThis as any).ztrackerGenerateInterceptor(chat);
+    (globalThis as any).xutilsGenerateInterceptor(chat);
 
-    expect(includeZTrackerMessagesMock.mock.calls[0][2]).toEqual({
+    expect(includeXUtilsMessagesMock.mock.calls[0][2]).toEqual({
       preserveTextCompletionTurnAlternation: false,
       isGroupChat: false,
       assistantReplyLabel: 'Bar',
@@ -272,13 +272,13 @@ describe('initializeGlobalUI parts menu portal cleanup', () => {
     installChatMessageDom(7, {
       innerHtml: `
         <div class="mes_text">Message 7</div>
-        <div class="mes_ztracker">
-          <div class="ztracker-delete-button fa-solid fa-trash-can" title="Delete Tracker"></div>
+        <div class="mes_xutils">
+          <div class="xutils-delete-button fa-solid fa-trash-can" title="Delete Tracker"></div>
         </div>
       `,
     });
 
-    const deleteButton = document.querySelector('.ztracker-delete-button');
+    const deleteButton = document.querySelector('.xutils-delete-button');
     if (!(deleteButton instanceof HTMLElement)) {
       throw new Error('Delete tracker button not found');
     }

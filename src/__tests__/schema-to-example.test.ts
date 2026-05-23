@@ -96,8 +96,8 @@ describe('schemaToExample', () => {
           },
           items: {
             type: 'array',
-            'x-ztracker-idKey': 'id',
-            'x-ztracker-dependsOn': ['timestamp'],
+            'x-xutils-idKey': 'id',
+            'x-xutils-dependsOn': ['timestamp'],
             items: {
               type: 'object',
               properties: {
@@ -114,13 +114,13 @@ describe('schemaToExample', () => {
     expect(result).toContain('format: date-time');
     expect(result).toContain('default: "2026-05-18T12:00:00Z"');
     expect(result).toContain('items:');
-    expect(result).toContain('"x-ztracker-idKey": id');
-    expect(result).toContain('"x-ztracker-dependsOn"[1');
+    expect(result).toContain('"x-xutils-idKey": id');
+    expect(result).toContain('"x-xutils-dependsOn"[1');
     expect(result).not.toContain('describedTimestamp:\n    format: date-time');
     expect(result).not.toContain('describedTimestamp:\n    default: 2026-05-18T12:00:00Z');
   });
 
-  it('keeps JSON prompt schemas explicit about format, defaults, and zTracker metadata', () => {
+  it('keeps JSON prompt schemas explicit about format, defaults, and xUtils metadata', () => {
     const result = JSON.parse(
       schemaToPromptSchema(
         {
@@ -129,8 +129,8 @@ describe('schemaToExample', () => {
             timestamp: { type: 'string', format: 'date-time', default: '2026-05-18T12:00:00Z' },
             items: {
               type: 'array',
-              'x-ztracker-idKey': 'id',
-              'x-ztracker-dependsOn': ['timestamp'],
+              'x-xutils-idKey': 'id',
+              'x-xutils-dependsOn': ['timestamp'],
               items: {
                 type: 'object',
                 properties: {
@@ -146,8 +146,8 @@ describe('schemaToExample', () => {
 
     expect(result.properties.timestamp.format).toBe('date-time');
     expect(result.properties.timestamp.default).toBe('2026-05-18T12:00:00Z');
-    expect(result.properties.items['x-ztracker-idKey']).toBe('id');
-    expect(result.properties.items['x-ztracker-dependsOn']).toEqual(['timestamp']);
+    expect(result.properties.items['x-xutils-idKey']).toBe('id');
+    expect(result.properties.items['x-xutils-dependsOn']).toEqual(['timestamp']);
     expect(result.properties.items.items.properties.id.default).toBe('item-1');
   });
 

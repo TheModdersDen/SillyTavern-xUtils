@@ -55,7 +55,7 @@ jsdom is an approximation of a browser environment. It is suitable for verifying
 **Covered:**
 - Parsing (JSON/XML fenced block extraction, invalid input behavior)
 - Schema-to-example generation
-- Snapshot injection logic (`includeZTrackerMessages`)
+- Snapshot injection logic (`includeXUtilsMessages`)
 - DOM helper behavior for tracker rendering (`renderTracker`)
 
 **Not covered (known gaps):**
