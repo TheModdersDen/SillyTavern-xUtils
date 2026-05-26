@@ -6,23 +6,33 @@ type LegacyMigrationResult = {
   chatMessages: boolean;
 };
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
 function moveLegacyExtensionRecord(container: unknown): boolean {
-  if (!container || typeof container !== 'object') {
+  if (!isPlainObject(container)) {
     return false;
   }
 
-  const record = container as Record<string, unknown>;
+  const record = container;
   const legacyValue = record[LEGACY_EXTENSION_KEY];
-  if (!legacyValue || typeof legacyValue !== 'object') {
+  if (!isPlainObject(legacyValue)) {
     return false;
   }
 
-  if (!record[EXTENSION_KEY] || typeof record[EXTENSION_KEY] !== 'object') {
+  if (record[EXTENSION_KEY] === undefined) {
     record[EXTENSION_KEY] = legacyValue;
+    delete record[LEGACY_EXTENSION_KEY];
+    return true;
   }
 
-  delete record[LEGACY_EXTENSION_KEY];
-  return true;
+  if (isPlainObject(record[EXTENSION_KEY])) {
+    delete record[LEGACY_EXTENSION_KEY];
+    return true;
+  }
+
+  return false;
 }
 
 export function migrateLegacyExtensionStorage(context: unknown): LegacyMigrationResult {

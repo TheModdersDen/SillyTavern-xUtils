@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed the extension surface from `zTracker` to `xUtils` while keeping backward-compatible migration paths for existing stored extension data and legacy schema/interceptor aliases.
+
+### Fixed
+
+- xAI/Grok tracker-generation chat-completion requests now normalize and validate message payloads more strictly, removing unsupported host-only fields and enforcing xAI-compatible tool-call/message shape rules before dispatch.
+
 ## [1.12.1] - 2026-05-21
 
 ### Fixed

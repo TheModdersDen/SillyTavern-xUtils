@@ -123,12 +123,20 @@ export function isXaiApiServer(apiServer?: string): boolean {
     return false;
   }
 
-  try {
-    const parsed = new URL(apiServer);
-    return XAI_HOST_PATTERN.test(parsed.hostname);
-  } catch {
-    return apiServer.toLowerCase().includes('x.ai');
-  }
+  const parseHostname = (value: string): string | null => {
+    try {
+      return new URL(value).hostname;
+    } catch {
+      try {
+        return new URL(`https://${value.replace(/^\/\//, '')}`).hostname;
+      } catch {
+        return null;
+      }
+    }
+  };
+
+  const hostname = parseHostname(apiServer);
+  return hostname ? XAI_HOST_PATTERN.test(hostname) : false;
 }
 
 export function formatMessagesForXai(messages: unknown[], options: FormatterOptions = {}): XaiMessage[] {

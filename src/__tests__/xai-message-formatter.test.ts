@@ -4,6 +4,8 @@ import { formatMessagesForXai, isXaiApiServer } from '../xaiMessageFormatter.js'
 describe('xAI message formatter', () => {
   test('detects xAI API hosts', () => {
     expect(isXaiApiServer('https://api.x.ai/v1')).toBe(true);
+    expect(isXaiApiServer('api.x.ai/v1')).toBe(true);
+    expect(isXaiApiServer('https://notx.ai.example/v1')).toBe(false);
     expect(isXaiApiServer('https://example.com/v1')).toBe(false);
   });
 

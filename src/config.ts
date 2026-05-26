@@ -417,6 +417,40 @@ export function migrateInvalidNumericSettings(
   return changed;
 }
 
+const LEGACY_RENAMED_SETTINGS_MAP = [
+  ['includeLastXZTrackerMessages', 'includeLastXXUtilsMessages'],
+  ['embedZTrackerRole', 'embedXUtilsRole'],
+  ['embedZTrackerAsCharacter', 'embedXUtilsAsCharacter'],
+  ['embedZTrackerSnapshotHeader', 'embedXUtilsSnapshotHeader'],
+  ['embedZTrackerSnapshotTransformPreset', 'embedXUtilsSnapshotTransformPreset'],
+  ['embedZTrackerSnapshotTransformPresets', 'embedXUtilsSnapshotTransformPresets'],
+] as const;
+
+/** Maps legacy zTracker setting field names to current xUtils field names. */
+export function migrateLegacyRenamedSettings(settings: object): boolean {
+  const mutableSettings = settings as Record<string, unknown>;
+  let changed = false;
+
+  for (const [legacyKey, currentKey] of LEGACY_RENAMED_SETTINGS_MAP) {
+    if (!Object.prototype.hasOwnProperty.call(mutableSettings, legacyKey)) {
+      continue;
+    }
+
+    const legacyValue = mutableSettings[legacyKey];
+    if (
+      !Object.prototype.hasOwnProperty.call(mutableSettings, currentKey) ||
+      mutableSettings[currentKey] === undefined
+    ) {
+      mutableSettings[currentKey] = legacyValue;
+    }
+
+    delete mutableSettings[legacyKey];
+    changed = true;
+  }
+
+  return changed;
+}
+
 export const DEFAULT_SCHEMA_VALUE: object = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   title: 'SceneTracker',

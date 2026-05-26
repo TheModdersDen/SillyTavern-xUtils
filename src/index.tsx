@@ -9,6 +9,7 @@ import {
   migrateInvalidNumericSettings,
   migrateLegacyAutoMode,
   migrateLegacyPromptTemplates,
+  migrateLegacyRenamedSettings,
 } from './config.js';
 import { migrateLegacyExtensionStorage } from './legacy-migration.js';
 import { createTrackerActions } from './ui/tracker-actions.js';
@@ -70,6 +71,7 @@ async function main() {
     migrateLegacyPromptTemplates(settings),
     migrateCorruptedSchemaPresetRequiredMetadata(settings),
     migrateInvalidNumericSettings(settings),
+    migrateLegacyRenamedSettings(settings),
   ].some(Boolean);
 
   if (didMigrateLegacySettings || legacyMigration.settings) {

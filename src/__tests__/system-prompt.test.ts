@@ -22,6 +22,7 @@ import {
   migrateCorruptedSchemaPresetRequiredMetadata,
   migrateLegacyAutoMode,
   migrateLegacyPromptTemplates,
+  migrateLegacyRenamedSettings,
 } from '../config.js';
 
 describe('system prompt helpers', () => {
@@ -300,6 +301,20 @@ describe('system prompt helpers', () => {
     expect(migrateLegacyAutoMode(settings as any)).toBe(true);
     expect(settings.autoMode).toBe(AutoModeOptions.INPUT);
     expect(migrateLegacyAutoMode(settings as any)).toBe(false);
+  });
+
+  test('migrates renamed zTracker settings keys to xUtils keys', () => {
+    const settings = {
+      includeLastXZTrackerMessages: 3,
+      embedZTrackerRole: 'assistant',
+      includeLastXXUtilsMessages: 1,
+    } as Record<string, unknown>;
+
+    expect(migrateLegacyRenamedSettings(settings)).toBe(true);
+    expect(settings.includeLastXXUtilsMessages).toBe(1);
+    expect(settings.embedXUtilsRole).toBe('assistant');
+    expect(settings.includeLastXZTrackerMessages).toBeUndefined();
+    expect(settings.embedZTrackerRole).toBeUndefined();
   });
 
   test('repairs corrupted schema presets that stored required arrays under properties.required', () => {
