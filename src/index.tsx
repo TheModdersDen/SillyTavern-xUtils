@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { settingsManager, ZTrackerSettings } from './components/Settings.js';
+import { settingsManager, XUtilsSettings } from './components/Settings.js';
 import Handlebars from 'handlebars';
 import { Generator } from 'sillytavern-utils-lib';
 import { st_echo } from 'sillytavern-utils-lib/config';
@@ -9,10 +9,12 @@ import {
   migrateInvalidNumericSettings,
   migrateLegacyAutoMode,
   migrateLegacyPromptTemplates,
+  migrateLegacyRenamedSettings,
 } from './config.js';
+import { migrateLegacyExtensionStorage } from './legacy-migration.js';
 import { createTrackerActions } from './ui/tracker-actions.js';
 import { initializeGlobalUI } from './ui/ui-init.js';
-import { ensureZTrackerSystemPromptPresetInstalled } from './system-prompt.js';
+import { ensureXUtilsSystemPromptPresetInstalled } from './system-prompt.js';
 import {
   renderTracker,
 } from './tracker.js';
@@ -21,6 +23,7 @@ import {
 const globalContext = SillyTavern.getContext();
 const generator = new Generator();
 const pendingRequests = new Map<number, string>();
+const initialLegacyMigration = migrateLegacyExtensionStorage(globalContext);
 const renderTrackerWithDeps = (messageId: number) =>
   renderTracker(messageId, { context: globalContext, document, handlebars: Handlebars });
 
@@ -41,42 +44,52 @@ if (!Handlebars.helpers['join']) {
 function renderReactSettings() {
   const settingsContainer = document.getElementById('extensions_settings');
   if (!settingsContainer) {
-    console.error('zTracker: Extension settings container not found.');
+    console.error('xUtils: Extension settings container not found.');
     return;
   }
 
-  let reactRootEl = document.getElementById('ztracker-react-settings-root');
+  let reactRootEl = document.getElementById('xutils-react-settings-root');
   if (!reactRootEl) {
     reactRootEl = document.createElement('div');
-    reactRootEl.id = 'ztracker-react-settings-root';
+    reactRootEl.id = 'xutils-react-settings-root';
     settingsContainer.appendChild(reactRootEl);
   }
 
   const root = createRoot(reactRootEl);
   root.render(
     <React.StrictMode>
-      <ZTrackerSettings />
+      <XUtilsSettings />
     </React.StrictMode>,
   );
 }
 
 async function main() {
+  const legacyMigration = initialLegacyMigration;
   const settings = settingsManager.getSettings();
   const didMigrateLegacySettings = [
     migrateLegacyAutoMode(settings),
     migrateLegacyPromptTemplates(settings),
     migrateCorruptedSchemaPresetRequiredMetadata(settings),
     migrateInvalidNumericSettings(settings),
+    migrateLegacyRenamedSettings(settings),
   ].some(Boolean);
 
-  if (didMigrateLegacySettings) {
+  if (didMigrateLegacySettings || legacyMigration.settings) {
     settingsManager.saveSettings();
   }
 
+  if (legacyMigration.chatMetadata && typeof globalContext.saveMetadataDebounced === 'function') {
+    globalContext.saveMetadataDebounced();
+  }
+
+  if (legacyMigration.chatMessages && typeof globalContext.saveChat === 'function') {
+    await globalContext.saveChat();
+  }
+
   try {
-    await ensureZTrackerSystemPromptPresetInstalled();
+    await ensureXUtilsSystemPromptPresetInstalled();
   } catch (error) {
-    console.warn('zTracker: failed to ensure the recommended system prompt preset exists.', error);
+    console.warn('xUtils: failed to ensure the recommended system prompt preset exists.', error);
   }
 
   const actions = createTrackerActions({
@@ -102,6 +115,5 @@ settingsManager
   .then(main)
   .catch((error) => {
     console.error(error);
-    st_echo('error', 'zTracker data migration failed. Check console for details.');
+    st_echo('error', 'xUtils data migration failed. Check console for details.');
   });
-

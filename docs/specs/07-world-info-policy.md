@@ -3,7 +3,7 @@
 Status: **Completed**
 
 ## Summary
-Add a zTracker setting that controls whether **World Info (lorebooks)** are included when generating a tracker.
+Add a xUtils setting that controls whether **World Info (lorebooks)** are included when generating a tracker.
 
 User goals:
 - Reduce noise/latency in tracker generation by excluding World Info entirely.
@@ -13,7 +13,7 @@ Non-goal:
 - Changing how normal (non-tracker) SillyTavern generations include World Info.
 
 ## UX
-New settings under **Extensions → zTracker**:
+New settings under **Extensions → xUtils**:
 
 1) **World Info during tracker generation** (select)
 - Include all (default)
@@ -35,21 +35,21 @@ Notes:
 During tracker generation (`generateTracker`):
 
 - **Include all**
-  - zTracker uses `buildPrompt(...)` normally.
+  - xUtils uses `buildPrompt(...)` normally.
   - All World Info that SillyTavern would normally include is included.
 
 - **Exclude all**
-  - zTracker calls `buildPrompt(..., { ignoreWorldInfo: true })`.
+  - xUtils calls `buildPrompt(..., { ignoreWorldInfo: true })`.
   - No World Info is included.
 
 - **Allowlist**
-  - zTracker calls `buildPrompt(..., { ignoreWorldInfo: true })`.
-  - zTracker loads relevant World Info books for the current context and injects a single `system` message containing only:
+  - xUtils calls `buildPrompt(..., { ignoreWorldInfo: true })`.
+  - xUtils loads relevant World Info books for the current context and injects a single `system` message containing only:
     - entries from allowlisted books, and/or
     - entries whose `uid` is allowlisted
 
 ### What “relevant World Info books” means
-zTracker gathers World Info books from the same major sources SillyTavern commonly uses:
+xUtils gathers World Info books from the same major sources SillyTavern commonly uses:
 - Global selected world info books
 - Chat metadata world info book
 - Character world info books (character card + extra books)
@@ -79,7 +79,7 @@ Then it filters that set by the allowlist.
 
 ## Verification
 - Unit tests: `npm test`
-- Manual: Extensions → zTracker
+- Manual: Extensions → xUtils
   - Set “World Info during tracker generation” to “Exclude all”, generate a tracker, and confirm World Info is not present.
   - Set it to “Allow only specified…”, then:
     - Add one known lorebook name and confirm only that book’s entries are injected.

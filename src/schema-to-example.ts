@@ -1,5 +1,11 @@
 import { encode } from '@toon-format/toon';
 import { repairCorruptedRequiredMetadata } from './schema-repair.js';
+import {
+  LEGACY_SCHEMA_DEPENDS_ON_KEY,
+  LEGACY_SCHEMA_ID_KEY,
+  XUTILS_SCHEMA_DEPENDS_ON_KEY,
+  XUTILS_SCHEMA_ID_KEY,
+} from './extension-metadata.js';
 
 export type StructuredFormat = 'json' | 'xml' | 'toon';
 
@@ -8,7 +14,7 @@ type PromptSchemaNormalizationOptions = {
   includeDocumentMetadata?: boolean;
   includeFormat?: boolean;
   includeDefaults?: boolean;
-  includeZTrackerMetadata?: boolean;
+  includeXUtilsMetadata?: boolean;
 };
 
 function hasNonEmptyString(value: unknown): value is string {
@@ -72,7 +78,7 @@ function normalizeSchemaForPrompt(schema: any, options: PromptSchemaNormalizatio
     includeDocumentMetadata = true,
     includeFormat = true,
     includeDefaults = true,
-    includeZTrackerMetadata = true,
+    includeXUtilsMetadata = true,
   } = options;
 
   const normalized: Record<string, any> = {};
@@ -122,10 +128,14 @@ function normalizeSchemaForPrompt(schema: any, options: PromptSchemaNormalizatio
     );
   }
 
-  if (includeZTrackerMetadata) {
-    for (const key of ['x-ztracker-dependsOn', 'x-ztracker-idKey']) {
-      if (schema[key] !== undefined) {
-        normalized[key] = schema[key];
+  if (includeXUtilsMetadata) {
+    const metadataMappings = [
+      [XUTILS_SCHEMA_DEPENDS_ON_KEY, schema[XUTILS_SCHEMA_DEPENDS_ON_KEY] ?? schema[LEGACY_SCHEMA_DEPENDS_ON_KEY]],
+      [XUTILS_SCHEMA_ID_KEY, schema[XUTILS_SCHEMA_ID_KEY] ?? schema[LEGACY_SCHEMA_ID_KEY]],
+    ] as const;
+    for (const [key, value] of metadataMappings) {
+      if (value !== undefined) {
+        normalized[key] = value;
       }
     }
   }
@@ -141,7 +151,7 @@ function getPromptSchemaNormalizationOptions(format: StructuredFormat): PromptSc
       includeDocumentMetadata: false,
       includeFormat: false,
       includeDefaults: false,
-      includeZTrackerMetadata: true,
+      includeXUtilsMetadata: true,
     };
   }
 

@@ -7,7 +7,7 @@ import {
   applyTrackerUpdateAndRenderMock,
   buildPromptMock,
   createTrackerActions,
-  includeZTrackerMessagesMock,
+  includeXUtilsMessagesMock,
   installSillyTavernContext,
   markEmbeddedTrackerSnapshot,
   makeBuiltPromptResult,
@@ -126,8 +126,8 @@ describe('createTrackerActions prompt assembly', () => {
       getPresetManager: () => ({
         getSelectedPresetName: () => 'Active Preset',
         getCompletionPresetByName: (name?: string) =>
-          name === 'zTracker' ? { name: 'zTracker', content: 'Saved tracker system prompt' } : undefined,
-        getPresetList: () => ({ presets: [], preset_names: ['zTracker'] }),
+          name === 'xUtils' ? { name: 'xUtils', content: 'Saved tracker system prompt' } : undefined,
+        getPresetList: () => ({ presets: [], preset_names: ['xUtils'] }),
       }),
     }));
 
@@ -217,7 +217,7 @@ describe('createTrackerActions prompt assembly', () => {
     });
 
     const context = SillyTavern.getContext() as any;
-    context.chatMetadata = { zTracker: { schemaKey: 'alternate' } };
+    context.chatMetadata = { xUtils: { schemaKey: 'alternate' } };
 
     await actions.generateTracker(0);
 
@@ -258,12 +258,12 @@ describe('createTrackerActions prompt assembly', () => {
     });
 
     const context = SillyTavern.getContext() as any;
-    context.chatMetadata = { zTracker: { schemaKey: 'missing' } };
+    context.chatMetadata = { xUtils: { schemaKey: 'missing' } };
     context.saveMetadataDebounced = jest.fn();
 
     await actions.generateTracker(0);
 
-    expect(context.chatMetadata).toEqual({ zTracker: { schemaKey: 'default' } });
+    expect(context.chatMetadata).toEqual({ xUtils: { schemaKey: 'default' } });
     expect(context.saveMetadataDebounced).toHaveBeenCalledTimes(1);
   });
 
@@ -408,7 +408,7 @@ describe('createTrackerActions prompt assembly', () => {
     await actions.generateTracker(0);
 
     const buildPromptOptions = (buildPromptMock as jest.Mock).mock.calls[0][1];
-    expect(buildPromptOptions).toHaveProperty('syspromptName', 'zTracker');
+    expect(buildPromptOptions).toHaveProperty('syspromptName', 'xUtils');
     expect(buildPromptOptions).toHaveProperty('includeNames', false);
 
     expect(generateRequest).not.toHaveBeenCalled();
@@ -458,10 +458,49 @@ describe('createTrackerActions prompt assembly', () => {
     expect(applyTrackerUpdateAndRenderMock).toHaveBeenCalled();
   });
 
+  test('strips unsupported message fields before sending chat-completion requests to xAI', async () => {
+    installSillyTavernContext(makeContext({ includeSavedPromptPreset: true }));
+
+    buildPromptMock.mockResolvedValue({
+      result: [
+        { role: 'system', content: 'Existing system prompt' },
+        { role: 'assistant', content: 'Prior chat message', name: 'Bar', ignoreInstruct: true },
+      ],
+    });
+    const generateRequest = makeGenerateRequest();
+
+    const actions = createTrackerActions({
+      globalContext: {
+        chat: [{ original_avatar: 'avatar.png', extra: {} }],
+        saveChat: async () => undefined,
+        extensionSettings: {
+          connectionManager: {
+            profiles: [makeProfile({ api_server: 'https://api.x.ai/v1' })],
+          },
+        },
+        CONNECT_API_MAP: { openai: { selected: 'openai' } },
+      },
+      settingsManager: { getSettings: () => makeSettings() } as any,
+      generator: { generateRequest, abortRequest: jest.fn() } as any,
+      pendingRequests: new Map(),
+      renderTrackerWithDeps: renderTrackerWithDepsMock,
+      importMetaUrl: TEST_IMPORT_META_URL,
+    });
+
+    await actions.generateTracker(0);
+
+    expect(generateRequest.mock.calls[0][0].prompt).toEqual([
+      { role: 'system', content: 'Existing system prompt' },
+      { role: 'system', content: 'Saved tracker system prompt' },
+      { role: 'assistant', content: 'Prior chat message' },
+      { role: 'system', content: 'Generate tracker JSON' },
+    ]);
+  });
+
   test('preserves embedded tracker snapshot roles while normalizing chat turns', async () => {
     installSillyTavernContext(makeContext({ includeSavedPromptPreset: true }));
 
-    includeZTrackerMessagesMock.mockImplementationOnce((messages: Array<any>) => [
+    includeXUtilsMessagesMock.mockImplementationOnce((messages: Array<any>) => [
       ...messages,
       markEmbeddedTrackerSnapshot({
         role: 'user',
@@ -561,7 +600,7 @@ describe('createTrackerActions prompt assembly', () => {
     document.body.innerHTML = [
       '<div id="extensionsMenu"></div>',
       '<div class="mes" mesid="0">',
-      '<div class="ztracker-part-regenerate-button" data-ztracker-part="time"></div>',
+      '<div class="xutils-part-regenerate-button" data-xutils-part="time"></div>',
       '<div class="mes_text"></div>',
       '</div>',
     ].join('');
@@ -572,7 +611,7 @@ describe('createTrackerActions prompt assembly', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaValue: { time: '09:00:00' },
                 schemaHtml: '<div></div>',
               },
@@ -1129,7 +1168,7 @@ describe('createTrackerActions prompt assembly', () => {
     expect(textCompletionProcessRequest).not.toHaveBeenCalled();
     expect(stEchoMock).toHaveBeenCalledWith(
       'error',
-      'Tracker generation failed: Could not resolve the active SillyTavern text-generation backend. The live runtime only exposed the generic textgenerationwebui family without a concrete backend type. Select a saved zTracker connection profile or switch the active SillyTavern backend to one with a concrete runtime type.',
+      'Tracker generation failed: Could not resolve the active SillyTavern text-generation backend. The live runtime only exposed the generic textgenerationwebui family without a concrete backend type. Select a saved xUtils connection profile or switch the active SillyTavern backend to one with a concrete runtime type.',
     );
 
     consoleSpy.mockRestore();
@@ -1631,7 +1670,7 @@ describe('createTrackerActions prompt assembly', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaValue: {
                   characters: [{ name: 'Alice', status: 'old status' }],
                 },
@@ -1714,7 +1753,7 @@ describe('createTrackerActions prompt assembly', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaValue: {
                   characters: [{ name: 'Alice', status: 'old status' }],
                 },
@@ -1792,7 +1831,7 @@ describe('createTrackerActions prompt assembly', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaValue: {
                   characters: [{ id: 'char-1', name: 'Alice', status: 'old status' }],
                 },

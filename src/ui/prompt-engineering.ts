@@ -64,7 +64,7 @@ export function createPromptEngineeringHelpers() {
     error?: unknown;
   }): void {
     const { format, reason, rawContent, parsedContent, error } = details;
-    console.warn('zTracker: malformed prompt-engineered payload', {
+    console.warn('xUtils: malformed prompt-engineered payload', {
       format,
       reason,
       rawContent,

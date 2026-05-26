@@ -1,4 +1,4 @@
-/** Keeps zTracker's portaled menu colors aligned with the active SillyTavern theme. */
+/** Keeps xUtils's portaled menu colors aligned with the active SillyTavern theme. */
 type Rgb = { r: number; g: number; b: number; a: number };
 
 /** Clamps a numeric color channel into the CSS byte range. */
@@ -72,7 +72,7 @@ function findNearestNonTransparentBackground(start: Element | null): Rgb | null 
 }
 
 /** Samples the current chat surface and updates the CSS variables used by the portaled parts menu. */
-function setZTrackerMenuThemeVars(): void {
+function setXUtilsMenuThemeVars(): void {
   if (typeof document === 'undefined') {
     return;
   }
@@ -93,15 +93,15 @@ function setZTrackerMenuThemeVars(): void {
   const menuAlpha = isLight ? 0.96 : 0.92;
   const root = document.documentElement;
 
-  root.style.setProperty('--ztracker-menu-bg', `rgba(${background.r}, ${background.g}, ${background.b}, ${menuAlpha})`);
-  root.style.setProperty('--ztracker-menu-border', isLight ? 'rgba(0, 0, 0, 0.18)' : 'rgba(255, 255, 255, 0.12)');
-  root.style.setProperty('--ztracker-menu-part-bg', isLight ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.06)');
-  root.style.setProperty('--ztracker-menu-item-bg', isLight ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.03)');
-  root.style.setProperty('--ztracker-menu-hover-bg', isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.10)');
+  root.style.setProperty('--xutils-menu-bg', `rgba(${background.r}, ${background.g}, ${background.b}, ${menuAlpha})`);
+  root.style.setProperty('--xutils-menu-border', isLight ? 'rgba(0, 0, 0, 0.18)' : 'rgba(255, 255, 255, 0.12)');
+  root.style.setProperty('--xutils-menu-part-bg', isLight ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.06)');
+  root.style.setProperty('--xutils-menu-item-bg', isLight ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.03)');
+  root.style.setProperty('--xutils-menu-hover-bg', isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.10)');
 }
 
-/** Watches theme-affecting DOM attributes and refreshes the zTracker menu variables on change. */
-export function installZTrackerThemeObserver(): void {
+/** Watches theme-affecting DOM attributes and refreshes the xUtils menu variables on change. */
+export function installXUtilsThemeObserver(): void {
   if (typeof document === 'undefined' || typeof MutationObserver === 'undefined') {
     return;
   }
@@ -113,7 +113,7 @@ export function installZTrackerThemeObserver(): void {
     }
     timer = window.setTimeout(() => {
       timer = undefined;
-      setZTrackerMenuThemeVars();
+      setXUtilsMenuThemeVars();
     }, 50);
   };
 
@@ -121,5 +121,5 @@ export function installZTrackerThemeObserver(): void {
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'style'] });
   observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'style'] });
 
-  setZTrackerMenuThemeVars();
+  setXUtilsMenuThemeVars();
 }

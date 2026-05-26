@@ -26,7 +26,7 @@ When using the **Minimal (top-level properties)** embedding preset, the embedded
 - Do not change formatting for non-minimal presets.
 
 ## Detailed behavior
-Applied only when `embedZTrackerSnapshotTransformPreset === "minimal"`:
+Applied only when `embedXUtilsSnapshotTransformPreset === "minimal"`:
 1. Normalize line endings: `\r\n` → `\n`.
 2. Trim trailing whitespace from every line.
 3. Drop lines that are empty after `.trim()`.

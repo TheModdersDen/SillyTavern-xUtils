@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-/** Shared SillyTavern host and DOM harness helpers for zTracker host-boundary tests. */
+/** Shared SillyTavern host and DOM harness helpers for xUtils host-boundary tests. */
 
 type EventHandler = (...args: any[]) => unknown;
 
@@ -229,7 +229,7 @@ export function installSendButtonDom(root: ParentNode = document.body): HTMLElem
   return sendButton;
 }
 
-/** Installs one supported character-panel action row for zTracker button sync tests. */
+/** Installs one supported character-panel action row for xUtils button sync tests. */
 export function installCharacterPanelDom(root: ParentNode = document.body) {
   const form = document.createElement('div');
   form.id = 'form_create';

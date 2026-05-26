@@ -99,7 +99,7 @@ async function persistChatSchemaPreset(context: any, schemaPresetKey: string): P
       } else {
         extensionMetadata[CHAT_METADATA_SCHEMA_PRESET_KEY] = previousSchemaPresetKey;
       }
-      console.error('zTracker: failed to save current chat schema preset metadata.', error);
+      console.error('xUtils: failed to save current chat schema preset metadata.', error);
       await st_echo('error', 'Current chat schema preset could not be saved. The selector was reverted.');
       return false;
     }
@@ -154,7 +154,7 @@ function getCurrentChatSchemaPresetState(settings: ExtensionSettings): CurrentCh
   };
 }
 
-export const ZTrackerSettings: FC = () => {
+export const XUtilsSettings: FC = () => {
   const forceUpdate = useForceUpdate();
   const settings = settingsManager.getSettings();
   const connectionSource = settings.connectionSource ?? 'saved';
@@ -454,20 +454,20 @@ export const ZTrackerSettings: FC = () => {
   };
 
   return (
-    <div className="ztracker-settings">
+    <div className="xutils-settings">
       <div className="inline-drawer">
         <div className="inline-drawer-toggle inline-drawer-header">
-          <b>zTracker</b>
+          <b>xUtils</b>
           <div className="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
         </div>
         <div className="inline-drawer-content">
-          <div className="ztracker-container">
+          <div className="xutils-container">
             <div className="setting-row">
-              <label title="Choose whether zTracker uses the currently active SillyTavern connection or a specific saved connection profile.">Connection Source</label>
+              <label title="Choose whether xUtils uses the currently active SillyTavern connection or a specific saved connection profile.">Connection Source</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
                 <select
                   className="text_pole"
-                  title="Choose whether zTracker uses the currently active SillyTavern connection or a specific saved connection profile."
+                  title="Choose whether xUtils uses the currently active SillyTavern connection or a specific saved connection profile."
                   value={connectionSource}
                   onChange={(e) =>
                     updateAndRefresh((s) => {
@@ -480,7 +480,7 @@ export const ZTrackerSettings: FC = () => {
                 </select>
                 {connectionSource === 'active' && (
                   <small>
-                    zTracker follows the live SillyTavern connection currently in use, including active unsaved connection changes.
+                    xUtils follows the live SillyTavern connection currently in use, including active unsaved connection changes.
                   </small>
                 )}
               </div>
@@ -488,7 +488,7 @@ export const ZTrackerSettings: FC = () => {
 
             {connectionSource === 'saved' && (
               <div className="setting-row">
-                <label title="Which saved SillyTavern Connection Profile zTracker uses when generating trackers.">Connection Profile</label>
+                <label title="Which saved SillyTavern Connection Profile xUtils uses when generating trackers.">Connection Profile</label>
                 <STConnectionProfileSelect
                   initialSelectedProfileId={settings.profileId}
                   onChange={(profile) =>

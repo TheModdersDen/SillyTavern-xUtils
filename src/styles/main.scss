@@ -1,36 +1,36 @@
- .ztracker-settings {
-	 .ztracker-container {
+ .xutils-settings {
+	 .xutils-container {
         display: flex;
         flex-direction: column;
         gap: 12px;
     }
 
-	.ztracker-settings-section {
+	.xutils-settings-section {
 		margin-top: 4px;
 	}
 
-	.ztracker-section-content {
+	.xutils-section-content {
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
 	}
 
-	.ztracker-schema-textarea.is-invalid {
+	.xutils-schema-textarea.is-invalid {
 		border-color: var(--error-color, #f44336);
 		box-shadow: 0 0 0 1px var(--error-color, #f44336);
 	}
 
-	.ztracker-schema-error {
+	.xutils-schema-error {
 		color: var(--error-color, #f44336);
 		margin-top: -2px;
 	}
 
-	.ztracker-schema-status {
+	.xutils-schema-status {
 		opacity: 0.8;
 		margin-top: -2px;
 	}
 
-	.ztracker-preset-select-row {
+	.xutils-preset-select-row {
 		display: flex;
 		align-items: center;
 		gap: 8px;
@@ -59,22 +59,22 @@
     }
 }
 
-.mes_ztracker_button.spinning,
-.ztracker-regenerate-button.spinning,
-.ztracker-part-regenerate-button.spinning,
-.ztracker-array-item-regenerate-button.spinning,
-.ztracker-array-item-field-regenerate-button.spinning {
+.mes_xutils_button.spinning,
+.xutils-regenerate-button.spinning,
+.xutils-part-regenerate-button.spinning,
+.xutils-array-item-regenerate-button.spinning,
+.xutils-array-item-field-regenerate-button.spinning {
   animation: spin 2s linear infinite;
 }
 
-.mes.ztracker-auto-mode-hold {
+.mes.xutils-auto-mode-hold {
 	.mes_text {
 		opacity: 0.72;
 		transition: opacity 0.2s ease-in-out;
 	}
 }
 
-.ztracker-message-status {
+.xutils-message-status {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -90,25 +90,25 @@
 	max-width: 100%;
 }
 
-.ztracker-message-status-icon {
+.xutils-message-status-icon {
 	animation: spin 1.6s linear infinite;
 	font-size: 0.95em;
 }
 
-.ztracker-message-status-icon--static {
+.xutils-message-status-icon--static {
 	animation: none;
 }
 
-.ztracker-message-status-text {
+.xutils-message-status-text {
 	white-space: normal;
 }
 
-.ztracker-render-error-status {
+.xutils-render-error-status {
 	border-color: rgba(255, 170, 0, 0.3);
 	background: rgba(255, 170, 0, 0.14);
 }
 
-.ztracker-pending-redactions-status {
+.xutils-pending-redactions-status {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -128,12 +128,12 @@
  * Parts menu styles must apply even when the menu is portaled to <body>
  * (to avoid being clipped by chat/message overflow).
  */
-.ztracker-parts-list {
+.xutils-parts-list {
 	min-width: 260px;
 	padding: 10px;
-	background-color: var(--ztracker-menu-bg, rgba(0, 0, 0, 0.92));
+	background-color: var(--xutils-menu-bg, rgba(0, 0, 0, 0.92));
 	background-image: none;
-	border: 1px solid var(--ztracker-menu-border, rgba(255, 255, 255, 0.12));
+	border: 1px solid var(--xutils-menu-border, rgba(255, 255, 255, 0.12));
 	border-radius: 6px;
 	display: flex;
 	flex-direction: column;
@@ -151,7 +151,7 @@
 	z-index: 6000;
 }
 
-.ztracker-parts-list.ztracker-parts-list-portal {
+.xutils-parts-list.xutils-parts-list-portal {
 	/* Page-coordinate positioning via inline top/left in JS. */
 	position: absolute;
 	right: auto;
@@ -160,7 +160,7 @@
 	z-index: 2147483647;
 }
 
-.ztracker-part-row {
+.xutils-part-row {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
@@ -173,7 +173,7 @@
 	}
 }
 
-.ztracker-part-regenerate-button {
+.xutils-part-regenerate-button {
 	cursor: pointer;
 	padding: 6px 8px;
 	border-radius: 4px;
@@ -182,14 +182,14 @@
 	opacity: 0.95;
 	user-select: none;
 	white-space: nowrap;
-	background: var(--ztracker-menu-part-bg, rgba(255, 255, 255, 0.06));
+	background: var(--xutils-menu-part-bg, rgba(255, 255, 255, 0.06));
 
 	&:hover {
-		background: var(--ztracker-menu-hover-bg, rgba(255, 255, 255, 0.10));
+		background: var(--xutils-menu-hover-bg, rgba(255, 255, 255, 0.10));
 	}
 }
 
-.ztracker-part-items {
+.xutils-part-items {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
@@ -198,13 +198,13 @@
 	overflow: auto;
 }
 
-.ztracker-array-item-row {
+.xutils-array-item-row {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 }
 
-.ztracker-array-item-regenerate-button {
+.xutils-array-item-regenerate-button {
 	cursor: pointer;
 	padding: 6px 8px;
 	border-radius: 4px;
@@ -213,21 +213,21 @@
 	user-select: none;
 	white-space: normal;
 	word-break: break-word;
-	background: var(--ztracker-menu-item-bg, rgba(255, 255, 255, 0.03));
+	background: var(--xutils-menu-item-bg, rgba(255, 255, 255, 0.03));
 
 	&:hover {
-		background: var(--ztracker-menu-hover-bg, rgba(255, 255, 255, 0.10));
+		background: var(--xutils-menu-hover-bg, rgba(255, 255, 255, 0.10));
 	}
 }
 
-.ztracker-array-item-fields {
+.xutils-array-item-fields {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 6px;
 	padding-left: 8px;
 }
 
-.ztracker-array-item-field-regenerate-button {
+.xutils-array-item-field-regenerate-button {
 	cursor: pointer;
 	padding: 4px 6px;
 	border-radius: 999px;
@@ -235,27 +235,27 @@
 	opacity: 0.98;
 	user-select: none;
 	white-space: nowrap;
-	background: var(--ztracker-menu-item-bg, rgba(255, 255, 255, 0.03));
-	border: 1px solid var(--ztracker-menu-border, rgba(255, 255, 255, 0.12));
+	background: var(--xutils-menu-item-bg, rgba(255, 255, 255, 0.03));
+	border: 1px solid var(--xutils-menu-border, rgba(255, 255, 255, 0.12));
 
 	&:hover {
-		background: var(--ztracker-menu-hover-bg, rgba(255, 255, 255, 0.10));
+		background: var(--xutils-menu-hover-bg, rgba(255, 255, 255, 0.10));
 	}
 }
 
-.ztracker-part-regenerate-button.is-pending-redaction,
-.ztracker-array-item-regenerate-button.is-pending-redaction,
-.ztracker-array-item-field-regenerate-button.is-pending-redaction {
+.xutils-part-regenerate-button.is-pending-redaction,
+.xutils-array-item-regenerate-button.is-pending-redaction,
+.xutils-array-item-field-regenerate-button.is-pending-redaction {
 	border-color: rgba(255, 196, 0, 0.32);
 	box-shadow: inset 0 0 0 1px rgba(255, 196, 0, 0.18);
 	opacity: 1;
 }
 
-.mes_ztracker {
+.mes_xutils {
 	position: relative;
 	z-index: 50;
 
-	.ztracker-controls {
+	.xutils-controls {
 		position: absolute;
 		top: 8px;
 		right: 8px;
@@ -264,11 +264,11 @@
 		gap: 12px;
 		z-index: 5000;
 
-		.ztracker-regenerate-button,
-		.ztracker-cleanup-button,
-		.ztracker-edit-button,
-		.ztracker-delete-button,
-		.ztracker-parts-summary {
+		.xutils-regenerate-button,
+		.xutils-cleanup-button,
+		.xutils-edit-button,
+		.xutils-delete-button,
+		.xutils-parts-summary {
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
@@ -285,7 +285,7 @@
 			}
 		}
 
-		.ztracker-parts-details {
+		.xutils-parts-details {
 			position: relative;
 			margin: 0;
 			padding: 0;
@@ -307,15 +307,15 @@
 			}
 		}
 
-		.ztracker-parts-list {
+		.xutils-parts-list {
 			position: absolute;
 			right: 0;
 			top: 22px;
 			min-width: 260px;
 			padding: 10px;
-			background-color: var(--ztracker-menu-bg, rgba(0, 0, 0, 0.92));
+			background-color: var(--xutils-menu-bg, rgba(0, 0, 0, 0.92));
 			background-image: none;
-			border: 1px solid var(--ztracker-menu-border, rgba(255, 255, 255, 0.12));
+			border: 1px solid var(--xutils-menu-border, rgba(255, 255, 255, 0.12));
 			border-radius: 6px;
 			display: flex;
 			flex-direction: column;
@@ -328,7 +328,7 @@
 			line-height: 1.25;
 		}
 
-		.ztracker-part-row {
+		.xutils-part-row {
 			display: flex;
 			flex-direction: column;
 			gap: 6px;
@@ -341,7 +341,7 @@
 			}
 		}
 
-		.ztracker-part-regenerate-button {
+		.xutils-part-regenerate-button {
 			cursor: pointer;
 			padding: 6px 8px;
 			border-radius: 4px;
@@ -350,14 +350,14 @@
 			opacity: 0.95;
 			user-select: none;
 			white-space: nowrap;
-			background: var(--ztracker-menu-part-bg, rgba(255, 255, 255, 0.06));
+			background: var(--xutils-menu-part-bg, rgba(255, 255, 255, 0.06));
 
 			&:hover {
-				background: var(--ztracker-menu-hover-bg, rgba(255, 255, 255, 0.10));
+				background: var(--xutils-menu-hover-bg, rgba(255, 255, 255, 0.10));
 			}
 		}
 
-		.ztracker-part-items {
+		.xutils-part-items {
 			display: flex;
 			flex-direction: column;
 			gap: 6px;
@@ -366,13 +366,13 @@
 			overflow: auto;
 		}
 
-		.ztracker-array-item-row {
+		.xutils-array-item-row {
 			display: flex;
 			flex-direction: column;
 			gap: 4px;
 		}
 
-		.ztracker-array-item-regenerate-button {
+		.xutils-array-item-regenerate-button {
 			cursor: pointer;
 			padding: 6px 8px;
 			border-radius: 4px;
@@ -381,21 +381,21 @@
 			user-select: none;
 			white-space: normal;
 			word-break: break-word;
-			background: var(--ztracker-menu-item-bg, rgba(255, 255, 255, 0.03));
+			background: var(--xutils-menu-item-bg, rgba(255, 255, 255, 0.03));
 
 			&:hover {
-				background: var(--ztracker-menu-hover-bg, rgba(255, 255, 255, 0.10));
+				background: var(--xutils-menu-hover-bg, rgba(255, 255, 255, 0.10));
 			}
 		}
 
-		.ztracker-array-item-fields {
+		.xutils-array-item-fields {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 6px;
 			padding-left: 8px;
 		}
 
-		.ztracker-array-item-field-regenerate-button {
+		.xutils-array-item-field-regenerate-button {
 			cursor: pointer;
 			padding: 4px 6px;
 			border-radius: 999px;
@@ -403,16 +403,16 @@
 			opacity: 0.98;
 			user-select: none;
 			white-space: nowrap;
-			background: var(--ztracker-menu-item-bg, rgba(255, 255, 255, 0.03));
-			border: 1px solid var(--ztracker-menu-border, rgba(255, 255, 255, 0.12));
+			background: var(--xutils-menu-item-bg, rgba(255, 255, 255, 0.03));
+			border: 1px solid var(--xutils-menu-border, rgba(255, 255, 255, 0.12));
 
 			&:hover {
-				background: var(--ztracker-menu-hover-bg, rgba(255, 255, 255, 0.10));
+				background: var(--xutils-menu-hover-bg, rgba(255, 255, 255, 0.10));
 			}
 		}
 	}
 
-	.ztracker_default_mes_template {
+	.xutils_default_mes_template {
 		font-size: smaller;
 		tr {
 			td {
@@ -434,7 +434,7 @@
 				}
 			}
 			table,
-			.mes_ztracker_characters {
+			.mes_xutils_characters {
 				padding-left: 20px;
 			}
 		}

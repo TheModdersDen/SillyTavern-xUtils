@@ -8,7 +8,7 @@ export const SettingsSectionDrawer: FC<{
   children: ReactNode;
 }> = ({ title, isOpen, onToggle, children }) => {
   return (
-    <div className="inline-drawer ztracker-settings-section">
+    <div className="inline-drawer xutils-settings-section">
       <div
         className="inline-drawer-toggle inline-drawer-header"
         onClick={(event) => {
@@ -21,7 +21,7 @@ export const SettingsSectionDrawer: FC<{
         <div className={`inline-drawer-icon fa-solid fa-circle-chevron-down ${isOpen ? 'down' : ''}`}></div>
       </div>
       <div className="inline-drawer-content" style={{ display: isOpen ? 'block' : 'none' }}>
-        <div className="ztracker-section-content">{children}</div>
+        <div className="xutils-section-content">{children}</div>
       </div>
     </div>
   );

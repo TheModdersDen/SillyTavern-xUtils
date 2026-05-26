@@ -77,14 +77,14 @@ export async function loadWorldInfoBookByName(
     });
 
     if (!res.ok) {
-      if (options?.debug) console.debug('zTracker: loadWorldInfoBookByName failed', trimmed, res.status);
+      if (options?.debug) console.debug('xUtils: loadWorldInfoBookByName failed', trimmed, res.status);
       return null;
     }
 
     const json = (await res.json()) as WorldInfoBookResponse;
     const entriesRecord = json?.entries;
     if (!entriesRecord || typeof entriesRecord !== 'object' || Array.isArray(entriesRecord)) {
-      if (options?.debug) console.debug('zTracker: lorebook response missing entries', trimmed, json);
+      if (options?.debug) console.debug('xUtils: lorebook response missing entries', trimmed, json);
       return null;
     }
 
@@ -97,7 +97,7 @@ export async function loadWorldInfoBookByName(
 
     return { name: trimmed, entries };
   } catch (err) {
-    if (options?.debug) console.debug('zTracker: loadWorldInfoBookByName threw', trimmed, err);
+    if (options?.debug) console.debug('xUtils: loadWorldInfoBookByName threw', trimmed, err);
     return null;
   }
 }

@@ -45,7 +45,7 @@ const toonTrackerValue = {
 };
 
 const embedSettings = {
-  embedZTrackerSnapshotTransformPresets: {
+  embedXUtilsSnapshotTransformPresets: {
     default: {
       name: 'Default (JSON)',
       input: 'pretty_json',
@@ -74,14 +74,14 @@ const embedSettings = {
       wrapInCodeFence: true,
     },
   },
-} as Pick<ExtensionSettings, 'embedZTrackerSnapshotTransformPresets'>;
+} as Pick<ExtensionSettings, 'embedXUtilsSnapshotTransformPresets'>;
 
 describe('formatEmbeddedTrackerSnapshot (minimal)', () => {
   it('transforms a nested object and writes an artifact file', async () => {
     const settings = {
       ...embedSettings,
-      embedZTrackerSnapshotTransformPreset: 'minimal',
-    } as Pick<ExtensionSettings, 'embedZTrackerSnapshotTransformPreset' | 'embedZTrackerSnapshotTransformPresets'>;
+      embedXUtilsSnapshotTransformPreset: 'minimal',
+    } as Pick<ExtensionSettings, 'embedXUtilsSnapshotTransformPreset' | 'embedXUtilsSnapshotTransformPresets'>;
 
     const { lang, text, wrapInCodeFence } = formatEmbeddedTrackerSnapshot(trackerValue, settings);
     expect(lang).toBe('text');
@@ -130,8 +130,8 @@ describe('formatEmbeddedTrackerSnapshot (toon)', () => {
   it('encodes tracker data as TOON, round-trips it, and writes an artifact file', async () => {
     const settings = {
       ...embedSettings,
-      embedZTrackerSnapshotTransformPreset: 'toon',
-    } as Pick<ExtensionSettings, 'embedZTrackerSnapshotTransformPreset' | 'embedZTrackerSnapshotTransformPresets'>;
+      embedXUtilsSnapshotTransformPreset: 'toon',
+    } as Pick<ExtensionSettings, 'embedXUtilsSnapshotTransformPreset' | 'embedXUtilsSnapshotTransformPresets'>;
 
     const { lang, text, wrapInCodeFence } = formatEmbeddedTrackerSnapshot(toonTrackerValue, settings);
 

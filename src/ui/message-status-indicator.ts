@@ -1,11 +1,11 @@
-/** Shared DOM helpers for zTracker message-local status badges. */
+/** Shared DOM helpers for xUtils message-local status badges. */
 
-export const AUTO_MODE_HOLD_CLASS = 'ztracker-auto-mode-hold';
-export const AUTO_MODE_STATUS_CLASS = 'ztracker-auto-mode-status';
-export const CONTEXT_MENU_STATUS_CLASS = 'ztracker-context-menu-status';
-export const FULL_TRACKER_STATUS_CLASS = 'ztracker-full-tracker-status';
-export const MESSAGE_STATUS_BASE_CLASS = 'ztracker-message-status';
-export const RENDER_ERROR_STATUS_CLASS = 'ztracker-render-error-status';
+export const AUTO_MODE_HOLD_CLASS = 'xutils-auto-mode-hold';
+export const AUTO_MODE_STATUS_CLASS = 'xutils-auto-mode-status';
+export const CONTEXT_MENU_STATUS_CLASS = 'xutils-context-menu-status';
+export const FULL_TRACKER_STATUS_CLASS = 'xutils-full-tracker-status';
+export const MESSAGE_STATUS_BASE_CLASS = 'xutils-message-status';
+export const RENDER_ERROR_STATUS_CLASS = 'xutils-render-error-status';
 
 type MessageStatusIndicatorOptions = {
   messageId: number | null;
@@ -53,7 +53,7 @@ export function clearMessageStatusIndicator(options: {
   });
 }
 
-/** Reattaches a message-local zTracker status badge after host rerenders or state changes. */
+/** Reattaches a message-local xUtils status badge after host rerenders or state changes. */
 export function syncMessageStatusIndicator(options: MessageStatusIndicatorOptions): void {
   clearMessageStatusIndicator({
     statusClassName: options.statusClassName,
@@ -80,11 +80,11 @@ export function syncMessageStatusIndicator(options: MessageStatusIndicatorOption
   status.setAttribute('aria-live', 'polite');
 
   const icon = document.createElement('span');
-  icon.className = options.iconClassName ?? 'ztracker-message-status-icon fa-solid fa-truck-fast';
+  icon.className = options.iconClassName ?? 'xutils-message-status-icon fa-solid fa-truck-fast';
   icon.setAttribute('aria-hidden', 'true');
 
   const text = document.createElement('span');
-  text.className = 'ztracker-message-status-text';
+  text.className = 'xutils-message-status-text';
   text.textContent = options.text;
 
   status.append(icon, text);
@@ -98,7 +98,7 @@ export function syncMessageStatusIndicator(options: MessageStatusIndicatorOption
   messageBlock.prepend(status);
 }
 
-/** Runs async work while keeping a message-local zTracker badge visible for that message. */
+/** Runs async work while keeping a message-local xUtils badge visible for that message. */
 export async function withMessageStatusIndicator<T>(
   options: Omit<MessageStatusIndicatorOptions, 'messageId'> & { messageId: number },
   callback: () => Promise<T>,

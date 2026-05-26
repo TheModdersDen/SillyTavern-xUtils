@@ -10,14 +10,14 @@ import {
   DEFAULT_SCHEMA_HTML,
   PromptEngineeringMode,
   TrackerWorldInfoPolicyMode,
-  ZTRACKER_SYSTEM_PROMPT_PRESET_NAME,
-  ZTRACKER_SYSTEM_PROMPT_TEXT,
+  XUTILS_SYSTEM_PROMPT_PRESET_NAME,
+  XUTILS_SYSTEM_PROMPT_TEXT,
 } from '../src/config.js';
 
 /** Reuses the live `Bar` profile id so local captures match the observed runtime request. */
 export const LIVE_BAR_PROFILE_ID = 'a16e3fcd-6739-4843-92f8-528bb85f92b2';
 
-/** Mirrors the schema shown in the live zTracker settings panel for the `Bar` chat. */
+/** Mirrors the schema shown in the live xUtils settings panel for the `Bar` chat. */
 export const LIVE_BAR_SCHEMA_VALUE = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   title: 'SceneTracker',
@@ -95,8 +95,8 @@ export const LIVE_BAR_SCHEMA_VALUE = {
         required: ['name', 'hair', 'makeup', 'outfit', 'stateOfDress', 'postureAndInteraction'],
       },
       description: 'Array of character objects',
-      'x-ztracker-dependsOn': ['charactersPresent'],
-      'x-ztracker-idKey': 'name',
+      'x-xutils-dependsOn': ['charactersPresent'],
+      'x-xutils-idKey': 'name',
     },
   },
   required: ['time', 'location', 'weather', 'topics', 'charactersPresent', 'characters'],
@@ -181,13 +181,13 @@ export function installLiveLikeSillyTavernContext() {
       if (apiId === 'sysprompt') {
         return {
           getCompletionPresetByName: (name?: string) =>
-            name === ZTRACKER_SYSTEM_PROMPT_PRESET_NAME
+            name === XUTILS_SYSTEM_PROMPT_PRESET_NAME
               ? {
-                  name: ZTRACKER_SYSTEM_PROMPT_PRESET_NAME,
-                  content: ZTRACKER_SYSTEM_PROMPT_TEXT,
+                  name: XUTILS_SYSTEM_PROMPT_PRESET_NAME,
+                  content: XUTILS_SYSTEM_PROMPT_TEXT,
                 }
               : undefined,
-          getPresetList: () => ({ presets: [], preset_names: [ZTRACKER_SYSTEM_PROMPT_PRESET_NAME] }),
+          getPresetList: () => ({ presets: [], preset_names: [XUTILS_SYSTEM_PROMPT_PRESET_NAME] }),
         };
       }
       return null;
@@ -204,7 +204,7 @@ export function makeLiveLikeSettings(mode: PromptEngineeringMode) {
   return {
     profileId: LIVE_BAR_PROFILE_ID,
     trackerSystemPromptMode: 'saved',
-    trackerSystemPromptSavedName: ZTRACKER_SYSTEM_PROMPT_PRESET_NAME,
+    trackerSystemPromptSavedName: XUTILS_SYSTEM_PROMPT_PRESET_NAME,
     maxResponseToken: 16000,
     autoMode: {},
     sequentialPartGeneration: false,
@@ -219,11 +219,11 @@ export function makeLiveLikeSettings(mode: PromptEngineeringMode) {
     prompt: '',
     skipFirstXMessages: 0,
     includeLastXMessages: 4,
-    includeLastXZTrackerMessages: 2,
-    embedZTrackerRole: 'system',
-    embedZTrackerSnapshotHeader: 'Scene details:',
-    embedZTrackerSnapshotTransformPreset: 'minimal',
-    embedZTrackerSnapshotTransformPresets: {
+    includeLastXXUtilsMessages: 2,
+    embedXUtilsRole: 'system',
+    embedXUtilsSnapshotHeader: 'Scene details:',
+    embedXUtilsSnapshotTransformPreset: 'minimal',
+    embedXUtilsSnapshotTransformPresets: {
       default: {
         name: 'Default (JSON)',
         input: 'pretty_json',

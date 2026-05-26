@@ -9,7 +9,7 @@ import { createRoot, Root } from 'react-dom/client';
 /** Covers the real settings subcomponents that were still missing focused UI tests. */
 
 const getWorldInfosMock = jest.fn();
-const getThirdPartyExtensionBasePathMock = jest.fn(() => '/scripts/extensions/third-party/ztracker');
+const getThirdPartyExtensionBasePathMock = jest.fn(() => '/scripts/extensions/third-party/xutils');
 const formatTrackerRequestDebugSnapshotMock = jest.fn(() => ['lastTrackerRequest:', 'prompt ok']);
 const getLastTrackerRequestDebugSnapshotMock = jest.fn(() => ({ requestId: 'debug-1' }));
 
@@ -295,7 +295,7 @@ describe('settings sections', () => {
 
     ({ root } = renderElement(React.createElement(WorldInfoPolicySection, { settings, updateAndRefresh })));
 
-    const policySelect = document.querySelector('select[title="Controls whether SillyTavern World Info is included when zTracker builds the prompt for tracker generation."]');
+    const policySelect = document.querySelector('select[title="Controls whether SillyTavern World Info is included when xUtils builds the prompt for tracker generation."]');
     if (!(policySelect instanceof HTMLSelectElement)) {
       throw new Error('World Info policy select not found');
     }
@@ -388,9 +388,9 @@ describe('settings sections', () => {
 
   test('updates transform preset selection, CRUD, and field edits from the settings surface', () => {
     const settings = {
-      embedZTrackerSnapshotHeader: 'Tracker:',
-      embedZTrackerSnapshotTransformPreset: 'default',
-      embedZTrackerSnapshotTransformPresets: {
+      embedXUtilsSnapshotHeader: 'Tracker:',
+      embedXUtilsSnapshotTransformPreset: 'default',
+      embedXUtilsSnapshotTransformPresets: {
         default: {
           name: 'Default',
           input: 'pretty_json',
@@ -415,7 +415,7 @@ describe('settings sections', () => {
 
     ({ root } = renderElement(React.createElement(EmbedSnapshotTransformSection, { settings, updateAndRefresh })));
 
-    const headerInput = document.querySelector('input[title="Header line to prepend before the embedded zTracker snapshot in normal generations. Set empty to omit."]');
+    const headerInput = document.querySelector('input[title="Header line to prepend before the embedded xUtils snapshot in normal generations. Set empty to omit."]');
     const presetSelect = document.querySelector('[data-testid="preset-select-Embed snapshot transform preset"]');
     if (!(headerInput instanceof HTMLInputElement) || !(presetSelect instanceof HTMLSelectElement)) {
       throw new Error('Transform header or preset select not found');
@@ -425,13 +425,13 @@ describe('settings sections', () => {
       setTextControlValue(headerInput, 'Scene:');
     });
 
-    expect(settings.embedZTrackerSnapshotHeader).toBe('Scene:');
+    expect(settings.embedXUtilsSnapshotHeader).toBe('Scene:');
 
     act(() => {
       setSelectValue(presetSelect, 'custom');
     });
 
-    expect(settings.embedZTrackerSnapshotTransformPreset).toBe('custom');
+    expect(settings.embedXUtilsSnapshotTransformPreset).toBe('custom');
 
     act(() => {
       root?.render(React.createElement(EmbedSnapshotTransformSection, { settings, updateAndRefresh }));
@@ -466,7 +466,7 @@ describe('settings sections', () => {
       wrapCheckbox.click();
     });
 
-    expect(settings.embedZTrackerSnapshotTransformPresets.custom).toMatchObject({
+    expect(settings.embedXUtilsSnapshotTransformPresets.custom).toMatchObject({
       input: 'toon',
       pattern: 'scene',
       flags: 'm',
@@ -485,7 +485,7 @@ describe('settings sections', () => {
     act(() => {
       createButton.click();
     });
-    expect(settings.embedZTrackerSnapshotTransformPresets.custom).toBeDefined();
+    expect(settings.embedXUtilsSnapshotTransformPresets.custom).toBeDefined();
 
     act(() => {
       root?.render(React.createElement(EmbedSnapshotTransformSection, { settings, updateAndRefresh }));
@@ -494,7 +494,7 @@ describe('settings sections', () => {
     act(() => {
       renameButton.click();
     });
-    expect(settings.embedZTrackerSnapshotTransformPresets.renamed?.name).toBe('Renamed');
+    expect(settings.embedXUtilsSnapshotTransformPresets.renamed?.name).toBe('Renamed');
 
     act(() => {
       root?.render(React.createElement(EmbedSnapshotTransformSection, { settings, updateAndRefresh }));
@@ -503,7 +503,7 @@ describe('settings sections', () => {
     act(() => {
       deleteButton.click();
     });
-    expect(settings.embedZTrackerSnapshotTransformPresets.renamed).toBeUndefined();
+    expect(settings.embedXUtilsSnapshotTransformPresets.renamed).toBeUndefined();
   });
 
   test('toggles debug logging and writes diagnostics output from the diagnostics surface', async () => {
@@ -542,12 +542,12 @@ describe('settings sections', () => {
 
     expect(globalThis.fetch).toHaveBeenNthCalledWith(
       1,
-      'http://localhost/scripts/extensions/third-party/ztracker/dist/templates/buttons.html',
+      'http://localhost/scripts/extensions/third-party/xutils/dist/templates/buttons.html',
       { cache: 'no-store' },
     );
     expect(globalThis.fetch).toHaveBeenNthCalledWith(
       2,
-      'http://localhost/scripts/extensions/third-party/ztracker/dist/templates/modify_schema_popup.html',
+      'http://localhost/scripts/extensions/third-party/xutils/dist/templates/modify_schema_popup.html',
       { cache: 'no-store' },
     );
     expect(setDiagnosticsText).toHaveBeenCalledWith(expect.stringContaining('template: dist/templates/buttons'));

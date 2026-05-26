@@ -137,7 +137,7 @@ describe('createTrackerActions skipFirstXMessages', () => {
     const generateRequest = makeGenerateRequest();
     const chat = makeChat(4);
     chat[3].extra = {
-      zTracker: {
+      xUtils: {
         schemaKey: 'default',
         schemaValue: { time: '09:00:00' },
         schemaHtml: '<div></div>',
@@ -191,7 +191,7 @@ describe('createTrackerActions skipFirstXMessages', () => {
     const generateRequest = makeGenerateRequest({ content: { time: '10:00:00' } });
     const chat = makeChat(4);
     chat[3].extra = {
-      zTracker: {
+      xUtils: {
         schemaKey: 'default',
         schemaValue: { time: '09:00:00' },
         schemaHtml: '<div></div>',

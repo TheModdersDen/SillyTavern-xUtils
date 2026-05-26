@@ -16,6 +16,10 @@
         "noEmit": false,
         "esModuleInterop": true,
         "skipLibCheck": true,
+        "typeRoots": [
+            "./types",
+            "./node_modules/@types"
+        ],
         "jsx": "react-jsx",
         "outDir": "./dist",
         "rootDir": "./src"

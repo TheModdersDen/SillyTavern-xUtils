@@ -1,4 +1,5 @@
 import { getArrayItemIdentityKey } from './tracker-helpers.js';
+import { LEGACY_SCHEMA_DEPENDS_ON_KEY, XUTILS_SCHEMA_DEPENDS_ON_KEY } from './extension-metadata.js';
 
 export function getTopLevelSchemaKeys(schema: any): string[] {
   const props = schema?.properties;
@@ -60,7 +61,8 @@ function buildWrappedSchema(schema: any, titleSuffix: string, propertyName: stri
  * Resolves a stable top-level generation order, honoring optional schema annotations.
  *
  * Supported JSON-schema extension fields (per top-level property):
- * - x-ztracker-dependsOn: string | string[] (other top-level keys)
+ * - x-xutils-dependsOn: string | string[] (other top-level keys)
+ * - x-ztracker-dependsOn: legacy alias still accepted during migration
  *
  * If a cycle is detected, falls back to the schema's declared property order.
  */
@@ -75,7 +77,9 @@ export function resolveTopLevelPartsOrder(schema: any): string[] {
   const depsByNode = new Map<string, Set<string>>();
   for (const key of baseOrder) {
     const def = (props as any)[key];
-    const deps = normalizeDependsOn(def?.['x-ztracker-dependsOn']).filter((d) => nodes.has(d));
+    const deps = normalizeDependsOn(def?.[XUTILS_SCHEMA_DEPENDS_ON_KEY] ?? def?.[LEGACY_SCHEMA_DEPENDS_ON_KEY]).filter(
+      (d) => nodes.has(d),
+    );
     depsByNode.set(key, new Set(deps));
   }
 

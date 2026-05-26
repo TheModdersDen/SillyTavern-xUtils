@@ -7,7 +7,7 @@
  * Records one live SillyTavern text-completion prompt-shape failure from the wrapped
  * tracker-generation path when conversation-role handling normalizes the user turn
  * to assistant/model and the host prompt builder ignores `message.name` unless
- * zTracker inlines the speaker labels before delegating prompt construction.
+ * xUtils inlines the speaker labels before delegating prompt construction.
  */
 export const wrappedConversationRoleSpeakerLossFixture = {
   apiMode: 'textgenerationwebui',

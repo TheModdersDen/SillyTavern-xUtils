@@ -54,7 +54,7 @@ export function createCharacterPanelButtonController(options: {
         getContext: () => SillyTavern.getContext(),
         autoModeEnabled: settings.autoMode !== AutoModeOptions.NONE,
         onToggle: ({ excluded }) => {
-          st_echo('info', excluded ? 'zTracker auto mode excluded for this character.' : 'zTracker auto mode restored for this character.');
+          st_echo('info', excluded ? 'xUtils auto mode excluded for this character.' : 'xUtils auto mode restored for this character.');
         },
       });
     }, 20);

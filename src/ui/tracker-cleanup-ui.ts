@@ -116,7 +116,7 @@ export function buildCleanupPopupContent(rows: TrackerCleanupPopupRow[]): string
         .map(
           (row, index) => `
               <label style="display:flex;align-items:flex-start;gap:8px;padding:4px 0 4px ${row.level * 18}px;">
-                <input type="checkbox" data-ztracker-cleanup-target-index="${index}" />
+                <input type="checkbox" data-xutils-cleanup-target-index="${index}" />
                 <span>${row.pending ? '[pending] ' : ''}${row.label}</span>
               </label>`,
         )
@@ -124,47 +124,47 @@ export function buildCleanupPopupContent(rows: TrackerCleanupPopupRow[]): string
     : '<div>No cleanup targets are available for this tracker.</div>';
 
   return `
-      <div id="ztracker-cleanup-popup" style="display:flex;flex-direction:column;gap:12px;min-width:min(560px,90vw);max-width:90vw;">
+      <div id="xutils-cleanup-popup" style="display:flex;flex-direction:column;gap:12px;min-width:min(560px,90vw);max-width:90vw;">
         <div>Clear wrong tracker sections before recreating them. Parent selections override child selections.</div>
         <div style="display:flex;flex-direction:column;gap:6px;">
           <label style="display:flex;align-items:flex-start;gap:8px;">
-            <input type="radio" name="ztracker-cleanup-mode" value="clear-and-recreate" checked />
+            <input type="radio" name="xutils-cleanup-mode" value="clear-and-recreate" checked />
             <span>Clear and recreate selected targets</span>
           </label>
           <label style="display:flex;align-items:flex-start;gap:8px;">
-            <input type="radio" name="ztracker-cleanup-mode" value="clear-only" />
+            <input type="radio" name="xutils-cleanup-mode" value="clear-only" />
             <span>Clear selected targets only</span>
           </label>
         </div>
         <div style="max-height:50vh;overflow:auto;border:1px solid rgba(127,127,127,0.22);border-radius:6px;padding:8px 10px;">
           ${rowsHtml}
         </div>
-        <div id="ztracker-cleanup-selection-summary" style="font-size:0.9em;opacity:0.85;">0 effective targets selected</div>
+        <div id="xutils-cleanup-selection-summary" style="font-size:0.9em;opacity:0.85;">0 effective targets selected</div>
       </div>
     `;
 }
 
 /** Keeps the popup summary aligned with effective ancestor-filtered target selection. */
 export function bindCleanupPopupSummary(rows: TrackerCleanupPopupRow[]): void {
-  const popupRoot = document.getElementById('ztracker-cleanup-popup');
+  const popupRoot = document.getElementById('xutils-cleanup-popup');
   if (!popupRoot) {
     return;
   }
 
   const updateSummary = () => {
     const selectedTargets = Array.from(
-      popupRoot.querySelectorAll<HTMLInputElement>('[data-ztracker-cleanup-target-index]:checked'),
+      popupRoot.querySelectorAll<HTMLInputElement>('[data-xutils-cleanup-target-index]:checked'),
     )
-      .map((input) => rows[Number(input.getAttribute('data-ztracker-cleanup-target-index') ?? '-1')]?.target)
+      .map((input) => rows[Number(input.getAttribute('data-xutils-cleanup-target-index') ?? '-1')]?.target)
       .filter((target): target is TrackerCleanupTarget => !!target);
     const effectiveTargetCount = normalizeTrackerCleanupTargets(selectedTargets).length;
-    const summary = popupRoot.querySelector('#ztracker-cleanup-selection-summary');
+    const summary = popupRoot.querySelector('#xutils-cleanup-selection-summary');
     if (summary) {
       summary.textContent = `${effectiveTargetCount} effective ${effectiveTargetCount === 1 ? 'target' : 'targets'} selected`;
     }
   };
 
-  popupRoot.querySelectorAll('[data-ztracker-cleanup-target-index]').forEach((input) => {
+  popupRoot.querySelectorAll('[data-xutils-cleanup-target-index]').forEach((input) => {
     input.addEventListener('change', updateSummary);
   });
   updateSummary();

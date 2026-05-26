@@ -36,7 +36,7 @@ describe('parseResponse', () => {
 
     expect(result).toEqual({ foo: 'bar' });
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired JSON response',
+      'xUtils: repaired JSON response',
       expect.objectContaining({
         appliedSteps: ['fence cleanup'],
       }),
@@ -51,7 +51,7 @@ describe('parseResponse', () => {
 
     expect(result).toEqual({ foo: 'bar' });
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired JSON response',
+      'xUtils: repaired JSON response',
       expect.objectContaining({
         appliedSteps: ['json substring extraction'],
       }),
@@ -66,7 +66,7 @@ describe('parseResponse', () => {
 
     expect(result).toEqual({ foo: 'bar', items: [1, 2] });
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired JSON response',
+      'xUtils: repaired JSON response',
       expect.objectContaining({
         appliedSteps: ['trailing comma removal'],
       }),
@@ -81,7 +81,7 @@ describe('parseResponse', () => {
 
     expect(result).toEqual({ foo: 'bar' });
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired JSON response',
+      'xUtils: repaired JSON response',
       expect.objectContaining({
         appliedSteps: ['whitespace normalization', 'smart quote normalization'],
       }),
@@ -144,7 +144,7 @@ describe('parseResponse', () => {
 
     expect(result).toEqual(value);
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'zTracker: repaired TOON response',
+      'xUtils: repaired TOON response',
       expect.objectContaining({
         appliedSteps: ['tabular delimiter normalization'],
       }),
@@ -194,7 +194,7 @@ describe('parseResponse', () => {
     try {
       expect(() => parseResponse(bad, 'json')).toThrow('Model response is not valid JSON.');
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        'zTracker: malformed payload',
+        'xUtils: malformed payload',
         expect.objectContaining({
           format: 'json',
           rawContent: bad,
@@ -217,7 +217,7 @@ describe('parseResponse', () => {
       expect(() => parseResponse(bad, 'toon')).toThrow('Model response is not valid TOON.');
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        'zTracker: malformed payload',
+        'xUtils: malformed payload',
         expect.objectContaining({
           format: 'toon',
           rawContent: bad,

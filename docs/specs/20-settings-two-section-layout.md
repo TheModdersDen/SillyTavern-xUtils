@@ -5,12 +5,12 @@ Last updated: 2026-04-13
 
 ## Summary
 
-Split the zTracker settings panel into two clearly separated areas:
+Split the xUtils settings panel into two clearly separated areas:
 
 1. **Tracker Generation** — everything that controls *how tracker data is created*.
 2. **Tracker Injection** — everything that controls *how tracker data is embedded* into normal (non-tracker) generations.
 
-Each section is a collapsible sub-drawer inside the existing zTracker inline-drawer, reusing SillyTavern's `inline-drawer` styling while keeping the open/closed state in React so both sections can default to open reliably.
+Each section is a collapsible sub-drawer inside the existing xUtils inline-drawer, reusing SillyTavern's `inline-drawer` styling while keeping the open/closed state in React so both sections can default to open reliably.
 
 ## Motivation
 
@@ -24,10 +24,10 @@ Grouping settings by concern:
 
 ## Current layout (flat)
 
-All settings render as sequential `.setting-row` elements inside a single `.ztracker-container`:
+All settings render as sequential `.setting-row` elements inside a single `.xutils-container`:
 
 ```
-zTracker (inline-drawer)
+xUtils (inline-drawer)
 └─ Connection Profile
    Auto Mode
    Sequential generation
@@ -42,8 +42,8 @@ zTracker (inline-drawer)
    Skip First X Messages
    Include Last X Messages
    Skip character card
-   Include Last X zTracker Messages        ← injection
-   Embed zTracker snapshots as (role)       ← injection
+   Include Last X xUtils Messages        ← injection
+   Embed xUtils snapshots as (role)       ← injection
    EmbedSnapshotTransformSection            ← injection
    WorldInfoPolicySection                   ← generation
    DiagnosticsSection
@@ -54,7 +54,7 @@ Note: World Info Policy is a generation concern but currently sits between injec
 ## Proposed layout (two sub-drawers + shared)
 
 ```
-zTracker (top-level inline-drawer)
+xUtils (top-level inline-drawer)
 │
 ├─ Connection Profile          ← shared (used by both flows)
 │
@@ -73,8 +73,8 @@ zTracker (top-level inline-drawer)
 │    World Info Policy
 │
 ├─ ▸ Tracker Injection         ← collapsible sub-drawer, open by default
-│    Include Last X zTracker Messages
-│    Embed zTracker snapshots as (role)
+│    Include Last X xUtils Messages
+│    Embed xUtils snapshots as (role)
 │    Embed snapshot header
 │    EmbedSnapshotTransformSection (preset + regex config)
 │
@@ -87,7 +87,7 @@ zTracker (top-level inline-drawer)
 
 ```
 ┌──────────────────────────────────────────┐
-│ ▾ zTracker                               │ ← existing top-level drawer
+│ ▾ xUtils                               │ ← existing top-level drawer
 ├──────────────────────────────────────────┤
 │  Connection Profile  [▾ dropdown      ]  │
 │                                          │
@@ -115,7 +115,7 @@ zTracker (top-level inline-drawer)
 │  └──────────────────────────────────────┘ │
 │                                          │
 │  ┌─ ▾ Tracker Injection ───────────────┐ │
-│  │  Include Last X zTracker Msgs [1]   │ │
+│  │  Include Last X xUtils Msgs [1]   │ │
 │  │  Embed snapshots as  [▾ User    ]   │ │
 │  │  Embed snapshot header [Tracker:]   │ │
 │  │  Transform Preset [▾ default ⊕✎🗑]  │ │
@@ -159,8 +159,8 @@ The implementation adds only minor spacing helpers for the nested section contai
 | Include Last X Messages | Generation | Context window for tracker generation. |
 | Skip character card | Generation | Omits character-card fields from generation prompt. |
 | World Info Policy | Generation | Controls World Info inclusion during tracker generation. |
-| Include Last X zTracker Messages | Injection | Controls *how many* snapshots are injected. |
-| Embed zTracker snapshots as (role) | Injection | Controls the role of injected messages. |
+| Include Last X xUtils Messages | Injection | Controls *how many* snapshots are injected. |
+| Embed xUtils snapshots as (role) | Injection | Controls the role of injected messages. |
 | Embed snapshot header | Injection | Header text for injected snapshot messages. |
 | EmbedSnapshotTransformSection | Injection | Regex transform and code-fence settings for injection. |
 | Debug logging + Diagnostics | Shared (bottom) | Global diagnostic concern, not specific to either flow. |
@@ -197,7 +197,7 @@ Implemented approach in `Settings.tsx`:
     <div className="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
   </div>
   <div className="inline-drawer-content">
-    {/* Include Last X zTracker, Embed role, EmbedSnapshotTransformSection */}
+    {/* Include Last X xUtils, Embed role, EmbedSnapshotTransformSection */}
   </div>
 </div>
 
@@ -248,7 +248,7 @@ Move `WorldInfoPolicySection` from its current position (below injection setting
 
 ## Testing
 
-- **Smoke test**: Open SillyTavern → Extensions → zTracker. Verify both sub-drawers render and collapse/expand correctly. Verify all settings are present and functional.
+- **Smoke test**: Open SillyTavern → Extensions → xUtils. Verify both sub-drawers render and collapse/expand correctly. Verify all settings are present and functional.
 - **No new unit tests required**: Layout-only change with no logic.
 - **Regression**: Confirm changing a setting in either section persists correctly after page reload.
 

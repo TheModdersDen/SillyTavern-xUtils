@@ -11,7 +11,7 @@ Allow users to exclude specific characters from automatic tracker generation. Wh
 
 Auto-mode (`autoMode` setting) triggers tracker generation for every new message via `CHARACTER_MESSAGE_RENDERED` / `USER_MESSAGE_RENDERED` events. In practice, not every character benefits from tracker generation — utility characters, narrator personas, OOC channels, or low-priority NPCs in a group chat add noise and waste LLM calls when tracked automatically.
 
-There is currently no per-character configuration in zTracker. All settings are global or per-chat. Users who want selective auto-tracking must either:
+There is currently no per-character configuration in xUtils. All settings are global or per-chat. Users who want selective auto-tracking must either:
 
 - Disable auto-mode entirely and generate manually per message.
 - Accept unnecessary LLM calls for characters that don't need tracking.
@@ -68,9 +68,9 @@ The only current per-character–adjacent setting is `skipCharacterCardInTracker
 ## Goals
 
 - Add a per-character flag that tells auto-mode to skip tracker generation for that character.
-- Expose the flag as a toggle button in the character edit panel so users can switch it without opening zTracker settings.
+- Expose the flag as a toggle button in the character edit panel so users can switch it without opening xUtils settings.
 - Provide immediate visual feedback (button color) reflecting the current exclusion state.
-- Reuse the existing zTracker truck icon for the character-level toggle so the feature stays visually associated with zTracker.
+- Reuse the existing xUtils truck icon for the character-level toggle so the feature stays visually associated with xUtils.
 - The exclusion applies only to auto-mode. Manual per-message generation (clicking the truck icon) still works regardless of the flag.
 
 ## Non-goals
@@ -158,13 +158,13 @@ This would add the guard deeper in the call stack. Less preferred because `gener
 
 SillyTavern's character edit panel (right-side panel, `#form_create`) contains a character info area with the avatar and several action buttons (export, duplicate, delete, favorites, etc.). This area is accessible to extensions via DOM manipulation.
 
-**Target location:** The button row near the character avatar in the character edit panel. This area typically contains icon buttons for character-level actions (favorite, export, duplicate, delete, lore, stats). zTracker would append one more icon button here.
+**Target location:** The button row near the character avatar in the character edit panel. This area typically contains icon buttons for character-level actions (favorite, export, duplicate, delete, lore, stats). xUtils would append one more icon button here.
 
 **Recommended approach:**
 
 1. Listen to a character-panel-related event (e.g. `CHAT_CHANGED` or a DOM mutation observer on `#form_create`) or hook into initial render.
 2. Find the existing button container in the character edit panel DOM.
-3. Append a zTracker exclusion toggle button if not already present.
+3. Append a xUtils exclusion toggle button if not already present.
 4. Update button state on character switch.
 
 **Implementation sketch:**
@@ -177,11 +177,11 @@ function injectCharacterPanelButton() {
   if (!buttonRow) return;
 
   // Avoid duplicates
-  if (buttonRow.querySelector('.ztracker-exclude-button')) return;
+  if (buttonRow.querySelector('.xutils-exclude-button')) return;
 
   const btn = document.createElement('div');
-  btn.classList.add('ztracker-exclude-button', 'menu_button', 'fa-solid', 'fa-truck');
-  btn.title = 'zTracker: Toggle auto-mode for this character';
+  btn.classList.add('xutils-exclude-button', 'menu_button', 'fa-solid', 'fa-truck');
+  btn.title = 'xUtils: Toggle auto-mode for this character';
 
   btn.addEventListener('click', () => toggleCharacterExclusion());
   buttonRow.appendChild(btn);
@@ -210,14 +210,14 @@ function updateExclusionButtonState(btn: HTMLElement) {
   const excluded = isCurrentCharacterExcluded();
   btn.style.color = excluded ? 'var(--SmartThemeQuoteColor, #e74c3c)' : '';
   btn.title = excluded
-    ? 'zTracker: Auto-mode EXCLUDED for this character (click to include)'
-    : 'zTracker: Auto-mode active for this character (click to exclude)';
+    ? 'xUtils: Auto-mode EXCLUDED for this character (click to include)'
+    : 'xUtils: Auto-mode active for this character (click to exclude)';
 }
 ```
 
 Using CSS custom properties from SillyTavern's Smart Theme system keeps the colors consistent with the user's theme.
 
-**Resolved icon choice:** use the existing zTracker truck icon (`fa-truck`) and rely on color + title text to communicate the exclusion state rather than switching to a different semantic icon.
+**Resolved icon choice:** use the existing xUtils truck icon (`fa-truck`) and rely on color + title text to communicate the exclusion state rather than switching to a different semantic icon.
 
 #### Character switch handling
 
@@ -232,7 +232,7 @@ No additional group-specific logic is needed because the exclusion check resolve
 ## Resolved decisions
 
 1. **Primary placement:** target the avatar action row in the character edit panel.
-2. **Icon:** use the zTracker truck icon with dynamic color and title updates.
+2. **Icon:** use the xUtils truck icon with dynamic color and title updates.
 3. **DOM failure behavior:** fail silently if the character panel button cannot be injected; do not add a fallback UI elsewhere.
 4. **Interaction scope:** exclusion applies to all auto-mode interactions associated with that character. In solo chats, that includes both incoming and outgoing auto-generation. In group chats, outgoing user-message behavior remains implementation-limited unless a stable member-target mapping exists.
 
@@ -262,7 +262,7 @@ No additional group-specific logic is needed because the exclusion check resolve
 
 ### Smoke test (Playwright)
 
-- Open a character's edit panel and confirm the zTracker button appears.
+- Open a character's edit panel and confirm the xUtils button appears.
 - Click the button and verify:
   - The exclusion flag is written to the character card.
   - The button color updates.

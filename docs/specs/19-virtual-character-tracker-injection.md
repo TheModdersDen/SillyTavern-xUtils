@@ -7,11 +7,11 @@ Last updated: 2026-04-13
 
 ## Summary
 
-Add an opt-in checkbox that makes embedded tracker snapshots appear as turns from a **virtual character** instead of using the selected role with a redundant header. The character name is derived from the existing `embedZTrackerSnapshotHeader` setting (default `"Tracker:"`), producing clean speaker attribution (e.g. `Tracker:`) rather than confusing composites like `[INST]Assistant: Tracker:`.
+Add an opt-in checkbox that makes embedded tracker snapshots appear as turns from a **virtual character** instead of using the selected role with a redundant header. The character name is derived from the existing `embedXUtilsSnapshotHeader` setting (default `"Tracker:"`), producing clean speaker attribution (e.g. `Tracker:`) rather than confusing composites like `[INST]Assistant: Tracker:`.
 
 ## Motivation
 
-When zTracker embeds tracker snapshots into the generation chat array via the `generate_interceptor`, the injected message is assigned one of the three standard roles (`user`, `assistant`, `system`). SillyTavern's prompt assembly then wraps that message with role-specific formatting:
+When xUtils embeds tracker snapshots into the generation chat array via the `generate_interceptor`, the injected message is assigned one of the three standard roles (`user`, `assistant`, `system`). SillyTavern's prompt assembly then wraps that message with role-specific formatting:
 
 - **Instruct mode** adds prefix/suffix sequences (e.g. `[INST]` / `[/INST]`) and may prepend the speaking character's name via `formatInstructModeChat()` depending on the `names_behavior` setting.
 - **Chat Completion mode** sets the `role` field and may prepend the character name into `content` or set a `name` property on the API message (depending on `names_behavior`).
@@ -32,11 +32,11 @@ A virtual character avoids the collision: the injected message carries its own s
 
 ### Setting
 
-`embedZTrackerRole` accepts `'user' | 'assistant' | 'system'` (default `'user'`).
+`embedXUtilsRole` accepts `'user' | 'assistant' | 'system'` (default `'user'`).
 
 ### Injection point
 
-`includeZTrackerMessages()` in `src/tracker.ts` splices a synthetic message into the cloned chat array:
+`includeXUtilsMessages()` in `src/tracker.ts` splices a synthetic message into the cloned chat array:
 
 ```ts
 copyMessages.splice(foundIndex + 1, 0, {
@@ -52,7 +52,7 @@ The injected message does **not** set a `name` field today.
 
 ### Header
 
-`embedZTrackerSnapshotHeader` (default `"Tracker:"`) is prepended to the message content as a text prefix.
+`embedXUtilsSnapshotHeader` (default `"Tracker:"`) is prepended to the message content as a text prefix.
 
 ## Upstream SillyTavern behavior (verified against 1.17 source)
 
@@ -105,7 +105,7 @@ The standard roles cause SillyTavern's prompt formatter to add its own speaker a
 - Creating an actual SillyTavern character card for the virtual speaker.
 - Changing the content format or transform pipeline of embedded snapshots.
 - Affecting the tracker *generation* prompt assembly (this spec targets the `generate_interceptor` embedding path only).
-- Suppressing instruct prefix/suffix wrapping (that is role-based and outside zTracker's control).
+- Suppressing instruct prefix/suffix wrapping (that is role-based and outside xUtils's control).
 
 ## Detailed design
 
@@ -113,24 +113,24 @@ The standard roles cause SillyTavern's prompt formatter to add its own speaker a
 
 ```ts
 /** When true, set `name` on injected tracker messages to the tracker label and omit the header prefix. */
-embedZTrackerAsCharacter: boolean;
+embedXUtilsAsCharacter: boolean;
 ```
 
 Default: `false` (off).
 
-This is orthogonal to `embedZTrackerRole` — the role dropdown continues to control which role the message uses (`user`, `assistant`, `system`). The checkbox controls whether the `name` field is set and the header prefix is suppressed.
+This is orthogonal to `embedXUtilsRole` — the role dropdown continues to control which role the message uses (`user`, `assistant`, `system`). The checkbox controls whether the `name` field is set and the header prefix is suppressed.
 
 ### 2. Derive character name from tracker label
 
 ```ts
-const label = (settings.embedZTrackerSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER)
+const label = (settings.embedXUtilsSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER)
   .replace(/:+\s*$/, '')   // strip trailing colon(s) + whitespace
   .trim() || 'Tracker';    // fallback if empty
 ```
 
-### 3. Modify `includeZTrackerMessages()` injection
+### 3. Modify `includeXUtilsMessages()` injection
 
-When `embedZTrackerAsCharacter` is `true`:
+When `embedXUtilsAsCharacter` is `true`:
 
 ```ts
 const characterName = deriveCharacterName(settings);
@@ -149,7 +149,7 @@ When `false`, behaviour is identical to today (no `name`, header prepended to co
 
 ### 4. Header behaviour
 
-| `embedZTrackerAsCharacter` | `name` on message | `content` starts with |
+| `embedXUtilsAsCharacter` | `name` on message | `content` starts with |
 |---|---|---|
 | `false` (default) | *(not set)* | `Tracker:\n\`\`\`json ...` |
 | `true` | `Tracker` | `` ```json ... `` |
@@ -164,7 +164,7 @@ The header is omitted from content because the `name` field already carries the 
 |---|---|
 | `[output_seq]\nAssistant: Tracker:\n\`\`\`json ...` | `[output_seq]\nTracker: \`\`\`json ...` |
 
-The instruct prefix/suffix wrapping (`[output_seq]` etc.) is still applied — zTracker cannot suppress it. But the speaker name changes from the default character name to the tracker label, which is the primary improvement.
+The instruct prefix/suffix wrapping (`[output_seq]` etc.) is still applied — xUtils cannot suppress it. But the speaker name changes from the default character name to the tracker label, which is the primary improvement.
 
 #### Instruct mode with `names_behavior: NONE`
 
@@ -199,7 +199,7 @@ Add a checkbox below the role dropdown in the Tracker Injection section:
 </label>
 ```
 
-The checkbox is only meaningful when `includeLastXZTrackerMessages > 0`. It can be visually grouped with the existing role and header controls.
+The checkbox is only meaningful when `includeLastXXUtilsMessages > 0`. It can be visually grouped with the existing role and header controls.
 
 ## Decisions (closed)
 
@@ -215,10 +215,10 @@ The checkbox is only meaningful when `includeLastXZTrackerMessages > 0`. It can 
 
 ## Acceptance criteria
 
-- [ ] New boolean setting `embedZTrackerAsCharacter` (default `false`).
+- [ ] New boolean setting `embedXUtilsAsCharacter` (default `false`).
 - [ ] When enabled, injected messages carry `name` derived from the tracker label and omit the header prefix from content.
 - [ ] When disabled, behaviour is identical to the current implementation.
 - [ ] UI checkbox is present with a clear tooltip.
 - [ ] Existing `user` / `assistant` / `system` role selection is unchanged and works with both checkbox states.
-- [ ] Existing tests pass; new tests cover the virtual-character path in `includeZTrackerMessages()`.
+- [ ] Existing tests pass; new tests cover the virtual-character path in `includeXUtilsMessages()`.
 - [ ] Smoke-tested against SillyTavern 1.17 in both instruct and Chat Completion mode.

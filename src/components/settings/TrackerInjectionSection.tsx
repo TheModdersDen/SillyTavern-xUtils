@@ -8,35 +8,35 @@ export const TrackerInjectionSection: FC<SettingsSectionProps> = ({ settings, up
   return (
     <>
       <div className="setting-row">
-        <label title="How many previous zTracker snapshots to embed into normal generations. 0 disables embedding.">
-          Include Last X zTracker Messages
+        <label title="How many previous xUtils snapshots to embed into normal generations. 0 disables embedding.">
+          Include Last X xUtils Messages
         </label>
         <input
           type="number"
           className="text_pole"
           min="0"
           step="1"
-          title="How many previous zTracker snapshots to embed into normal generations. 0 disables embedding."
-          value={settings.includeLastXZTrackerMessages}
+          title="How many previous xUtils snapshots to embed into normal generations. 0 disables embedding."
+          value={settings.includeLastXXUtilsMessages}
           onChange={(e) =>
             updateAndRefresh((s) => {
-              s.includeLastXZTrackerMessages = sanitizeIntegerSetting(e.target.value, { fallback: 0, min: 0 });
+              s.includeLastXXUtilsMessages = sanitizeIntegerSetting(e.target.value, { fallback: 0, min: 0 });
             })
           }
         />
       </div>
 
       <div className="setting-row">
-        <label title="Which role to use for embedded zTracker snapshots in normal generations. This affects generate_interceptor only, after SillyTavern has already built the live prompt chat array. In Text Completion chats, assistant-role snapshots stay as assistant turns when zTracker can preserve a clear reply cue and only inline into the final user turn in ambiguous terminal cases.">
-          Embed zTracker snapshots as
+        <label title="Which role to use for embedded xUtils snapshots in normal generations. This affects generate_interceptor only, after SillyTavern has already built the live prompt chat array. In Text Completion chats, assistant-role snapshots stay as assistant turns when xUtils can preserve a clear reply cue and only inline into the final user turn in ambiguous terminal cases.">
+          Embed xUtils snapshots as
         </label>
         <select
           className="text_pole"
-          title="Only affects embedding into the generation chat array after SillyTavern prompt assembly (generate_interceptor), not tracker generation. In Text Completion chats, assistant-role snapshots stay raw when zTracker can preserve a clear assistant reply cue and only inline when a standalone terminal assistant block would be ambiguous."
-          value={settings.embedZTrackerRole ?? 'user'}
+          title="Only affects embedding into the generation chat array after SillyTavern prompt assembly (generate_interceptor), not tracker generation. In Text Completion chats, assistant-role snapshots stay raw when xUtils can preserve a clear assistant reply cue and only inline when a standalone terminal assistant block would be ambiguous."
+          value={settings.embedXUtilsRole ?? 'user'}
           onChange={(e) =>
             updateAndRefresh((s) => {
-              s.embedZTrackerRole = e.target.value as typeof s.embedZTrackerRole;
+              s.embedXUtilsRole = e.target.value as typeof s.embedXUtilsRole;
             })
           }
         >
@@ -45,21 +45,21 @@ export const TrackerInjectionSection: FC<SettingsSectionProps> = ({ settings, up
           <option value="assistant">Assistant</option>
         </select>
         <div className="notes">
-          In Text Completion chats, assistant-role snapshots stay as assistant turns when zTracker can keep a clear reply cue, such as a host-confirmed solo speaker or trailing assistant prefill, and only inline into the final user turn for ambiguous terminal no-prefill cases. Confirmed single-speaker terminal fallbacks still use a raw assistant block so the prompt can end on the real assistant reply cue.
+          In Text Completion chats, assistant-role snapshots stay as assistant turns when xUtils can keep a clear reply cue, such as a host-confirmed solo speaker or trailing assistant prefill, and only inline into the final user turn for ambiguous terminal no-prefill cases. Confirmed single-speaker terminal fallbacks still use a raw assistant block so the prompt can end on the real assistant reply cue.
         </div>
       </div>
 
       <div className="setting-row">
-        <label title="When enabled, the tracker header is used as the injected speaker name instead of a content prefix when zTracker can keep a normal standalone injected message. Text-completion terminal assistant fallbacks still keep the tracker label in raw content so the prompt can end on the real assistant reply cue.">
+        <label title="When enabled, the tracker header is used as the injected speaker name instead of a content prefix when xUtils can keep a normal standalone injected message. Text-completion terminal assistant fallbacks still keep the tracker label in raw content so the prompt can end on the real assistant reply cue.">
           Inject as virtual character
         </label>
         <input
           type="checkbox"
           title="Uses the embed snapshot header as the injected message name and removes the header prefix from the embedded content when a standalone injected message is safe. Raw terminal assistant fallbacks keep the label in content instead."
-          checked={settings.embedZTrackerAsCharacter ?? false}
+          checked={settings.embedXUtilsAsCharacter ?? false}
           onChange={(e) =>
             updateAndRefresh((s) => {
-              s.embedZTrackerAsCharacter = e.target.checked;
+              s.embedXUtilsAsCharacter = e.target.checked;
             })
           }
         />

@@ -5,7 +5,7 @@ import type { ChatMessage } from 'sillytavern-utils-lib/types';
 import { EventNames } from 'sillytavern-utils-lib/types';
 import type { ExtensionSettingsManager } from 'sillytavern-utils-lib';
 import type { TrackerActions } from './tracker-actions.js';
-import { includeZTrackerMessages } from '../tracker.js';
+import { includeXUtilsMessages } from '../tracker.js';
 import { selected_group, st_echo } from 'sillytavern-utils-lib/config';
 import {
   getCurrentCharacterId,
@@ -13,10 +13,11 @@ import {
   shouldAutoGenerateForUserMessage,
 } from './character-auto-mode-exclusion.js';
 import { createCharacterPanelButtonController } from './character-panel-auto-mode.js';
-import { installZTrackerThemeObserver } from './menu-theme.js';
+import { installXUtilsThemeObserver } from './menu-theme.js';
 import { clearMessageStatusIndicator, RENDER_ERROR_STATUS_CLASS, syncMessageStatusIndicator } from './message-status-indicator.js';
 import { createOutgoingAutoModeController } from './outgoing-auto-mode.js';
 import { installPartsMenuPortalHandlers } from './parts-menu-portal.js';
+import { migrateLegacyExtensionStorage } from '../legacy-migration.js';
 
 const incomingTypes = [AutoModeOptions.RESPONSES, AutoModeOptions.BOTH];
 const outgoingTypes = [AutoModeOptions.INPUT, AutoModeOptions.BOTH];
@@ -72,17 +73,17 @@ function resolveAssistantReplyLabel(context: GenerateInterceptorContext): string
   return normalizeSpeakerLabel(context.characters[characterId]?.name);
 }
 
-/** Injects the zTracker per-message action button into SillyTavern's message template. */
+/** Injects the xUtils per-message action button into SillyTavern's message template. */
 function ensureMessageTemplateButton(): void {
-  if (document.querySelector('#message_template .mes_buttons .extraMesButtons .mes_ztracker_button')) {
+  if (document.querySelector('#message_template .mes_buttons .extraMesButtons .mes_xutils_button')) {
     return;
   }
 
-  const zTrackerIcon = document.createElement('div');
-  zTrackerIcon.title = 'zTracker';
-  zTrackerIcon.className = 'mes_button mes_ztracker_button fa-solid fa-truck-moving interactable';
-  zTrackerIcon.tabIndex = 0;
-  document.querySelector('#message_template .mes_buttons .extraMesButtons')?.prepend(zTrackerIcon);
+  const xUtilsIcon = document.createElement('div');
+  xUtilsIcon.title = 'xUtils';
+  xUtilsIcon.className = 'mes_button mes_xutils_button fa-solid fa-truck-moving interactable';
+  xUtilsIcon.tabIndex = 0;
+  document.querySelector('#message_template .mes_buttons .extraMesButtons')?.prepend(xUtilsIcon);
 }
 
 /** Resolves the message id for a click target from either a message row or the active portaled parts menu. */
@@ -119,14 +120,14 @@ function installTrackerActionClickHandler(): void {
 
     const { actions } = runtime;
 
-    const fieldButton = target.closest('.ztracker-array-item-field-regenerate-button') as HTMLElement | null;
+    const fieldButton = target.closest('.xutils-array-item-field-regenerate-button') as HTMLElement | null;
     if (fieldButton) {
-      const partKey = fieldButton.getAttribute('data-ztracker-part') ?? '';
-      const index = Number(fieldButton.getAttribute('data-ztracker-index') ?? '');
-      const name = fieldButton.getAttribute('data-ztracker-name') ?? '';
-      const idKey = fieldButton.getAttribute('data-ztracker-idkey') ?? '';
-      const idValue = fieldButton.getAttribute('data-ztracker-idvalue') ?? '';
-      const fieldKey = fieldButton.getAttribute('data-ztracker-field') ?? '';
+      const partKey = fieldButton.getAttribute('data-xutils-part') ?? '';
+      const index = Number(fieldButton.getAttribute('data-xutils-index') ?? '');
+      const name = fieldButton.getAttribute('data-xutils-name') ?? '';
+      const idKey = fieldButton.getAttribute('data-xutils-idkey') ?? '';
+      const idValue = fieldButton.getAttribute('data-xutils-idvalue') ?? '';
+      const fieldKey = fieldButton.getAttribute('data-xutils-field') ?? '';
 
       if (partKey && fieldKey && idKey && idValue && 'generateTrackerArrayItemFieldByIdentity' in actions) {
         // @ts-ignore - optional capability depending on build/version.
@@ -142,13 +143,13 @@ function installTrackerActionClickHandler(): void {
       return;
     }
 
-    const itemButton = target.closest('.ztracker-array-item-regenerate-button') as HTMLElement | null;
+    const itemButton = target.closest('.xutils-array-item-regenerate-button') as HTMLElement | null;
     if (itemButton) {
-      const partKey = itemButton.getAttribute('data-ztracker-part') ?? '';
-      const index = Number(itemButton.getAttribute('data-ztracker-index') ?? '');
-      const name = itemButton.getAttribute('data-ztracker-name') ?? '';
-      const idKey = itemButton.getAttribute('data-ztracker-idkey') ?? '';
-      const idValue = itemButton.getAttribute('data-ztracker-idvalue') ?? '';
+      const partKey = itemButton.getAttribute('data-xutils-part') ?? '';
+      const index = Number(itemButton.getAttribute('data-xutils-index') ?? '');
+      const name = itemButton.getAttribute('data-xutils-name') ?? '';
+      const idKey = itemButton.getAttribute('data-xutils-idkey') ?? '';
+      const idValue = itemButton.getAttribute('data-xutils-idvalue') ?? '';
 
       if (partKey && idKey && idValue && 'generateTrackerArrayItemByIdentity' in actions) {
         // @ts-ignore - optional capability depending on build/version.
@@ -161,25 +162,25 @@ function installTrackerActionClickHandler(): void {
       return;
     }
 
-    const partButton = target.closest('.ztracker-part-regenerate-button') as HTMLElement | null;
+    const partButton = target.closest('.xutils-part-regenerate-button') as HTMLElement | null;
     if (partButton) {
-      const partKey = partButton.getAttribute('data-ztracker-part') ?? '';
+      const partKey = partButton.getAttribute('data-xutils-part') ?? '';
       if (partKey) {
         actions.generateTrackerPart(messageId, partKey);
       }
       return;
     }
 
-    if (target.classList.contains('mes_ztracker_button')) {
+    if (target.classList.contains('mes_xutils_button')) {
       actions.generateTracker(messageId, { showStatusIndicator: true });
-    } else if (target.classList.contains('ztracker-cleanup-button') && 'openTrackerCleanup' in actions) {
+    } else if (target.classList.contains('xutils-cleanup-button') && 'openTrackerCleanup' in actions) {
       // @ts-ignore - optional capability depending on build/version.
       actions.openTrackerCleanup(messageId);
-    } else if (target.classList.contains('ztracker-edit-button')) {
+    } else if (target.classList.contains('xutils-edit-button')) {
       actions.editTracker(messageId);
-    } else if (target.classList.contains('ztracker-regenerate-button')) {
+    } else if (target.classList.contains('xutils-regenerate-button')) {
       actions.generateTracker(messageId, { showStatusIndicator: true });
-    } else if (target.classList.contains('ztracker-delete-button')) {
+    } else if (target.classList.contains('xutils-delete-button')) {
       actions.deleteTracker(messageId);
     }
   });
@@ -201,22 +202,22 @@ function rerenderTrackersForCurrentChat(options: {
       renderTrackerWithDeps(messageId);
     } catch (error) {
       hadRenderError = true;
-      console.error(`Error rendering zTracker on message ${messageId}, keeping stored data:`, error);
+      console.error(`Error rendering xUtils on message ${messageId}, keeping stored data:`, error);
       syncMessageStatusIndicator({
         messageId,
-        text: 'zTracker failed to render. Stored data was kept.',
+        text: 'xUtils failed to render. Stored data was kept.',
         statusClassName: RENDER_ERROR_STATUS_CLASS,
-        iconClassName: 'ztracker-message-status-icon ztracker-message-status-icon--static fa-solid fa-triangle-exclamation',
+        iconClassName: 'xutils-message-status-icon xutils-message-status-icon--static fa-solid fa-triangle-exclamation',
       });
     }
   });
 
   if (hadRenderError) {
-    st_echo('error', 'A zTracker template failed to render for one or more messages. Tracker data was kept.');
+    st_echo('error', 'A xUtils template failed to render for one or more messages. Tracker data was kept.');
   }
 }
 
-/** Boots zTracker's document-level UI helpers and wires them to SillyTavern runtime events. */
+/** Boots xUtils's document-level UI helpers and wires them to SillyTavern runtime events. */
 export async function initializeGlobalUI(options: InitializeGlobalUIOptions) {
   const { globalContext, settingsManager, actions, renderTrackerWithDeps } = options;
   const partsMenuPortal = installPartsMenuPortalHandlers();
@@ -230,7 +231,7 @@ export async function initializeGlobalUI(options: InitializeGlobalUIOptions) {
   }
 
   if (!themeObserverInstalled) {
-    installZTrackerThemeObserver();
+    installXUtilsThemeObserver();
     themeObserverInstalled = true;
   }
 
@@ -289,7 +290,7 @@ export async function initializeGlobalUI(options: InitializeGlobalUIOptions) {
           try {
             await actions.generateTracker(messageId, { silent: true, showStatusIndicator: false });
           } catch (error) {
-            console.error('zTracker auto mode failed to generate a tracker before reply.', error);
+            console.error('xUtils auto mode failed to generate a tracker before reply.', error);
           }
 
           const completion = outgoingAutoMode.finishPendingMessage(messageId, runId);
@@ -311,6 +312,14 @@ export async function initializeGlobalUI(options: InitializeGlobalUIOptions) {
     });
 
     globalContext.eventSource.on(EventNames.CHAT_CHANGED, () => {
+      const migration = migrateLegacyExtensionStorage(SillyTavern.getContext());
+      if (migration.chatMetadata && typeof globalContext.saveMetadataDebounced === 'function') {
+        globalContext.saveMetadataDebounced();
+      }
+      if (migration.chatMessages && typeof globalContext.saveChat === 'function') {
+        void globalContext.saveChat();
+      }
+
       outgoingAutoMode.resetAndSync({ invalidateRun: true });
       characterPanelButtons.scheduleSync();
       rerenderTrackersForCurrentChat({ globalContext, renderTrackerWithDeps });
@@ -319,10 +328,10 @@ export async function initializeGlobalUI(options: InitializeGlobalUIOptions) {
     registeredHostEventSources.add(eventSource as object);
   }
 
-  (globalThis as any).ztrackerGenerateInterceptor = (chat: ChatMessage[]) => {
+  const generateInterceptor = (chat: ChatMessage[]) => {
     const textCompletionSafeContext = SillyTavern.getContext() as GenerateInterceptorContext;
     const isGroupChat = Boolean(textCompletionSafeContext?.selected_group ?? selected_group);
-    const newChat = includeZTrackerMessages(chat, settingsManager.getSettings(), {
+    const newChat = includeXUtilsMessages(chat, settingsManager.getSettings(), {
       preserveTextCompletionTurnAlternation: textCompletionSafeContext?.mainApi === 'textgenerationwebui',
       isGroupChat,
       assistantReplyLabel: isGroupChat ? undefined : resolveAssistantReplyLabel(textCompletionSafeContext),
@@ -330,4 +339,7 @@ export async function initializeGlobalUI(options: InitializeGlobalUIOptions) {
     chat.length = 0;
     chat.push(...newChat);
   };
+
+  (globalThis as any).xutilsGenerateInterceptor = generateInterceptor;
+  (globalThis as any).ztrackerGenerateInterceptor = generateInterceptor;
 }

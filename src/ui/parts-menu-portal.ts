@@ -1,4 +1,4 @@
-/** Manages the zTracker parts dropdown while it is portaled to the document body. */
+/** Manages the xUtils parts dropdown while it is portaled to the document body. */
 type PartsMenuPortalState = {
   details: HTMLDetailsElement;
   summary: HTMLElement;
@@ -34,7 +34,7 @@ function positionPartsMenu(list: HTMLElement, summary: HTMLElement): void {
 
 /** Restores a portaled parts menu back into its original tracker container. */
 function restorePartsMenu(state: PartsMenuPortalState): void {
-  state.list.classList.remove('ztracker-parts-list-portal');
+  state.list.classList.remove('xutils-parts-list-portal');
   state.list.style.removeProperty('position');
   state.list.style.removeProperty('z-index');
   state.list.style.removeProperty('right');
@@ -71,7 +71,7 @@ function closeActivePartsMenu(): void {
 /** Moves the open parts menu into the document body so host overflow clipping cannot hide it. */
 function portalPartsMenu(details: HTMLDetailsElement): void {
   const summary = details.querySelector('summary') as HTMLElement | null;
-  const list = details.querySelector('.ztracker-parts-list') as HTMLElement | null;
+  const list = details.querySelector('.xutils-parts-list') as HTMLElement | null;
   if (!summary || !list) {
     return;
   }
@@ -80,10 +80,10 @@ function portalPartsMenu(details: HTMLDetailsElement): void {
     closeActivePartsMenu();
   }
 
-  const placeholder = document.createComment('ztracker-parts-list-placeholder');
+  const placeholder = document.createComment('xutils-parts-list-placeholder');
   list.replaceWith(placeholder);
   document.body.append(list);
-  list.classList.add('ztracker-parts-list-portal');
+  list.classList.add('xutils-parts-list-portal');
   list.style.position = 'absolute';
   list.style.zIndex = '2147483647';
   list.style.right = 'auto';
@@ -101,7 +101,7 @@ function portalPartsMenu(details: HTMLDetailsElement): void {
       return;
     }
     if (!details.isConnected || !details.open) {
-      if (list.classList.contains('ztracker-parts-list-portal')) {
+      if (list.classList.contains('xutils-parts-list-portal')) {
         list.style.visibility = '';
         restorePartsMenu(state);
         if (activePartsMenu?.details === details) {
@@ -125,7 +125,7 @@ export function installPartsMenuPortalHandlers(): PartsMenuPortalController {
     'toggle',
     (event) => {
       const details = event.target as HTMLDetailsElement;
-      if (!details?.classList?.contains('ztracker-parts-details')) {
+      if (!details?.classList?.contains('xutils-parts-details')) {
         return;
       }
 

@@ -35,7 +35,7 @@ jest.unstable_mockModule('sillytavern-utils-lib/types', () => ({
 }));
 
 jest.unstable_mockModule('../tracker.js', () => ({
-  includeZTrackerMessages: (chat: unknown[]) => chat,
+  includeXUtilsMessages: (chat: unknown[]) => chat,
 }));
 
 const { initializeGlobalUI } = await import('../ui/ui-init.js');
@@ -78,7 +78,7 @@ async function initializeAutoModeHarness(options: AutoModeHarnessOptions = {}) {
       settingsManager: {
         getSettings: jest.fn(() => ({
           autoMode: 'inputs',
-          includeLastXZTrackerMessages: 1,
+          includeLastXXUtilsMessages: 1,
           ...(options.settings ?? {}),
         })),
       } as any,
@@ -135,7 +135,7 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     await trackerPromise;
 
     expect(host.spies.generate).not.toHaveBeenCalled();
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
   });
 
   test('does not resume host generation after a tracker failure when the host reply was never suppressed', async () => {
@@ -158,10 +158,10 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
 
     expect(host.spies.stopGeneration).toHaveBeenCalledTimes(1);
     expect(host.spies.generate).not.toHaveBeenCalled();
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
   });
 
-  test('ignores zTracker-owned request starts while outgoing auto mode is holding the host reply', async () => {
+  test('ignores xUtils-owned request starts while outgoing auto mode is holding the host reply', async () => {
     renderMessage(0);
     let beforeRequestStartHook: (() => void) | undefined;
     const host = createSillyTavernHost({
@@ -214,8 +214,8 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
 
     events.emit('MESSAGE_SENT', 0);
     expect(actions.generateTracker).toHaveBeenCalledWith(0, { silent: true, showStatusIndicator: false });
-    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('ztracker-auto-mode-hold')).toBe(true);
-    expect(document.querySelector('.ztracker-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
+    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('xutils-auto-mode-hold')).toBe(true);
+    expect(document.querySelector('.xutils-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
 
     events.emit('GENERATION_STARTED');
     events.emit('GENERATION_STARTED');
@@ -226,8 +226,8 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     await trackerPromise;
 
     expect(host.spies.generate).toHaveBeenCalledWith(undefined, { automatic_trigger: true });
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
-    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('ztracker-auto-mode-hold')).toBe(false);
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('xutils-auto-mode-hold')).toBe(false);
   });
 
   test('does not keep stopping unrelated generation starts after the initial outgoing auto-mode suppression', async () => {
@@ -281,13 +281,13 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     });
 
     events.emit('MESSAGE_SENT', 0);
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
 
     renderMessage(0);
     events.emit('USER_MESSAGE_RENDERED', 0);
 
-    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('ztracker-auto-mode-hold')).toBe(true);
-    expect(document.querySelector('.ztracker-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
+    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('xutils-auto-mode-hold')).toBe(true);
+    expect(document.querySelector('.xutils-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
 
     resolveTracker(true);
     await trackerPromise;
@@ -315,7 +315,7 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     events.emit('MESSAGE_SENT', 0);
     expect(actions.generateTracker).toHaveBeenCalledWith(0, { silent: true, showStatusIndicator: false });
     expect(host.spies.stopGeneration).toHaveBeenCalledTimes(1);
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
 
     events.emit('GENERATION_STARTED');
     expect(host.spies.stopGeneration).toHaveBeenCalledTimes(1);
@@ -323,14 +323,14 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
 
     renderMessage(0);
     events.emit('USER_MESSAGE_RENDERED', 0);
-    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('ztracker-auto-mode-hold')).toBe(true);
-    expect(document.querySelector('.ztracker-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
+    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('xutils-auto-mode-hold')).toBe(true);
+    expect(document.querySelector('.xutils-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
 
     resolveTracker(true);
     await trackerPromise;
 
     expect(host.spies.generate).toHaveBeenCalledWith(undefined, { automatic_trigger: true });
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
   });
 
   test('reapplies the hold indicator when SillyTavern rerenders the pending message without a user-message event', async () => {
@@ -353,13 +353,13 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     });
 
     events.emit('MESSAGE_SENT', 0);
-    expect(document.querySelector('.ztracker-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
+    expect(document.querySelector('.xutils-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
 
     renderMessage(0);
     await flushDomObservers();
 
-    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('ztracker-auto-mode-hold')).toBe(true);
-    expect(document.querySelector('.ztracker-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
+    expect(document.querySelector('.mes[mesid="0"]')?.classList.contains('xutils-auto-mode-hold')).toBe(true);
+    expect(document.querySelector('.xutils-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
 
     resolveTracker(true);
     await trackerPromise;
@@ -397,7 +397,7 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     expect(actions.cancelTracker).toHaveBeenCalledWith(0);
     expect(sendButton?.title).toBe('Send a message');
     expect(sendButton?.classList.contains('fa-paper-plane')).toBe(true);
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
 
     resolveTracker(false);
     await trackerPromise;
@@ -424,7 +424,7 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     await Promise.resolve();
 
     expect(host.spies.generate).toHaveBeenCalledWith(undefined, { automatic_trigger: true });
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
   });
 
   test('resumes normal generation when tracker generation throws', async () => {
@@ -449,9 +449,9 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     await Promise.resolve();
     await Promise.resolve();
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('zTracker auto mode failed to generate a tracker before reply.', expect.any(Error));
+    expect(consoleErrorSpy).toHaveBeenCalledWith('xUtils auto mode failed to generate a tracker before reply.', expect.any(Error));
     expect(host.spies.generate).toHaveBeenCalledWith(undefined, { automatic_trigger: true });
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
 
     consoleErrorSpy.mockRestore();
   });
@@ -473,7 +473,7 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     const { events, actions } = await initializeAutoModeHarness({
       host: {
         chat: [{ original_avatar: 'alice.png' }],
-        characters: [{ avatar: 'alice.png', data: { extensions: { zTracker: { autoModeExcluded: true } } } }],
+        characters: [{ avatar: 'alice.png', data: { extensions: { xUtils: { autoModeExcluded: true } } } }],
         characterId: 0,
       },
       settings: {
@@ -489,7 +489,7 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     const { events, actions } = await initializeAutoModeHarness({
       host: {
         chat: [],
-        characters: [{ avatar: 'alice.png', data: { extensions: { zTracker: { autoModeExcluded: true } } } }],
+        characters: [{ avatar: 'alice.png', data: { extensions: { xUtils: { autoModeExcluded: true } } } }],
         characterId: 0,
       },
     });
@@ -518,15 +518,15 @@ describe('initializeGlobalUI auto-mode exclusion guards', () => {
     });
 
     events.emit('MESSAGE_SENT', 0);
-    expect(document.querySelector('.ztracker-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
+    expect(document.querySelector('.xutils-auto-mode-status')?.textContent).toContain('Generating tracker before reply');
 
     events.emit('CHAT_CHANGED');
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
 
     resolveTracker(true);
     await trackerPromise;
 
     expect(host.spies.generate).not.toHaveBeenCalled();
-    expect(document.querySelector('.ztracker-auto-mode-status')).toBeNull();
+    expect(document.querySelector('.xutils-auto-mode-status')).toBeNull();
   });
 });

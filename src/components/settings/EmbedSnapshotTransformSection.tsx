@@ -8,44 +8,44 @@ export const EmbedSnapshotTransformSection: FC<{
   updateAndRefresh: (updater: (current: ExtensionSettings) => void) => void;
 }> = ({ settings, updateAndRefresh }) => {
   const embedTransformItems = useMemo((): PresetItem[] => {
-    const presets = settings.embedZTrackerSnapshotTransformPresets ?? {};
+    const presets = settings.embedXUtilsSnapshotTransformPresets ?? {};
     return Object.entries(presets).map(([value, preset]) => ({
       value,
       label: preset.name,
     }));
-  }, [settings.embedZTrackerSnapshotTransformPresets]);
+  }, [settings.embedXUtilsSnapshotTransformPresets]);
 
   const handleEmbedTransformPresetChange = (newValue?: string) => {
     updateAndRefresh((s) => {
-      const selection = resolvePresetSelection(s.embedZTrackerSnapshotTransformPresets, newValue);
+      const selection = resolvePresetSelection(s.embedXUtilsSnapshotTransformPresets, newValue);
       if (!selection) return;
-      s.embedZTrackerSnapshotTransformPreset = selection.key;
+      s.embedXUtilsSnapshotTransformPreset = selection.key;
     });
   };
 
   const handleEmbedTransformPresetsListChange = (newItems: PresetItem[]) => {
     updateAndRefresh((s) => {
-      const nextState = reconcilePresetItems(s.embedZTrackerSnapshotTransformPresets, s.embedZTrackerSnapshotTransformPreset, newItems);
-      s.embedZTrackerSnapshotTransformPresets = nextState.presets as ExtensionSettings['embedZTrackerSnapshotTransformPresets'];
-      s.embedZTrackerSnapshotTransformPreset = nextState.activeKey;
+      const nextState = reconcilePresetItems(s.embedXUtilsSnapshotTransformPresets, s.embedXUtilsSnapshotTransformPreset, newItems);
+      s.embedXUtilsSnapshotTransformPresets = nextState.presets as ExtensionSettings['embedXUtilsSnapshotTransformPresets'];
+      s.embedXUtilsSnapshotTransformPreset = nextState.activeKey;
     });
   };
 
-  const key = settings.embedZTrackerSnapshotTransformPreset ?? 'default';
-  const preset = settings.embedZTrackerSnapshotTransformPresets?.[key];
+  const key = settings.embedXUtilsSnapshotTransformPreset ?? 'default';
+  const preset = settings.embedXUtilsSnapshotTransformPresets?.[key];
 
   return (
     <div className="setting-row">
-      <label title="Header line to prepend before the embedded zTracker snapshot in normal generations.">Embed snapshot header</label>
+      <label title="Header line to prepend before the embedded xUtils snapshot in normal generations.">Embed snapshot header</label>
       <input
         type="text"
         className="text_pole"
         placeholder={DEFAULT_EMBED_SNAPSHOT_HEADER}
-        title="Header line to prepend before the embedded zTracker snapshot in normal generations. Set empty to omit."
-        value={settings.embedZTrackerSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER}
+        title="Header line to prepend before the embedded xUtils snapshot in normal generations. Set empty to omit."
+        value={settings.embedXUtilsSnapshotHeader ?? DEFAULT_EMBED_SNAPSHOT_HEADER}
         onChange={(e) =>
           updateAndRefresh((s) => {
-            s.embedZTrackerSnapshotHeader = e.target.value;
+            s.embedXUtilsSnapshotHeader = e.target.value;
           })
         }
       />
@@ -58,7 +58,7 @@ export const EmbedSnapshotTransformSection: FC<{
       <STPresetSelect
         label="Embed snapshot transform preset"
         items={embedTransformItems}
-        value={settings.embedZTrackerSnapshotTransformPreset ?? 'default'}
+        value={settings.embedXUtilsSnapshotTransformPreset ?? 'default'}
         onChange={handleEmbedTransformPresetChange}
         onItemsChange={handleEmbedTransformPresetsListChange}
         readOnlyValues={['default']}
@@ -77,10 +77,10 @@ export const EmbedSnapshotTransformSection: FC<{
               value={preset.input ?? 'pretty_json'}
               onChange={(e) =>
                 updateAndRefresh((s) => {
-                  const current = s.embedZTrackerSnapshotTransformPresets?.[key];
+                  const current = s.embedXUtilsSnapshotTransformPresets?.[key];
                   if (!current) return;
-                  s.embedZTrackerSnapshotTransformPresets = {
-                    ...s.embedZTrackerSnapshotTransformPresets,
+                  s.embedXUtilsSnapshotTransformPresets = {
+                    ...s.embedXUtilsSnapshotTransformPresets,
                     [key]: { ...current, input: e.target.value as any },
                   };
                 })
@@ -98,10 +98,10 @@ export const EmbedSnapshotTransformSection: FC<{
               value={preset.pattern ?? ''}
               onChange={(e) =>
                 updateAndRefresh((s) => {
-                  const current = s.embedZTrackerSnapshotTransformPresets?.[key];
+                  const current = s.embedXUtilsSnapshotTransformPresets?.[key];
                   if (!current) return;
-                  s.embedZTrackerSnapshotTransformPresets = {
-                    ...s.embedZTrackerSnapshotTransformPresets,
+                  s.embedXUtilsSnapshotTransformPresets = {
+                    ...s.embedXUtilsSnapshotTransformPresets,
                     [key]: { ...current, pattern: e.target.value },
                   };
                 })
@@ -120,10 +120,10 @@ export const EmbedSnapshotTransformSection: FC<{
               value={preset.flags ?? ''}
               onChange={(e) =>
                 updateAndRefresh((s) => {
-                  const current = s.embedZTrackerSnapshotTransformPresets?.[key];
+                  const current = s.embedXUtilsSnapshotTransformPresets?.[key];
                   if (!current) return;
-                  s.embedZTrackerSnapshotTransformPresets = {
-                    ...s.embedZTrackerSnapshotTransformPresets,
+                  s.embedXUtilsSnapshotTransformPresets = {
+                    ...s.embedXUtilsSnapshotTransformPresets,
                     [key]: { ...current, flags: e.target.value },
                   };
                 })
@@ -137,10 +137,10 @@ export const EmbedSnapshotTransformSection: FC<{
               value={preset.replacement ?? ''}
               onChange={(e) =>
                 updateAndRefresh((s) => {
-                  const current = s.embedZTrackerSnapshotTransformPresets?.[key];
+                  const current = s.embedXUtilsSnapshotTransformPresets?.[key];
                   if (!current) return;
-                  s.embedZTrackerSnapshotTransformPresets = {
-                    ...s.embedZTrackerSnapshotTransformPresets,
+                  s.embedXUtilsSnapshotTransformPresets = {
+                    ...s.embedXUtilsSnapshotTransformPresets,
                     [key]: { ...current, replacement: e.target.value },
                   };
                 })
@@ -161,10 +161,10 @@ export const EmbedSnapshotTransformSection: FC<{
               value={preset.codeFenceLang ?? ''}
               onChange={(e) =>
                 updateAndRefresh((s) => {
-                  const current = s.embedZTrackerSnapshotTransformPresets?.[key];
+                  const current = s.embedXUtilsSnapshotTransformPresets?.[key];
                   if (!current) return;
-                  s.embedZTrackerSnapshotTransformPresets = {
-                    ...s.embedZTrackerSnapshotTransformPresets,
+                  s.embedXUtilsSnapshotTransformPresets = {
+                    ...s.embedXUtilsSnapshotTransformPresets,
                     [key]: { ...current, codeFenceLang: e.target.value },
                   };
                 })
@@ -182,10 +182,10 @@ export const EmbedSnapshotTransformSection: FC<{
               checked={preset.wrapInCodeFence !== false}
               onChange={(e) =>
                 updateAndRefresh((s) => {
-                  const current = s.embedZTrackerSnapshotTransformPresets?.[key];
+                  const current = s.embedXUtilsSnapshotTransformPresets?.[key];
                   if (!current) return;
-                  s.embedZTrackerSnapshotTransformPresets = {
-                    ...s.embedZTrackerSnapshotTransformPresets,
+                  s.embedXUtilsSnapshotTransformPresets = {
+                    ...s.embedXUtilsSnapshotTransformPresets,
                     [key]: { ...current, wrapInCodeFence: e.target.checked },
                   };
                 })

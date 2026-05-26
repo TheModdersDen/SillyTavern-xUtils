@@ -23,7 +23,7 @@ describe('createTrackerActions editTracker', () => {
   });
 
   test('does not save invalid tracker edits when rerender validation fails', async () => {
-    document.body.innerHTML = '<div class="mes" mesid="0"><div class="mes_ztracker"><details open><summary>Tracker</summary></details></div><div class="mes_text"></div></div>';
+    document.body.innerHTML = '<div class="mes" mesid="0"><div class="mes_xutils"><details open><summary>Tracker</summary></details></div><div class="mes_text"></div></div>';
 
     const saveChat = jest.fn(async () => undefined);
     let popupContent: HTMLElement | undefined;
@@ -39,7 +39,7 @@ describe('createTrackerActions editTracker', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaValue: { time: '09:00:00' },
                 schemaHtml: '<div>{{data.time}}</div>',
               },
@@ -65,7 +65,7 @@ describe('createTrackerActions editTracker', () => {
 
     await actions.editTracker(0);
 
-    const textarea = popupContent?.querySelector('#ztracker-edit-textarea') as HTMLTextAreaElement | null;
+    const textarea = popupContent?.querySelector('#xutils-edit-textarea') as HTMLTextAreaElement | null;
     expect(textarea).not.toBeNull();
     textarea!.value = '{"time":"10:00:00"}';
 
@@ -77,7 +77,7 @@ describe('createTrackerActions editTracker', () => {
   });
 
   test('rolls back tracker edits when saving the chat fails', async () => {
-    document.body.innerHTML = '<div class="mes" mesid="0"><div class="mes_ztracker"><details open><summary>Tracker</summary></details></div><div class="mes_text"></div></div>';
+    document.body.innerHTML = '<div class="mes" mesid="0"><div class="mes_xutils"><details open><summary>Tracker</summary></details></div><div class="mes_text"></div></div>';
 
     const rollback = jest.fn(() => undefined);
     const saveChat = jest.fn(async () => {
@@ -94,7 +94,7 @@ describe('createTrackerActions editTracker', () => {
           {
             original_avatar: 'avatar.png',
             extra: {
-              zTracker: {
+              xUtils: {
                 schemaValue: { time: '09:00:00' },
                 schemaHtml: '<div>{{data.time}}</div>',
               },
@@ -120,7 +120,7 @@ describe('createTrackerActions editTracker', () => {
 
     await actions.editTracker(0);
 
-    const textarea = popupContent?.querySelector('#ztracker-edit-textarea') as HTMLTextAreaElement | null;
+    const textarea = popupContent?.querySelector('#xutils-edit-textarea') as HTMLTextAreaElement | null;
     expect(textarea).not.toBeNull();
     textarea!.value = '{"time":"10:00:00"}';
 

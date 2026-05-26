@@ -5,9 +5,9 @@ Last updated: 2026-03-17
 
 ## Summary
 
-Add a narrowly scoped JSON repair layer to zTracker's response parsing so tracker generation can recover from minor, common model output defects instead of failing immediately.
+Add a narrowly scoped JSON repair layer to xUtils's response parsing so tracker generation can recover from minor, common model output defects instead of failing immediately.
 
-Today `parseResponse()` in `src/parser.ts` extracts fenced content and then calls `JSON.parse()` directly. That is intentionally strict, but in live usage models still sometimes return output that is semantically correct and close to valid JSON while containing small formatting defects. The most recent live smoke test reproduced one such case: the tracker request used the correct saved `zTracker` system prompt, but the model response still failed parsing because it returned fenced JSON where the inner payload was not accepted as-is by the parser path.
+Today `parseResponse()` in `src/parser.ts` extracts fenced content and then calls `JSON.parse()` directly. That is intentionally strict, but in live usage models still sometimes return output that is semantically correct and close to valid JSON while containing small formatting defects. The most recent live smoke test reproduced one such case: the tracker request used the correct saved `xUtils` system prompt, but the model response still failed parsing because it returned fenced JSON where the inner payload was not accepted as-is by the parser path.
 
 This spec adds a repair pipeline for JSON only. The repair step runs before the final parse attempt and is limited to small, deterministic cleanup operations. It must not silently rewrite materially incorrect payloads.
 
@@ -24,7 +24,7 @@ Tracker generation is only useful if the extension can tolerate minor model form
 
 These cases do not represent a logical failure in tracker generation. They are parser-adjacent formatting issues, and rejecting them outright creates unnecessary user-visible failures.
 
-At the same time, zTracker should remain strict enough to avoid masking genuine model failures. A repair layer should recover only from small, well-understood defects and should preserve observability when repair is needed.
+At the same time, xUtils should remain strict enough to avoid masking genuine model failures. A repair layer should recover only from small, well-understood defects and should preserve observability when repair is needed.
 
 ## Goals
 
@@ -56,8 +56,8 @@ At the same time, zTracker should remain strict enough to avoid masking genuine 
 
 ### What this means
 
-- zTracker already tolerates one common case: a single fenced code block.
-- zTracker does **not** tolerate any other minor JSON defect.
+- xUtils already tolerates one common case: a single fenced code block.
+- xUtils does **not** tolerate any other minor JSON defect.
 - Near-valid model output can still fail generation even when the logical tracker data is present.
 
 ## Detailed design
@@ -167,7 +167,7 @@ Pros:
 Cons:
 - broadens accepted syntax more than needed
 - risks hiding model failures behind overly permissive parsing
-- may parse content that is not actually valid JSON by zTracker's contract
+- may parse content that is not actually valid JSON by xUtils's contract
 
 Not preferred by default. A dedicated library is only justified if the local deterministic repair path becomes too complex.
 

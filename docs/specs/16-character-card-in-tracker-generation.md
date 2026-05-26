@@ -5,7 +5,7 @@ Last updated: 2026-04-01
 
 ## Goal
 
-Add a zTracker setting that controls whether character-card prompt fields are included during tracker generation.
+Add a xUtils setting that controls whether character-card prompt fields are included during tracker generation.
 
 Primary user goal:
 - Let users disable character-card context for tracker extraction when it adds noise, redundant prose, or biases the tracker toward static card text instead of recent chat state.
@@ -52,7 +52,7 @@ When `generateTracker(messageId)` prepares prompt context:
 
 ## UI
 
-- Add a checkbox to zTracker settings near other prompt-composition options.
+- Add a checkbox to xUtils settings near other prompt-composition options.
 - Label: `Skip character card in tracker generation`
 - Help text / tooltip:
   - `When enabled, tracker generation ignores character-card prompt fields such as description, personality, and scenario.`
@@ -67,7 +67,7 @@ When `generateTracker(messageId)` prepares prompt context:
 ## Acceptance criteria
 
 - [x] New boolean setting exists in `ExtensionSettings` and defaults to `false`.
-- [x] A checkbox is present in zTracker settings and persists correctly.
+- [x] A checkbox is present in xUtils settings and persists correctly.
 - [x] When disabled, tracker generation continues to include character-card prompt fields.
 - [x] When enabled, tracker generation passes `ignoreCharacterFields: true` to `buildPrompt(...)`.
 - [x] Disabling the setting does not change World Info behavior, tracker snapshot injection, or prompt-engineering mode behavior.
@@ -92,4 +92,4 @@ When `generateTracker(messageId)` prepares prompt context:
 ## Verification
 
 - Live verification on 2026-03-30 showed character-card content present in a real tracker-generation request for the `Bar` chat.
-- Implemented on 2026-04-01 with a default-off skip checkbox in zTracker settings and tracker-actions coverage for both enabled and disabled prompt-building paths.
+- Implemented on 2026-04-01 with a default-off skip checkbox in xUtils settings and tracker-actions coverage for both enabled and disabled prompt-building paths.

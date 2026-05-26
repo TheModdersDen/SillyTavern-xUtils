@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed the extension surface from `zTracker` to `xUtils` while keeping backward-compatible migration paths for existing stored extension data and legacy schema/interceptor aliases.
+
+### Fixed
+
+- xAI/Grok tracker-generation chat-completion requests now normalize and validate message payloads more strictly, removing unsupported host-only fields and enforcing xAI-compatible tool-call/message shape rules before dispatch.
+
 ## [1.12.1] - 2026-05-21
 
 ### Fixed
@@ -16,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
-- zTracker settings now separate the default schema preset for new chats from the current chat schema preset used for full tracker generation, with clearer preset switching and editing controls.
+- xUtils settings now separate the default schema preset for new chats from the current chat schema preset used for full tracker generation, with clearer preset switching and editing controls.
 
 ### Fixed
 
@@ -28,7 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- zTracker can now generate trackers from either the currently active SillyTavern connection or a specific saved connection profile.
+- xUtils can now generate trackers from either the currently active SillyTavern connection or a specific saved connection profile.
 
 ### Fixed
 
@@ -129,13 +137,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Text-completion tracker generation now follows SillyTavern's live prompt formatting more closely, preserving speaker names and reducing malformed prompt failures.
-- Outgoing auto mode now pauses the host reply cleanly while zTracker runs, avoids duplicate replies, and keeps its pending and stop state visible.
+- Outgoing auto mode now pauses the host reply cleanly while xUtils runs, avoids duplicate replies, and keeps its pending and stop state visible.
 
 ## [1.7.1] - 2026-04-16
 
 ### Changed
 
-- zTracker now requires SillyTavern 1.17+.
+- xUtils now requires SillyTavern 1.17+.
 
 ### Fixed
 
@@ -169,7 +177,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Added richer diagnostics in the zTracker settings panel, including the last tracker-generation request and clearer embed-header information.
+- Added richer diagnostics in the xUtils settings panel, including the last tracker-generation request and clearer embed-header information.
 
 ### Fixed
 
@@ -205,7 +213,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Added a `Skip First X Messages` tracker-generation setting so zTracker can wait for more chat context before extracting a tracker.
+- Added a `Skip First X Messages` tracker-generation setting so xUtils can wait for more chat context before extracting a tracker.
 
 ## [1.3.1] - 2026-03-30
 
@@ -226,7 +234,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - XML and TOON generation now stays aligned with the current schema more reliably, and older installs upgrade to the improved shipped templates automatically.
 - XML and TOON reply repair now handles more malformed model responses.
-- zTracker now warns when dependency-linked arrays become inconsistent.
+- xUtils now warns when dependency-linked arrays become inconsistent.
 
 ## [1.2.1] - 2026-03-17
 
@@ -239,7 +247,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Tracker generation can now use either the selected connection profile's system prompt or a specifically chosen saved SillyTavern system prompt.
-- zTracker now installs a recommended `zTracker` system prompt preset and warns when that tracker-only prompt matches SillyTavern's active global system prompt.
+- xUtils now installs a recommended `xUtils` system prompt preset and warns when that tracker-only prompt matches SillyTavern's active global system prompt.
 
 ### Fixed
 
@@ -276,7 +284,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added sequential per-part tracker generation with dependency-aware ordering.
 - Added per-part, per-array-item, and per-field regeneration controls on messages.
-- Added schema annotations for part ordering and array identity via `x-ztracker-dependsOn` and `x-ztracker-idKey`.
+- Added schema annotations for part ordering and array identity via `x-xutils-dependsOn` and `x-xutils-idKey`.
 
 ### Fixed
 
@@ -288,13 +296,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Hover tooltips for zTracker settings.
+- Hover tooltips for xUtils settings.
 
 ## [1.0.1] - 2026-01-26
 
 ### Fixed
 
-- Fixed HTML template loading when installed under the default SillyTavern folder name (`SillyTavern-zTracker`).
+- Fixed HTML template loading when installed under the default SillyTavern folder name (`SillyTavern-xUtils`).
 
 ## [1.0.0] - 2026-01-26
 

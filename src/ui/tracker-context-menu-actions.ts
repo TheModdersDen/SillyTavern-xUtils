@@ -217,7 +217,7 @@ export function createContextMenuTrackerActions(dependencies: ContextMenuTracker
 
     const messageBlock = getMessageBlock(id);
     const partButton = messageBlock?.querySelector(
-      `.ztracker-part-regenerate-button[data-ztracker-part="${CSS.escape(partKey)}"]`,
+      `.xutils-part-regenerate-button[data-xutils-part="${CSS.escape(partKey)}"]`,
     );
     const detailsState = captureDetailsState(id);
 
@@ -535,20 +535,20 @@ function getMessageBlock(messageId: number): Element | null {
 /** Builds the shared selector suffix for one array-item locator. */
 function buildLocatorSelector(locator: ArrayItemLocator): string {
   if (locator.kind === 'index') {
-    return `[data-ztracker-index="${locator.index}"]`;
+    return `[data-xutils-index="${locator.index}"]`;
   }
   if (locator.kind === 'name') {
-    return `[data-ztracker-name="${CSS.escape(locator.name)}"]`;
+    return `[data-xutils-name="${CSS.escape(locator.name)}"]`;
   }
-  return `[data-ztracker-idkey="${CSS.escape(locator.idKey)}"][data-ztracker-idvalue="${CSS.escape(locator.idValue)}"]`;
+  return `[data-xutils-idkey="${CSS.escape(locator.idKey)}"][data-xutils-idvalue="${CSS.escape(locator.idValue)}"]`;
 }
 
 /** Builds the selector for one array-item regenerate button. */
 function buildItemButtonSelector(partKey: string, locator: ArrayItemLocator): string {
-  return `.ztracker-array-item-regenerate-button[data-ztracker-part="${CSS.escape(partKey)}"]${buildLocatorSelector(locator)}`;
+  return `.xutils-array-item-regenerate-button[data-xutils-part="${CSS.escape(partKey)}"]${buildLocatorSelector(locator)}`;
 }
 
 /** Builds the selector for one array-item-field regenerate button. */
 function buildFieldButtonSelector(partKey: string, fieldKey: string, locator: ArrayItemLocator): string {
-  return `${buildItemButtonSelector(partKey, locator).replace('array-item-regenerate-button', 'array-item-field-regenerate-button')}[data-ztracker-field="${CSS.escape(fieldKey)}"]`;
+  return `${buildItemButtonSelector(partKey, locator).replace('array-item-regenerate-button', 'array-item-field-regenerate-button')}[data-xutils-field="${CSS.escape(fieldKey)}"]`;
 }

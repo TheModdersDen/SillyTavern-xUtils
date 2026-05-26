@@ -13,8 +13,8 @@ This is intentionally tracked as a follow-up spec rather than a branch-local ref
 
 The partial-cleanup branch already added or expanded schema-aware logic in the tracker core:
 
-- `resolveTopLevelPartsOrder()` in `src/tracker-parts.ts` parses `x-ztracker-dependsOn`;
-- `buildPartsMeta()` in `src/ui/tracker-action-helpers.ts` separately parses `x-ztracker-dependsOn` again;
+- `resolveTopLevelPartsOrder()` in `src/tracker-parts.ts` parses `x-xutils-dependsOn`;
+- `buildPartsMeta()` in `src/ui/tracker-action-helpers.ts` separately parses `x-xutils-dependsOn` again;
 - `getArrayItemIdentityKey()` and `sanitizeArrayItemFieldKeys()` already live in `src/tracker-parts.ts`, so schema-derived metadata is only partially centralized today.
 
 That split has two costs:
@@ -30,7 +30,7 @@ This is not a correctness bug today, but it is unnecessary code volume and creat
 
 `src/tracker-parts.ts` uses a local `normalizeDependsOn()` helper for part ordering.
 
-`src/ui/tracker-action-helpers.ts` reimplements equivalent `x-ztracker-dependsOn` parsing inside `buildPartsMeta()`.
+`src/ui/tracker-action-helpers.ts` reimplements equivalent `x-xutils-dependsOn` parsing inside `buildPartsMeta()`.
 
 ### Array-part metadata derivation
 
@@ -44,7 +44,7 @@ Those are schema-derived concerns, not UI concerns.
 
 ## Goals
 
-- Keep one source of truth for parsing `x-ztracker-dependsOn`.
+- Keep one source of truth for parsing `x-xutils-dependsOn`.
 - Reduce total LOC across the schema and UI helper modules.
 - Keep schema-derived metadata logic close to other schema helpers.
 - Leave runtime behavior unchanged for `partsOrder` and `partsMeta` consumers.
@@ -60,7 +60,7 @@ Those are schema-derived concerns, not UI concerns.
 
 ### 1. Centralize dependency normalization
 
-Expose one shared helper for `x-ztracker-dependsOn` parsing instead of keeping separate logic in two modules.
+Expose one shared helper for `x-xutils-dependsOn` parsing instead of keeping separate logic in two modules.
 
 Possible shapes:
 
@@ -93,7 +93,7 @@ The preferred option is whichever produces the smallest and clearest result.
 
 ## Acceptance criteria
 
-- Only one implementation parses `x-ztracker-dependsOn`.
+- Only one implementation parses `x-xutils-dependsOn`.
 - `resolveTopLevelPartsOrder()` and parts metadata generation reuse the same dependency parsing logic.
 - Schema-derived metadata no longer has duplicated parsing rules across schema and UI helper modules.
 - Existing `partsMeta` and `partsOrder` behavior remains unchanged.

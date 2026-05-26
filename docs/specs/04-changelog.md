@@ -4,7 +4,7 @@ Status: Completed
 Last updated: 2026-01-22
 
 ## Goal
-Add a `CHANGELOG.md` and keep it updated as zTracker evolves.
+Add a `CHANGELOG.md` and keep it updated as xUtils evolves.
 
 ## Current state
 - Root changelog lives at [CHANGELOG.md](CHANGELOG.md#L1-L12) using Keep a Changelog format with `Unreleased` and a dated `1.0.0` (2026-01-22) entry.

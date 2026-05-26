@@ -62,7 +62,7 @@ export interface ExtensionSettings {
   maxResponseToken: number;
   autoMode: AutoModeOptions;
 
-  /** When enabled, zTracker generates the tracker in smaller parts, sequentially. */
+  /** When enabled, xUtils generates the tracker in smaller parts, sequentially. */
   sequentialPartGeneration: boolean;
 
   schemaPreset: string;
@@ -75,26 +75,26 @@ export interface ExtensionSettings {
   skipCharacterCardInTrackerGeneration: boolean;
   /** Controls how user/assistant chat turns are labeled before tracker-generation requests are sent. */
   trackerGenerationConversationRoleMode: TrackerGenerationConversationRoleMode;
-  includeLastXZTrackerMessages: number; // 0 means none
+  includeLastXXUtilsMessages: number; // 0 means none
   /**
-   * Role to use when embedding zTracker snapshots into the generation chat array.
+   * Role to use when embedding xUtils snapshots into the generation chat array.
    * This only affects the generate_interceptor embedding, not tracker generation.
    */
-  embedZTrackerRole: 'user' | 'assistant' | 'system';
+  embedXUtilsRole: 'user' | 'assistant' | 'system';
   /** When true, embedded tracker snapshots use the snapshot header as a speaker name instead of a content prefix. */
-  embedZTrackerAsCharacter: boolean;
+  embedXUtilsAsCharacter: boolean;
 
   /**
-   * Controls how embedded zTracker snapshots are transformed (regex find/replace).
+   * Controls how embedded xUtils snapshots are transformed (regex find/replace).
    * This only affects embedding into the generation chat array.
    */
   /**
-   * Header line used when embedding zTracker snapshots into the generation chat array.
+   * Header line used when embedding xUtils snapshots into the generation chat array.
    * Set to an empty string to omit the header entirely.
    */
-  embedZTrackerSnapshotHeader: string;
-  embedZTrackerSnapshotTransformPreset: string;
-  embedZTrackerSnapshotTransformPresets: Record<string, EmbedSnapshotRegexTransformPreset>;
+  embedXUtilsSnapshotHeader: string;
+  embedXUtilsSnapshotTransformPreset: string;
+  embedXUtilsSnapshotTransformPresets: Record<string, EmbedSnapshotRegexTransformPreset>;
   promptEngineeringMode: PromptEngineeringMode;
   promptJson: string;
   promptXml: string;
@@ -150,10 +150,10 @@ export const DEFAULT_PROMPT = `You are a Scene Tracker Assistant, tasked with pr
 
 Your primary objective is to ensure clarity, consistency, providing complete details even when specifics are not explicitly stated.`;
 
-export const ZTRACKER_SYSTEM_PROMPT_PRESET_VERSION = '1.3.1';
-export const ZTRACKER_SYSTEM_PROMPT_PRESET_NAME = `zTracker-${ZTRACKER_SYSTEM_PROMPT_PRESET_VERSION}`;
+export const XUTILS_SYSTEM_PROMPT_PRESET_VERSION = '1.3.1';
+export const XUTILS_SYSTEM_PROMPT_PRESET_NAME = `xUtils-${XUTILS_SYSTEM_PROMPT_PRESET_VERSION}`;
 
-export const ZTRACKER_SYSTEM_PROMPT_TEXT = `You are a structured data extraction assistant. Your task is to analyze conversations and produce a structured tracker update that conforms to a provided schema and requested output format.
+export const XUTILS_SYSTEM_PROMPT_TEXT = `You are a structured data extraction assistant. Your task is to analyze conversations and produce a structured tracker update that conforms to a provided schema and requested output format.
 
 Rules:
 - Output ONLY valid structured data matching the provided schema. No narration, no markdown unless instructed.
@@ -313,7 +313,7 @@ export const LEGACY_PROMPT_TOON = `You are a highly specialized AI assistant. Yo
 const DEFAULT_MAX_RESPONSE_TOKEN = 16000;
 const DEFAULT_SKIP_FIRST_X_MESSAGES = 0;
 const DEFAULT_INCLUDE_LAST_X_MESSAGES = 0;
-const DEFAULT_INCLUDE_LAST_ZTRACKER_MESSAGES = 1;
+const DEFAULT_INCLUDE_LAST_XUTILS_MESSAGES = 1;
 
 /** Migrates legacy auto-mode values to the canonical SillyTavern enum value used at runtime. */
 export function migrateLegacyAutoMode(settings: Pick<ExtensionSettings, 'autoMode'>): boolean {
@@ -373,7 +373,7 @@ export function migrateCorruptedSchemaPresetRequiredMetadata(settings: Pick<Exte
 export function migrateInvalidNumericSettings(
   settings: Pick<
     ExtensionSettings,
-    'maxResponseToken' | 'skipFirstXMessages' | 'includeLastXMessages' | 'includeLastXZTrackerMessages'
+    'maxResponseToken' | 'skipFirstXMessages' | 'includeLastXMessages' | 'includeLastXXUtilsMessages'
   >,
 ): boolean {
   let changed = false;
@@ -405,12 +405,46 @@ export function migrateInvalidNumericSettings(
     changed = true;
   }
 
-  const nextIncludeLastXZTrackerMessages = sanitizeIntegerSetting(settings.includeLastXZTrackerMessages, {
-    fallback: DEFAULT_INCLUDE_LAST_ZTRACKER_MESSAGES,
+  const nextIncludeLastXXUtilsMessages = sanitizeIntegerSetting(settings.includeLastXXUtilsMessages, {
+    fallback: DEFAULT_INCLUDE_LAST_XUTILS_MESSAGES,
     min: 0,
   });
-  if (settings.includeLastXZTrackerMessages !== nextIncludeLastXZTrackerMessages) {
-    settings.includeLastXZTrackerMessages = nextIncludeLastXZTrackerMessages;
+  if (settings.includeLastXXUtilsMessages !== nextIncludeLastXXUtilsMessages) {
+    settings.includeLastXXUtilsMessages = nextIncludeLastXXUtilsMessages;
+    changed = true;
+  }
+
+  return changed;
+}
+
+const LEGACY_RENAMED_SETTINGS_MAP = [
+  ['includeLastXZTrackerMessages', 'includeLastXXUtilsMessages'],
+  ['embedZTrackerRole', 'embedXUtilsRole'],
+  ['embedZTrackerAsCharacter', 'embedXUtilsAsCharacter'],
+  ['embedZTrackerSnapshotHeader', 'embedXUtilsSnapshotHeader'],
+  ['embedZTrackerSnapshotTransformPreset', 'embedXUtilsSnapshotTransformPreset'],
+  ['embedZTrackerSnapshotTransformPresets', 'embedXUtilsSnapshotTransformPresets'],
+] as const;
+
+/** Maps legacy zTracker setting field names to current xUtils field names. */
+export function migrateLegacyRenamedSettings(settings: object): boolean {
+  const mutableSettings = settings as Record<string, unknown>;
+  let changed = false;
+
+  for (const [legacyKey, currentKey] of LEGACY_RENAMED_SETTINGS_MAP) {
+    if (!Object.prototype.hasOwnProperty.call(mutableSettings, legacyKey)) {
+      continue;
+    }
+
+    const legacyValue = mutableSettings[legacyKey];
+    if (
+      !Object.prototype.hasOwnProperty.call(mutableSettings, currentKey) ||
+      mutableSettings[currentKey] === undefined
+    ) {
+      mutableSettings[currentKey] = legacyValue;
+    }
+
+    delete mutableSettings[legacyKey];
     changed = true;
   }
 
@@ -463,8 +497,8 @@ export const DEFAULT_SCHEMA_VALUE: object = {
     },
     characters: {
       type: 'array',
-      'x-ztracker-dependsOn': ['charactersPresent'],
-      'x-ztracker-idKey': 'name',
+      'x-xutils-dependsOn': ['charactersPresent'],
+      'x-xutils-idKey': 'name',
       items: {
         type: 'object',
         properties: {
@@ -501,7 +535,7 @@ export const DEFAULT_SCHEMA_VALUE: object = {
   required: ['time', 'location', 'weather', 'topics', 'charactersPresent', 'characters'],
 };
 
-export const DEFAULT_SCHEMA_HTML = `<div class="ztracker_default_mes_template">
+export const DEFAULT_SCHEMA_HTML = `<div class="xutils_default_mes_template">
     <!-- Main Scene Information -->
     <table>
         <tbody>
@@ -543,7 +577,7 @@ export const DEFAULT_SCHEMA_HTML = `<div class="ztracker_default_mes_template">
         </table>
 
         <!-- Character Details Section -->
-        <div class="mes_ztracker_characters">
+        <div class="mes_xutils_characters">
             <!-- Looping through the array of character objects -->
             {{#each data.characters as |character|}}
             <hr>
@@ -604,12 +638,12 @@ export const defaultSettings: ExtensionSettings = {
   includeLastXMessages: DEFAULT_INCLUDE_LAST_X_MESSAGES,
   skipCharacterCardInTrackerGeneration: false,
   trackerGenerationConversationRoleMode: 'preserve',
-  includeLastXZTrackerMessages: DEFAULT_INCLUDE_LAST_ZTRACKER_MESSAGES,
-  embedZTrackerRole: 'user',
-  embedZTrackerAsCharacter: false,
-  embedZTrackerSnapshotHeader: DEFAULT_EMBED_SNAPSHOT_HEADER,
-  embedZTrackerSnapshotTransformPreset: 'default',
-  embedZTrackerSnapshotTransformPresets: {
+  includeLastXXUtilsMessages: DEFAULT_INCLUDE_LAST_XUTILS_MESSAGES,
+  embedXUtilsRole: 'user',
+  embedXUtilsAsCharacter: false,
+  embedXUtilsSnapshotHeader: DEFAULT_EMBED_SNAPSHOT_HEADER,
+  embedXUtilsSnapshotTransformPreset: 'default',
+  embedXUtilsSnapshotTransformPresets: {
     default: {
       name: 'Default (JSON)',
       input: 'pretty_json',

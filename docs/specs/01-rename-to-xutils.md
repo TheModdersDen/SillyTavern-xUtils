@@ -1,10 +1,10 @@
-# Spec: Rename extension to zTracker
+# Spec: Rename extension to xUtils
 
 Status: Completed
-Last updated: 2026-01-21
+Last updated: 2026-05-26
 
 ## Goal
-Rename the extension to **zTracker** in a way that is clear to users and does not accidentally break existing stored tracker data.
+Rename the extension to **xUtils** in a way that is clear to users and does not accidentally break existing stored tracker data.
 
 ## Scope
 - Rename user-facing extension name in UI and metadata.
@@ -17,51 +17,51 @@ Rename the extension to **zTracker** in a way that is clear to users and does no
 
 ## Open questions to clarify first
 1. Migration policy:
-   - Do we want a non-breaking migration from the legacy keys to new keys (`zTracker`), or is this a breaking fork?
+   - Do we want a non-breaking migration from the legacy keys to new keys (`xUtils`), or is this a breaking fork?
 2. Folder name / install path:
    - What will the extension folder be named in SillyTavern after installation? (This affects template paths like `third-party/<folder>`.)
 3. Branding:
-   - Is the display name exactly `zTracker` (lowercase z) or `ZTracker`?
+   - Is the display name exactly `xUtils` (lowercase z) or `XUtils`?
 4. Backward compatibility window:
    - If we migrate, do we keep reading the legacy key for a while, or do a one-time copy and then drop support?
 
 ## Decisions (chosen)
-- Chosen display name: `zTracker`
-- Chosen internal key (settings/extras/metadata): `zTracker`
-- Chosen extension folder name (for templates): `SillyTavern-zTracker`
-- Migration approach: none (fresh start)
-- Legacy read-compat window: none (no backward compatibility before first zTracker release)
+- Chosen display name: `xUtils`
+- Chosen internal key (settings/extras/metadata): `xUtils`
+- Chosen extension folder name (for templates): `SillyTavern-xUtils`
+- Migration approach: one-time runtime migration from legacy `zTracker` storage to `xUtils`
+- Legacy read-compat window: keep compatibility readers for legacy schema annotations and interceptor alias
 
 ## Clarifications checklist (answer these before coding)
-- [x] Confirm display name: `zTracker`
-- [x] Confirm internal key: `zTracker`
-- [x] Confirm template folder name used by ST installer: `SillyTavern-zTracker`
-- [x] Confirm migration: no
-- [x] Confirm legacy read-compat window: none
+- [x] Confirm display name: `xUtils`
+- [x] Confirm internal key: `xUtils`
+- [x] Confirm template folder name used by ST installer: `SillyTavern-xUtils`
+- [x] Confirm migration: yes, runtime one-time migration
+- [x] Confirm legacy read-compat window: yes
 
 ## Implementation plan (high level)
 - Update `manifest.json` fields (`display_name`, `version`, `homePage`, `generate_interceptor`).
 - Update internal constants (extension key, extension name).
 - Update any hard-coded template base paths.
-- Do not include any migration/back-compat logic for legacy tracker data.
+- Add migration/back-compat logic for legacy tracker data (`extensionSettings`, `chatMetadata`, `message.extra`).
 
 ## Acceptance criteria
-- Shows as `zTracker` in Manage Extensions.
+- Shows as `xUtils` in Manage Extensions.
 - Tracker generation, rendering, edit/delete/regenerate still works.
-- Existing chats created before the rename are not supported (fresh start).
+- Existing chats created before the rename continue to load through runtime migration/back-compat paths.
 - No console errors related to template loading or missing interceptor.
 
 ## Tasks checklist
 - [x] Decide display name and internal key
 - [x] Decide migration approach
 - [x] Implement rename
-- [x] Ensure no migration/back-compat code remains
-- [x] Update docs (README + screenshots if needed)
-- [skippped] Add/update tests covering migration behavior *(explicitly deferred; test coverage will be added in a later spec)*
+- [x] Add runtime migration/back-compat code
+- [x] Update docs (README + changelog)
+- [x] Add/update tests covering migration behavior
  
 ## Notes / consequences
-- Old stored data (message extras / settings / chat metadata) created under the previous name will be ignored by zTracker.
-- This simplifies the code but is a breaking change for existing users of the legacy tracker build.
+- Old stored data (message extras / settings / chat metadata) created under `zTracker` is migrated at runtime to `xUtils`.
+- Existing installs can continue without manual storage cleanup.
 
 ## Notes
 - `generate_interceptor` must be a global function name (assigned to `globalThis`).

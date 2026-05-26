@@ -46,7 +46,7 @@ describe('tracker cleanup UI', () => {
         properties: {
           characters: {
             type: 'array',
-            'x-ztracker-idKey': 'name',
+            'x-xutils-idKey': 'name',
             items: {
               type: 'object',
               properties: {

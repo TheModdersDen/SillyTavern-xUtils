@@ -7,8 +7,8 @@ import {
 
 describe('extension install path resolver', () => {
   test('resolveThirdPartyFolderNameFromUrl extracts folder name', () => {
-    const url = 'http://127.0.0.1:8000/scripts/extensions/third-party/SillyTavern-zTracker/dist/index.js';
-    expect(resolveThirdPartyFolderNameFromUrl(url)).toBe('SillyTavern-zTracker');
+    const url = 'http://127.0.0.1:8000/scripts/extensions/third-party/SillyTavern-xUtils/dist/index.js';
+    expect(resolveThirdPartyFolderNameFromUrl(url)).toBe('SillyTavern-xUtils');
   });
 
   test('resolveThirdPartyFolderNameFromUrl returns null when missing', () => {
@@ -20,19 +20,19 @@ describe('extension install path resolver', () => {
     expect(
       getInstalledExtensionFolderName({
         importMetaUrl: 'not a url',
-        fallbackFolderName: 'zTracker',
+        fallbackFolderName: 'xUtils',
       }),
-    ).toBe('zTracker');
+    ).toBe('xUtils');
   });
 
   test('root/basePath use resolved folder', () => {
     const importMetaUrl =
       'http://127.0.0.1:8000/scripts/extensions/third-party/MyFork/dist/index.js?cachebust=1';
 
-    expect(getThirdPartyExtensionRoot({ importMetaUrl, fallbackFolderName: 'zTracker' })).toBe(
+    expect(getThirdPartyExtensionRoot({ importMetaUrl, fallbackFolderName: 'xUtils' })).toBe(
       'third-party/MyFork',
     );
-    expect(getThirdPartyExtensionBasePath({ importMetaUrl, fallbackFolderName: 'zTracker' })).toBe(
+    expect(getThirdPartyExtensionBasePath({ importMetaUrl, fallbackFolderName: 'xUtils' })).toBe(
       '/scripts/extensions/third-party/MyFork',
     );
   });

@@ -43,13 +43,13 @@ describe('tracker parts helpers', () => {
     expect(getTopLevelSchemaKeys(schema)).toEqual(['time', 'topics']);
   });
 
-  it('resolves dependency-aware top-level order using x-ztracker-dependsOn', () => {
+  it('resolves dependency-aware top-level order using x-xutils-dependsOn', () => {
     const s = {
       type: 'object',
       properties: {
         time: { type: 'string' },
         charactersPresent: { type: 'array', items: { type: 'string' } },
-        characters: { type: 'array', 'x-ztracker-dependsOn': ['charactersPresent'], items: { type: 'object' } },
+        characters: { type: 'array', 'x-xutils-dependsOn': ['charactersPresent'], items: { type: 'object' } },
       },
     };
 
@@ -60,8 +60,8 @@ describe('tracker parts helpers', () => {
     const s = {
       type: 'object',
       properties: {
-        a: { type: 'string', 'x-ztracker-dependsOn': ['b'] },
-        b: { type: 'string', 'x-ztracker-dependsOn': ['a'] },
+        a: { type: 'string', 'x-xutils-dependsOn': ['b'] },
+        b: { type: 'string', 'x-xutils-dependsOn': ['a'] },
         c: { type: 'string' },
       },
     };
@@ -176,12 +176,12 @@ describe('tracker parts helpers', () => {
     expect(findArrayItemIndexByName(arr as any, 'Missing')).toBe(-1);
   });
 
-  it('derives array identity key from schema (x-ztracker-idKey, default name)', () => {
+  it('derives array identity key from schema (x-xutils-idKey, default name)', () => {
     const s = {
       type: 'object',
       properties: {
-        characters: { type: 'array', 'x-ztracker-idKey': 'name', items: { type: 'object' } },
-        items: { type: 'array', 'x-ztracker-idKey': 'id', items: { type: 'object' } },
+        characters: { type: 'array', 'x-xutils-idKey': 'name', items: { type: 'object' } },
+        items: { type: 'array', 'x-xutils-idKey': 'id', items: { type: 'object' } },
       },
     };
 
@@ -218,7 +218,7 @@ describe('tracker parts helpers', () => {
         time: { type: 'string' },
         characters: {
           type: 'array',
-          'x-ztracker-idKey': 'name',
+          'x-xutils-idKey': 'name',
           items: {
             type: 'object',
             properties: {

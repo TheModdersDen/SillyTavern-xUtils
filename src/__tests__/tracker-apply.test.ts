@@ -86,7 +86,7 @@ describe('applyTrackerUpdateAndRender', () => {
     });
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'zTracker: dependent array mismatch',
+      'xUtils: dependent array mismatch',
       expect.objectContaining({
         partKey: 'characters',
         dependsOn: 'charactersPresent',

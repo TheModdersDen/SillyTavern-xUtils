@@ -4,7 +4,7 @@ Status: Completed
 Last updated: 2026-01-27
 
 ## Goal
-Allow zTracker to generate a tracker **in parts**, sequentially (one part after another), and provide UI controls to **regenerate individual parts** for a given chat message.
+Allow xUtils to generate a tracker **in parts**, sequentially (one part after another), and provide UI controls to **regenerate individual parts** for a given chat message.
 
 This is intended to:
 - Reduce failure blast-radius (if one part fails, others can still update)
@@ -14,14 +14,14 @@ This is intended to:
 ## Background / current behavior
 
 ### Storage
-For each message, zTracker currently stores:
+For each message, xUtils currently stores:
 - `message.extra[EXTENSION_KEY].value`: the full tracker data object
 - `message.extra[EXTENSION_KEY].html`: the full tracker HTML template (from schema preset)
 
 ### Generation
 UI actions call `generateTracker(messageId)` which:
 - Builds a prompt from recent chat
-- Injects prior zTracker snapshots (optional)
+- Injects prior xUtils snapshots (optional)
 - Requests **the full tracker schema** (native JSON Schema output or prompt-engineered JSON/XML)
 - Parses the response into a full tracker object
 - Saves and renders it (with strict Handlebars rendering)
@@ -89,8 +89,8 @@ Not required for initial implementation.
 ### Optional schema annotations (implemented)
 Schema presets may add extension fields on **top-level properties**:
 
-- `x-ztracker-dependsOn`: `string | string[]` list of other top-level keys that should be generated before this part. If a dependency cycle is detected, zTracker falls back to the schema’s declared property order.
-- `x-ztracker-idKey`: `string` identity field name for arrays of objects. Used by per-array-item regeneration to match items by a stable identifier (defaults to `name`).
+- `x-xutils-dependsOn`: `string | string[]` list of other top-level keys that should be generated before this part. If a dependency cycle is detected, xUtils falls back to the schema’s declared property order.
+- `x-xutils-idKey`: `string` identity field name for arrays of objects. Used by per-array-item regeneration to match items by a stable identifier (defaults to `name`).
 
 ## Reduced schema construction
 Given the active full schema `S` (draft-07-ish JSON Schema object), and a part key `k`:
@@ -146,7 +146,7 @@ Initial implementation should:
 ### Common guidance
 Each part request should:
 - Include the same conversational context window as full generation.
-- Include prior zTracker snapshots (existing behavior).
+- Include prior xUtils snapshots (existing behavior).
 - Include the current tracker for this message (when present) so dependent fields can stay consistent.
 - Add an explicit instruction message:
   - “Generate ONLY the field `<k>` as valid output matching the provided schema.”
@@ -159,7 +159,7 @@ When regenerating an array part’s individual element (e.g. `characters[1]`):
 - Request a schema shaped as `{ "item": <itemsSchema> }` and replace only that one element.
 
 When the array items are objects with a stable identifier (e.g. `character.name`), regeneration should prefer matching by that identifier instead of by index:
-- UI carries `data-ztracker-name` for items with `name`.
+- UI carries `data-xutils-name` for items with `name`.
 - Action resolves the current index by `name`, then replaces that item.
 - Prompt includes an explicit instruction to preserve `name` exactly.
 
@@ -170,7 +170,7 @@ When the array items are objects with a stable identifier (e.g. `character.name`
 ## Cancellation / pending requests
 
 ### User expectation
-Clicking the message-level zTracker button while generation is running should cancel the in-flight operation.
+Clicking the message-level xUtils button while generation is running should cancel the in-flight operation.
 
 ### Proposed behavior
 - Track in-flight request(s) by messageId.
@@ -179,7 +179,7 @@ Clicking the message-level zTracker button while generation is running should ca
 ## UI design
 
 ### Control placement
-Controls are currently injected by zTracker (not part of user templates). We will extend the existing controls block to include per-part actions.
+Controls are currently injected by xUtils (not part of user templates). We will extend the existing controls block to include per-part actions.
 
 Proposed UI behavior:
 - Keep existing:
@@ -189,7 +189,7 @@ Proposed UI behavior:
 - Add a “parts” control (compact):
   - either a dropdown menu or a small icon that expands a list of part buttons.
 
-Each per-part action will carry `data-ztracker-part="<k>"` so the global click handler can dispatch.
+Each per-part action will carry `data-xutils-part="<k>"` so the global click handler can dispatch.
 
 ### Event wiring
 Extend the global click handler to recognize per-part buttons and call `actions.generateTrackerPart(messageId, partKey)`.
@@ -208,7 +208,7 @@ This can power:
 - future UI badges
 
 ## Acceptance criteria
-- A new sequential generation mode exists and can be toggled (location: zTracker settings).
+- A new sequential generation mode exists and can be toggled (location: xUtils settings).
 - In sequential mode, generating a tracker produces the same final stored tracker shape as today.
 - Per-part regenerate UI exists for messages that have a tracker.
 - Per-part regenerate updates only the requested part and preserves other parts.
@@ -220,7 +220,7 @@ This can power:
 
 ## Verification
 - Jest: `npm test`
-- Manual: enable **Sequential generation** in **Extensions → zTracker**, then generate a tracker and use the list icon menu to regenerate a specific field.
+- Manual: enable **Sequential generation** in **Extensions → xUtils**, then generate a tracker and use the list icon menu to regenerate a specific field.
 
 ## Open questions
 1. Should sequential mode be default-on or default-off?

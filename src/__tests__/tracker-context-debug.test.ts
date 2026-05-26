@@ -53,7 +53,7 @@ describe('tracker-context debug harness parity', () => {
 		expect(flattenedPrompt).toContain('single, valid TOON structure');
 	});
 
-	test('renders a live-like TOON prompt with fallback format/default hints and zTracker metadata when custom schema fields need them', async () => {
+	test('renders a live-like TOON prompt with fallback format/default hints and xUtils metadata when custom schema fields need them', async () => {
 		const captured = await captureTrackerContext(PromptEngineeringMode.TOON, {
 			schemaValue: {
 				type: 'object',
@@ -67,8 +67,8 @@ describe('tracker-context debug harness parity', () => {
 					},
 					items: {
 						type: 'array',
-						'x-ztracker-idKey': 'id',
-						'x-ztracker-dependsOn': ['timestamp'],
+						'x-xutils-idKey': 'id',
+						'x-xutils-dependsOn': ['timestamp'],
 						items: {
 							type: 'object',
 							properties: {
@@ -85,8 +85,8 @@ describe('tracker-context debug harness parity', () => {
 
 		expect(instruction).toContain('format: date-time');
 		expect(instruction).toContain('default: "2026-05-18T12:00:00Z"');
-		expect(instruction).toContain('"x-ztracker-idKey": id');
-		expect(instruction).toContain('"x-ztracker-dependsOn"[1');
+		expect(instruction).toContain('"x-xutils-idKey": id');
+		expect(instruction).toContain('"x-xutils-dependsOn"[1');
 		expect(instruction).not.toContain('describedTimestamp:\n    format: date-time');
 		expect(instruction).not.toContain('describedTimestamp:\n    default: 2026-05-18T12:00:00Z');
 	});

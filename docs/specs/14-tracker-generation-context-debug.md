@@ -4,12 +4,12 @@ Status: In Progress
 Last updated: 2026-03-30
 
 ## Goal
-Keep a short living record of what context zTracker sends to the LLM during tracker generation for the live-like prompt-engineered JSON, XML, and TOON paths that we compare against SillyTavern.
+Keep a short living record of what context xUtils sends to the LLM during tracker generation for the live-like prompt-engineered JSON, XML, and TOON paths that we compare against SillyTavern.
 
 ## Current verified flow
 - Base prompt messages come from `buildPrompt(...)` in the tracker generation flow.
 - Live verification confirmed that this currently includes character-card prompt content (for example, the `Bar` narrator/description text) because tracker generation does not pass `ignoreCharacterFields`.
-- zTracker then calls `includeZTrackerMessages(...)` to inject prior tracker snapshots into that prompt array.
+- xUtils then calls `includeXUtilsMessages(...)` to inject prior tracker snapshots into that prompt array.
 - The debug harnesses now use one shared live-like `Bar` fixture so JSON, XML, and TOON runs all mirror the same prompt stack observed in SillyTavern.
 - Saved tracker-only system prompts are inserted as an extra system message before the first non-system message.
 - Before the request is sent, prompt messages are sanitized down to generation-relevant fields (`role`, `content`, optional `name`, optional `ignoreInstruct`).

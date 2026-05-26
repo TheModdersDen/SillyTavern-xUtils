@@ -10,17 +10,17 @@ Ensure existing tracker data is reliably added to the prompt context for LLM cal
 - Tracker snapshots are injected by:
   - the tracker generation flow, and
   - a `generate_interceptor` that modifies outgoing generation chat arrays.
-- There is already a setting similar to `includeLastXzTrackerMessages`.
+- There is already a setting similar to `includeLastXxUtilsMessages`.
 
 ## Current implementation (verified)
 
 ### Scope
 - Injection applies to:
-   - zTracker’s own tracker generation prompt-building flow, and
+   - xUtils’s own tracker generation prompt-building flow, and
    - all SillyTavern generations routed through the global interceptor hook.
 
 ### Setting semantics
-- Implemented setting name: `includeLastXZTrackerMessages`
+- Implemented setting name: `includeLastXXUtilsMessages`
    - `0`: none
    - `N > 0`: inject up to N distinct tracker snapshots found in the chat
 - There is no explicit “all snapshots” sentinel; users can approximate this by choosing a large N.
@@ -39,7 +39,7 @@ Ensure existing tracker data is reliably added to the prompt context for LLM cal
 - There is no token-estimate cap or hard truncation logic beyond the user-configured N.
 
 ## Decisions (closed)
-1. Scope: both (zTracker generation + global interceptor)
+1. Scope: both (xUtils generation + global interceptor)
 2. Semantics: `0 = none`, `N > 0 = up to N`; no dedicated “all” option for now
 3. Formatting: JSON fenced code block (current approach)
 4. Deduplication: do not repeat the same tracker-bearing message within one injection operation; do not include the snapshot from the most recent message being processed
