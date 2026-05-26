@@ -4,7 +4,7 @@
     "description": "SillyTavern xUtils extension.",
     "type": "module",
     "main": "src/scripts/main.js",
-    "packageManager": "pnpm@10.22.0",
+    "packageManager": "pnpm@11.3.0",
     "scripts": {
         "sync-version": "node scripts/sync-version.mjs",
         "copy-templates": "node scripts/copy-templates.mjs",
